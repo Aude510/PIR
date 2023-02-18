@@ -4,10 +4,8 @@ import {TestComponent} from "./test/test.component";
 import {Test2Component} from "./test2/test2.component";
 
 const routes: Routes = [
-  // { path:'/test/?', component: TestComponent , children: [
-  //     {path: ...}
-  //   ]},
-  // { path: '*', component: Test2Component }
+  { path:'test', component: TestComponent },
+  { path: '**', component: Test2Component }
 ];
 
 @NgModule({

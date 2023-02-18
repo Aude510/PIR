@@ -23,5 +23,4 @@ export class TestComponent implements OnInit {
       this.pokemon = JSON.stringify(result);
     })
   }
-
 }
