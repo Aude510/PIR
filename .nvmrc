@@ -1,0 +1,4 @@
+v18.14.1
+
+# node version to use with nvm (node version manager)
+# run "$nvm use" to start using the correct version of node for this project
