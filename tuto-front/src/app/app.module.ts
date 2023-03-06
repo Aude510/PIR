@@ -6,12 +6,16 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { TestComponent } from './test/test.component';
 import { Test2Component } from './test2/test2.component';
+import { MapComponent } from './map/map.component';
+import { BaseMapComponent } from './base-map/base-map.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     TestComponent,
-    Test2Component
+    Test2Component,
+    MapComponent,
+    BaseMapComponent
   ],
   imports: [
     BrowserModule,
