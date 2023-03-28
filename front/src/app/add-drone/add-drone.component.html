@@ -1,8 +1,12 @@
 <div>
   <form #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
     <h3>Click twice to add your start and end point</h3>
-    <div>
+    <div class="formInput">
       <p>Drone name:</p>
+      <input name="drName" ngModel required #first="ngModel" placeholder="name">
+    </div>
+    <div class="formInput">
+      <p>Drone priority:</p>
       <input name="drName" ngModel required #first="ngModel" placeholder="name">
     </div>
     <button>Submit</button>
