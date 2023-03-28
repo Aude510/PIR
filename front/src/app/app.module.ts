@@ -6,17 +6,21 @@ import { AppComponent } from './app.component';
 import { BaseMapComponent } from './base-map/base-map.component';
 import { MainComponent } from './main/main.component';
 import { BlockZoneComponent } from './block-zone/block-zone.component';
+import {AddDroneComponent} from "./add-drone/add-drone.component";
+import {FormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [
     AppComponent,
     BaseMapComponent,
     MainComponent,
-    BlockZoneComponent
+    BlockZoneComponent,
+    AddDroneComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
