@@ -5,12 +5,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BaseMapComponent } from './base-map/base-map.component';
 import { MainComponent } from './main/main.component';
+import { BlockZoneComponent } from './block-zone/block-zone.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     BaseMapComponent,
-    MainComponent
+    MainComponent,
+    BlockZoneComponent
   ],
   imports: [
     BrowserModule,
