@@ -6,7 +6,7 @@ import {AddDroneComponent} from "./add-drone/add-drone.component";
 
 const routes: Routes = [
   { path:'add-drone', component: AddDroneComponent },
-  {path: "aude",component: BlockZoneComponent},{path: "**",component: MainComponent}
+  { path:'block-zone',component: BlockZoneComponent},{path: "**",component: MainComponent}
 ];
 
 @NgModule({
