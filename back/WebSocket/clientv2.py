@@ -12,8 +12,8 @@ def receiving(websocket,receive):
 
 
 def main():
-    servURL = "ws://localhost/ouibonjour"
-    port = 8765
+    servURL = "ws://192.168.43.17/"
+    port = 80
     ws = websocket.create_connection(servURL + ":" + str(port)) ## Connexion au serveur ##
     event = threading.Event() ## Event pour notify de la réception ##
     th_receiv = threading.Thread(target=receiving, args=(ws,event),daemon=True) ## Création du thread réception ##
