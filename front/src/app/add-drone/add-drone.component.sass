@@ -6,22 +6,45 @@ $max-form-width: 400px
 form
   max-width: $max-form-width
   padding: 20px
+  overflow: hidden
 
   div
+    padding: 20px 0
+
     button
       width: 150px
       height: 50px
       font-size: 16px
+      border: none
+      background-color: #a29bfe
+      border-radius: 5px
+      transition-duration: 0.1s
     
-.form-input
-  width: 100%
-  padding: 20px 0
+    button:hover 
+      background-color: #8279fc
+      cursor: pointer
 
-  div
-    input
-      height: 40px
-      width: 100%
-      max-width: $max-form-width
-      min-width: 170px
-      background-color: transparent
-      outline: none
+  button
+    height: 40px
+    width: 100px
+
+.formInput
+  max-width: 100%
+
+  input
+    border: none
+    border-bottom: 1px solid #a29bfe
+    height: 40px
+    width: 100%
+    max-width: $max-form-width
+    min-width: 170px
+    padding: 5px
+    font-size: 16px
+    background-color: transparent
+    outline: none
+
+  input:focus
+    border-bottom: 2px solid #a29bfe
+
+  p
+    padding: 5px 0

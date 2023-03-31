@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, Output, TemplateRef } from '@angular/core';
-import { Location } from '@angular/common';
+import { Component } from '@angular/core';
+
 @Component({
   selector: 'app-side-bar',
   templateUrl: './side-bar.component.html',
@@ -7,44 +7,38 @@ import { Location } from '@angular/common';
 })
 export class SideBarComponent {
   public sideBarWidth: string;
-  public onMousePress: (e: MouseEvent) => void;
+  private resizeElement: HTMLDivElement | null;
+  private sideBar: HTMLDivElement | null
 
-  private onMouseRelease: (e: MouseEvent) => void;
+  public onMousePress: (e: MouseEvent) => void;
+  public onMouseRelease: (e: MouseEvent) => void;
   private onMouseMove: (e: MouseEvent) => void;
 
-  @Input() displayType: string;
-  @Input() template: TemplateRef<any> | null;
-  @Input() data: any;
-  @Output() previousPageEvent: EventEmitter<void>;
 
-  public constructor(private location: Location) {
-    this.previousPageEvent = new EventEmitter<void>();
-    this.displayType = 'flex';
+  public constructor() {
     this.sideBarWidth = "250px";
-    this.template = null;
+    this.resizeElement = null;
+    this.sideBar = null;
 
     this.onMouseMove = (e: MouseEvent): void => {};
     this.onMousePress = (e: MouseEvent): void => {};
     this.onMouseRelease = (e: MouseEvent): void => {};
   }
 
-  public ngAfterViewInit(): void {
+  public ngOnInit(): void {
+    this.resizeElement = <HTMLDivElement>document.getElementById('resize');
+    this.sideBar = <HTMLDivElement>document.getElementById('side-bar-root"');
+
     this.onMouseMove = (e: MouseEvent): void => {
       this.sideBarWidth = `${e.x + 2.5}px`;
     }
 
-    this.onMouseRelease = (e: MouseEvent): void => {
-      document.removeEventListener('mousemove', this.onMouseMove);
-      document.removeEventListener('mouseup', this.onMouseRelease);
-    }
-
     this.onMousePress = (e: MouseEvent): void => {
       document.addEventListener('mousemove', this.onMouseMove);
-      document.addEventListener('mouseup', this.onMouseRelease);
     }
-  }
 
-  public onBack(): void {
-    this.location.back();
+    this.onMouseRelease = (e: MouseEvent): void => {
+      document.removeEventListener('mousemove', this.onMouseMove);
+    }
   }
 }

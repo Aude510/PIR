@@ -1,60 +1,18 @@
 @import "../../shared.sass"
     
-#side-bar-root
+#side-bar 
+    display: flex
     min-width: 250px
     height: 100%
-    position: relative
-
-#side-bar-container
-    width: 100%
 
 #side-bar-contents
     width: 100%
     height: 100%
 
-#side-bar-back-container
-    height: 50px
-    padding: 0 0 0 10px
-
-    
-    button
-        font-family: 'Play', sans-serif
-        border: none
-        position: relative
-
-        span
-            font-size: 18px
-            position: absolute
-            opacity: 0
-            left: 0
-            transition-duration: 0.3s
-
-        svg 
-            width: 25px
-            height: 25px
-            transition-duration: 0.3s
-
-    button:hover
-        cursor: pointer
-
-        svg 
-            width: 30px
-            height: 30px
-
-        span
-            opacity: 1
-            left: 100%
-            transform: translateX(25%)
-
-
 #resize
-    position: absolute
-    transform: translateX(-100%)
-    left: 100%
     height: 100%
+    // background-color: red
     width: 5px
-    transition-duration: 0.5s
 
 #resize:hover 
     cursor: col-resize
-    background-color: #c5cccc
