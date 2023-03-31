@@ -1,7 +1,7 @@
 import {LeafletMouseEvent} from "leaflet";
 import * as L from 'leaflet';
 
-export interface MapMouseEvent {
-  map: L.Map,
-  event: LeafletMouseEvent
+export type MapMouseEvent = {
+  map: L.Map, // instance de la carte
+  event: LeafletMouseEvent 
 }

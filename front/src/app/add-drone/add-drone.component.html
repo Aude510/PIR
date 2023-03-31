@@ -1,0 +1,15 @@
+<div>
+  <form #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
+    <h3>Click twice to add your start and end point</h3>
+    <div class="formInput">
+      <p>Drone name:</p>
+      <input name="drName" ngModel required #first="ngModel" placeholder="name">
+    </div>
+    <div class="formInput">
+      <p>Drone priority:</p>
+      <input name="drName" ngModel required #first="ngModel" placeholder="name">
+    </div>
+    <button>Submit</button>
+  </form>
+  <app-base-map (leafletMouseEvent)="leafletClick($event)"></app-base-map>
+</div>
