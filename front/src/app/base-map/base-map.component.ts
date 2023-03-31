@@ -17,6 +17,7 @@ import {MapMouseEvent} from "../../model/MapMouseEvent";
 export class BaseMapComponent {
   private map: L.Map | undefined;
   @Output() leafletMouseEvent: EventEmitter<MapMouseEvent> = new EventEmitter();
+  
   private initMap() {
     this.map = L.map('map', {
       center: [ 51.5, -0.09 ],
@@ -33,6 +34,7 @@ export class BaseMapComponent {
 
     tiles.addTo(this.map);
   }
+
   ngAfterViewInit() {
     this.initMap();
   }
