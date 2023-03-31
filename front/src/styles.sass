@@ -1,5 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
 
+$menu: rgba(181, 208, 208, 1)
+$boutons: rgba(135, 133, 165, 1)
+
+
 *
   margin: 0
   padding: 0
@@ -10,3 +14,25 @@ body
 body, app-root
   width: 100vw
   height: 100vh
+
+
+.page
+    display: flex
+    width: 100%
+    height: 100%
+
+.menu
+    display: flex
+    width: 20%
+    min-width: 100px
+    height: 100%
+    background: $menu
+
+
+.map-size
+  width: 100% // sinon le component prend une taille 0 
+
+.bouton
+  background: $boutons
+  border-radius: 15px
+  
