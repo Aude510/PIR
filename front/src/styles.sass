@@ -3,7 +3,6 @@
 $menu: rgba(181, 208, 208, 1)
 $boutons: rgba(135, 133, 165, 1)
 
-
 *
   margin: 0
   padding: 0
@@ -22,17 +21,29 @@ body, app-root
     height: 100%
 
 .menu
-    display: flex
-    width: 20%
-    min-width: 100px
-    height: 100%
-    background: $menu
+  padding: 10px 0
+  display: flex
+  flex-direction: column
+  align-items: center
+  width: 20%
+  min-width: 200px
+  height: 100%
+  background: $menu
 
 
 .map-size
   width: 100% // sinon le component prend une taille 0 
 
 .bouton
-  background: $boutons
+  transition-duration: 0.5s
+  margin: 10px 0
+  width: 150px
+  height: 65px
+  border: none
+  background: #a29bfe
   border-radius: 15px
-  
+
+.bouton:hover
+  // transition-duration: 0.5s
+  cursor: pointer
+  background-color: #6c5ce7
