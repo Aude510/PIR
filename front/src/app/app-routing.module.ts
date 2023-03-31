@@ -4,7 +4,7 @@ import { BlockZoneComponent } from './block-zone/block-zone.component';
 import { MainComponent } from './main/main.component';
 
 
-const routes: Routes = [{path: "aude",component: BlockZoneComponent},{path: "**",component: MainComponent}];
+const routes: Routes = [{path: "block-zone",component: BlockZoneComponent},{path: "**",component: MainComponent}];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
