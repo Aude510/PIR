@@ -1,0 +1,6 @@
+<div id="side-bar" [style.width]="sideBarWidth">
+    <div id="side-bar-contents">
+        <app-add-drone></app-add-drone>
+    </div>
+    <div id="resize" (mousedown)="onMousePress($event)" (mouseup)="onMouseRelease($event)"></div>
+</div>

@@ -23,15 +23,14 @@ export class BaseMapComponent {
       center: [ 51.5, -0.09 ],
       zoom: 14
     });
-
-    this.map.on('click', (e: LeafletMouseEvent) => this.onMapClick(e));
-
+    
     const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
       minZoom: 3,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     });
-
+    
+    this.map.on('click', (e: LeafletMouseEvent) => this.onMapClick(e));
     tiles.addTo(this.map);
   }
 
