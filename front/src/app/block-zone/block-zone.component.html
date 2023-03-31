@@ -1,13 +1,6 @@
-
-
-
 <div class="page">
     <div class="menu">
         <button class="bouton">valider</button>
     </div>
-    <app-base-map class="map-size"></app-base-map>
-
+    <app-base-map class="map-size" (leafletMouseEvent)="addPoint($event)"></app-base-map>
 </div>
-
-
-
