@@ -1,9 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
+@import ./shared.sass
 
 @import url('https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap')
 
 :root 
     font-family: 'Play', sans-serif
+    font-size: 16px
 
 *
   margin: 0
@@ -18,23 +20,31 @@ body
   display: flex
   flex-direction: columns
 
-
 .flex-h-center-h
   justify-content: center
 
-// .map-size
-//   width: 100% // sinon le component prend une taille 0 
+.floating-label
+  position: relative
+  border: 1px solid #a29bfe
+  border-radius: 5px
+  padding: 0 10px
 
-// .bouton
-//   transition-duration: 0.5s
-//   margin: 10px 0
-//   width: 150px
-//   height: 65px
-//   border: none
-//   background: #a29bfe
-//   border-radius: 15px
+  span
+    position: absolute
+    top: 50%
+    left: 10px
+    transform: translate(0, -50%)
+    transition-duration: 0.1s
 
-// .bouton:hover
-//   transition-duration: 0.5s
-//   cursor: pointer
-//   background-color: #6c5ce7
+  input
+    border: none
+
+  input:not([value=""]):valid
+    ~span 
+      top: -1px
+      background-color: $cloud
+
+  input:focus
+    ~span
+      top: -1px
+      background-color: $cloud

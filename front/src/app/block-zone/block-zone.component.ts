@@ -13,12 +13,8 @@ export class BlockZoneComponent {
   private listePoints: Array<LatLng> = []; // ne pas oublier d'init 
 
 
-  addPoint(event: MapMouseEvent){
+  addPoint(event: MapMouseEvent) {
     /* add marqueur sur la map de l'event à la position du point */ 
     // tracer polygone si plus de 3 points 
-    
-
   }
-
-
 }
