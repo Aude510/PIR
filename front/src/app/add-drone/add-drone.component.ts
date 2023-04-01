@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import {NgForm} from "@angular/forms";
 import {CircleMarker, LatLng, Marker} from "leaflet";
 import * as L from 'leaflet';
@@ -14,7 +14,17 @@ export class AddDroneComponent {
   private arrival: CircleMarker | undefined;
   private mapState: "SettingStart" | "SettingArrival" = "SettingStart";
 
-  leafletClick(event: MapMouseEvent) {
+  @Output() callback: EventEmitter<(e: MapMouseEvent) => void>;
+
+  public constructor() {
+    this.callback = new EventEmitter<(e: MapMouseEvent) => void>();
+  }
+
+  public ngOnInit(): void {
+    this.callback.emit((e: MapMouseEvent): void => { this.leafletClick(e) });
+  }
+
+  public leafletClick(event: MapMouseEvent): void {
     let point = event.event.latlng;
 
     if (this.mapState === "SettingStart") {
@@ -28,7 +38,7 @@ export class AddDroneComponent {
     }
   }
 
-  onSubmit(f: NgForm) {
+  public onSubmit(f: NgForm): void {
     if (!this.start || !this.arrival) {
       throw new Error("Please click twice to add your start and end point");
     }
