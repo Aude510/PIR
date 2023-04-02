@@ -1,0 +1,6 @@
+<div id="side-bar" [style.width]="sideBarWidth">
+    <div id="side-bar-contents">
+        <ng-container [ngTemplateOutlet]="template"></ng-container>
+    </div>
+    <div id="resize" (mousedown)="onMousePress($event)"></div>
+</div>

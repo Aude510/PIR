@@ -1,18 +1,9 @@
 <!--page principale-->
+<ng-template #addDrone>
+    <app-add-drone (callback)="onMapClickCallback($event)"></app-add-drone>
+</ng-template>
 
-
-<div class="page">
-    <div class="menu">
-        <button class="bouton">block a zone</button>
-        <button class="bouton">block a zone</button>
-        <button class="bouton">block a zone</button>
-        <button class="bouton">block a zone</button>
-        <button class="bouton">block a zone</button>
-        <button class="bouton">block a zone</button>
-    </div> 
-    <app-base-map class="map-size"></app-base-map>
- 
+<div id="main-container">
+    <app-side-bar [template]="addDrone"></app-side-bar>
+    <app-base-map (leafletMouseEvent)="onMapClick($event)"></app-base-map>
 </div>
-
-
-  

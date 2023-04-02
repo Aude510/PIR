@@ -1,15 +1,18 @@
-<div>
-  <form #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
-    <h3>Click twice to add your start and end point</h3>
-    <div class="formInput">
-      <p>Drone name:</p>
-      <input name="drName" ngModel required #first="ngModel" placeholder="name">
+<form #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
+  <h3>Click twice to add your start and end point</h3>
+  <div class="form-input">
+    <div class="floating-label">
+      <input name="drName" ngModel required #first="ngModel">
+      <span>Name</span>
     </div>
-    <div class="formInput">
-      <p>Drone priority:</p>
-      <input name="drName" ngModel required #first="ngModel" placeholder="name">
+  </div>
+  <div class="form-input ">
+    <div class="floating-label">
+      <input name="drName" ngModel required #first="ngModel">
+      <span>Priority</span>
     </div>
+  </div>
+  <div class="flex-h flex-h-center-h">
     <button>Submit</button>
-  </form>
-  <app-base-map (leafletMouseEvent)="leafletClick($event)"></app-base-map>
-</div>
+  </div>
+</form>

@@ -73,6 +73,4 @@ export class BlockZoneComponent {
   backToMain(){
     // TODO 
   }
-
-
 }
