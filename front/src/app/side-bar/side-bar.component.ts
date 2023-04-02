@@ -27,7 +27,7 @@ export class SideBarComponent {
     this.onMouseRelease = (e: MouseEvent): void => {};
   }
 
-  public ngOnInit(): void {
+  public ngAfterViewInit(): void {
     this.resizeElement = <HTMLDivElement>document.getElementById('resize');
     this.sideBar = <HTMLDivElement>document.getElementById('side-bar-root"');
     

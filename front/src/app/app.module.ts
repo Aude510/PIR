@@ -10,6 +10,7 @@ import {AddDroneComponent} from "./add-drone/add-drone.component";
 import {FormsModule} from "@angular/forms";
 import {DroneInformationsComponent} from "./drone-informations/drone-informations.component";
 import { SideBarComponent } from './side-bar/side-bar.component';
+import { HomePageComponent } from './home-page/home-page.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { SideBarComponent } from './side-bar/side-bar.component';
     BlockZoneComponent,
     AddDroneComponent,
     DroneInformationsComponent,
-    SideBarComponent
+    SideBarComponent,
+    HomePageComponent
   ],
   imports: [
     BrowserModule,
