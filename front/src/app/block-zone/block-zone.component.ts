@@ -13,22 +13,65 @@ import * as L from "leaflet";
 export class BlockZoneComponent {
 
   private listePoints: Array<LatLng> = []; // ne pas oublier d'init 
+  private listeMarkers: Array<L.Marker> = [];
+  private map: any = null; 
+  private polygon: any = null; 
+
   addPoint(event: MapMouseEvent){
-    let maxNbPts: number = 5; 
+    let tailleSquare: number = 4; 
+
     // let scope {}
     // var scope par fonction (à éviter)
     // attention const = final en java, pas constante 
-    /* add marqueur sur la map de l'event à la position du point */ 
-    let marker: L.Marker = new L.Marker(event.event.latlng); 
-    event.map.addLayer(marker);
-    // add point à la liste 
-    this.listePoints.push(event.event.latlng); 
-    // tracer polygone si plus de 3 points 
-    if (this.listePoints.length>2){
-      event.map.eachLayer((layer) => {layer.remove();}); // se démerder pour pas flush la map 
-      let polygon = L.polygon(this.listePoints).addTo(event.map);
+    
+    
+    // assignation de la map : 
+    if (this.map==null){
+      this.map=event.map;
     }
-    // pop up quand on dépasse le nombre de points 
+
+    if (this.listePoints.length<tailleSquare){
+      // add point à la liste 
+      this.listePoints.push(event.event.latlng); 
+      /* add marqueur sur la map de l'event à la position du point */ 
+      let marker: L.Marker = new L.Marker(event.event.latlng); 
+      this.listeMarkers.push(marker); 
+      this.map.addLayer(marker);
+    } else {
+      alert("veuillez valider ou retracer la zone");
+    }
+
+    if (this.listePoints.length==tailleSquare && this.polygon==null){
+      // tracer polygone 
+      this.polygon = L.polygon(this.listePoints);
+      this.map.addLayer(this.polygon);
+    }
+  }
+
+  deleteZone(){
+    console.log("effacement des points");
+    this.listePoints=[];
+    // virer les marqueurs 
+    for (let marker of this.listeMarkers){
+      this.map.removeLayer(marker);
+    }
+    this.listeMarkers = [];
+    // virer le polygone
+    if (this.polygon!=null){
+      this.map.removeLayer(this.polygon);
+    }
+    this.polygon=null; 
+  }
+
+  sendToBack(){
+    console.log("envoi des données au serveur");
+    // TODO 
+
+    this.backToMain();
+  }
+
+  backToMain(){
+    // TODO 
   }
 
 
