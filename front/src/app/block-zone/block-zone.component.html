@@ -1,9 +1,11 @@
-<div class="page">
-    <div class="menu">
+<div id="block-zone-root">
+    <div>
         <div>
-            veuiller cliquer sur la carte pour tracer la zone à bloquer
+            Veuillez cliquer sur la carte pour tracer la zone à bloquer
         </div>
-        <button class="bouton" (click)="sendToBack()">valider</button>
-        <button class="bouton" (click)="deleteZone()">retracer la zone</button>
-    </div> 
+        <div class="flex-c flex-c-center-x" id="marge-boutons">
+            <button class="button-shy-moment bouton-block" (click)="sendToBack()">valider</button>
+            <button class="button-shy-moment bouton-block" (click)="deleteZone()">retracer la zone</button>    
+        </div>
+       </div> 
 </div>
