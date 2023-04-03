@@ -1,6 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
 @import ./shared.sass
-
 @import url('https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap')
 
 :root 
@@ -10,18 +9,42 @@
 *
   margin: 0
   padding: 0
+  -webkit-user-select: none
+  -ms-user-select: none
+  user-select: none
 
 body
   overflow: hidden
   width: 100vw
   height: 100vh
 
-.flex-h 
-  display: flex
-  flex-direction: columns
+.button-shy-moment
+  font-family: 'Play', sans-serif
+  border: none
+  background-color: #a29bfe
+  border-radius: 5px
+  transition-duration: 0.3s
 
-.flex-h-center-h
+.button-shy-moment:hover 
+  background-color: #8279fc
+  cursor: pointer
+
+.flex-r
+  display: flex
+  flex-direction: row
+
+.flex-c
+  display: flex
+  flex-direction: column
+
+.flex-r-center-x
   justify-content: center
+
+.flex-r-center-y
+  align-items: center
+
+.flex-c-center-x 
+  align-items: center
 
 .floating-label
   position: relative
