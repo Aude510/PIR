@@ -30,9 +30,11 @@ body
   padding: 0 10px
 
   span
+    z-index: -1
     position: absolute
     top: 50%
     left: 10px
+    color: #5c5c5c
     transform: translate(0, -50%)
     transition-duration: 0.1s
 
@@ -41,10 +43,14 @@ body
 
   input:not([value=""]):valid
     ~span 
+      z-index: 1
+      color: #000000
       top: -1px
       background-color: $cloud
 
   input:focus
     ~span
+      z-index: 1
+      color: #000000
       top: -1px
       background-color: $cloud
