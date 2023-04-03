@@ -1,4 +1,4 @@
-import { Component, Input, TemplateRef } from '@angular/core';
+import { Component, EventEmitter, Input, Output, TemplateRef } from '@angular/core';
 
 @Component({
   selector: 'app-side-bar',
@@ -7,19 +7,20 @@ import { Component, Input, TemplateRef } from '@angular/core';
 })
 export class SideBarComponent {
   public sideBarWidth: string;
-  private resizeElement: HTMLDivElement | null;
-  private sideBar: HTMLDivElement | null
-
   public onMousePress: (e: MouseEvent) => void;
-  public onMouseRelease: (e: MouseEvent) => void;
+  
+  private onMouseRelease: (e: MouseEvent) => void;
   private onMouseMove: (e: MouseEvent) => void;
-
+  
+  @Input() displayType: string;
   @Input() template: TemplateRef<any> | null;
+  
+  @Output() previousPageEvent: EventEmitter<void>;
 
   public constructor() {
+    this.previousPageEvent = new EventEmitter<void>();
+    this.displayType = 'flex';
     this.sideBarWidth = "250px";
-    this.resizeElement = null;
-    this.sideBar = null;
     this.template = null;
 
     this.onMouseMove = (e: MouseEvent): void => {};
@@ -27,10 +28,7 @@ export class SideBarComponent {
     this.onMouseRelease = (e: MouseEvent): void => {};
   }
 
-  public ngAfterViewInit(): void {
-    this.resizeElement = <HTMLDivElement>document.getElementById('resize');
-    this.sideBar = <HTMLDivElement>document.getElementById('side-bar-root"');
-    
+  public ngAfterViewInit(): void {    
     this.onMouseMove = (e: MouseEvent): void => {
       this.sideBarWidth = `${e.x + 2.5}px`;
     }
@@ -44,5 +42,9 @@ export class SideBarComponent {
       document.addEventListener('mousemove', this.onMouseMove);
       document.addEventListener('mouseup', this.onMouseRelease);
     }
+  }
+
+  public onBack(): void {
+    this.previousPageEvent.emit();
   }
 }
