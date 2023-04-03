@@ -12,6 +12,7 @@ export class MainComponent {
   public displayType: string;
 
   @ViewChild('addDrone', { static: true }) addDroneTemplate: TemplateRef<any> | null;
+  @ViewChild('blockZone', { static: true }) blockZoneTemplate: TemplateRef<any> | null;
   @ViewChild('homePage', { static: true }) homePageTemplate: TemplateRef<any> | null;
 
   public eventCallback: (e: MapMouseEvent) => void;
@@ -22,6 +23,7 @@ export class MainComponent {
     this.previousTemplate = null;
     this.addDroneTemplate = null;
     this.homePageTemplate = null;
+    this.blockZoneTemplate = null; 
     this.eventCallback = (e: MapMouseEvent) => {};
   }
 
@@ -30,6 +32,12 @@ export class MainComponent {
   }
 
   public onAddDroneEvent(): void {
+    this.previousTemplate = this.currentTemplate;
+    this.currentTemplate = this.addDroneTemplate;
+    this.displayType = 'flex';
+  }
+
+  public onBlockZoneEvent(): void {
     this.previousTemplate = this.currentTemplate;
     this.currentTemplate = this.addDroneTemplate;
     this.displayType = 'flex';
