@@ -4,11 +4,11 @@
 </ng-template>
 
 <ng-template #homePage>
-    <app-home-page (addDroneEvent)="onAddDroneEvent()"></app-home-page>
+    <app-home-page (addDroneEvent)="onAddDroneEvent()" (blockZoneEvent)="onBlockZoneEvent()"></app-home-page>
 </ng-template>
 
 <ng-template #blockZone>
-    <app-block-zone></app-block-zone>
+    <app-block-zone (callback)="onMapClickCallback($event)"></app-block-zone>
 </ng-template>
 
 <div id="main-container">

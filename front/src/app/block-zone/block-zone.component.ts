@@ -1,3 +1,4 @@
+import { EventEmitter, Input, Output } from '@angular/core';
 import { Component } from '@angular/core';
 import {MapMouseEvent} from "../../model/MapMouseEvent";
 import { LatLng } from 'leaflet';
@@ -11,6 +12,19 @@ import * as L from "leaflet";
   styleUrls: ['./block-zone.component.sass']
 })
 export class BlockZoneComponent {
+
+  @Output() callback: EventEmitter<(e: MapMouseEvent) => void>;
+
+  public constructor() {
+    this.callback = new EventEmitter<(e: MapMouseEvent) => void>();
+  }
+
+  public ngOnInit(): void {
+    this.callback.emit((e: MapMouseEvent): void => { this.addPoint(e) });
+  }
+
+  
+
 
   private listePoints: Array<LatLng> = []; // ne pas oublier d'init 
   private listeMarkers: Array<L.Marker> = [];
@@ -67,10 +81,6 @@ export class BlockZoneComponent {
     console.log("envoi des données au serveur");
     // TODO 
 
-    this.backToMain();
   }
 
-  backToMain(){
-    // TODO 
-  }
 }
