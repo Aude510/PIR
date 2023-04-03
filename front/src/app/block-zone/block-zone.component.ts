@@ -32,6 +32,10 @@ export class BlockZoneComponent {
   private polygon: any = null; 
 
   addPoint(event: MapMouseEvent){
+
+    // TODO si un connard clique pas dans l'ordre
+
+
     let tailleSquare: number = 4; 
 
     // let scope {}
