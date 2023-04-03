@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output, TemplateRef } from '@angular/core';
-
+import { Location } from '@angular/common';
 @Component({
   selector: 'app-side-bar',
   templateUrl: './side-bar.component.html',
@@ -8,16 +8,16 @@ import { Component, EventEmitter, Input, Output, TemplateRef } from '@angular/co
 export class SideBarComponent {
   public sideBarWidth: string;
   public onMousePress: (e: MouseEvent) => void;
-  
+
   private onMouseRelease: (e: MouseEvent) => void;
   private onMouseMove: (e: MouseEvent) => void;
-  
+
   @Input() displayType: string;
   @Input() template: TemplateRef<any> | null;
-  
+  @Input() data: any;
   @Output() previousPageEvent: EventEmitter<void>;
 
-  public constructor() {
+  public constructor(private location: Location) {
     this.previousPageEvent = new EventEmitter<void>();
     this.displayType = 'flex';
     this.sideBarWidth = "250px";
@@ -28,7 +28,7 @@ export class SideBarComponent {
     this.onMouseRelease = (e: MouseEvent): void => {};
   }
 
-  public ngAfterViewInit(): void {    
+  public ngAfterViewInit(): void {
     this.onMouseMove = (e: MouseEvent): void => {
       this.sideBarWidth = `${e.x + 2.5}px`;
     }
@@ -45,6 +45,6 @@ export class SideBarComponent {
   }
 
   public onBack(): void {
-    this.previousPageEvent.emit();
+    this.location.back();
   }
 }
