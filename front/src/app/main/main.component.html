@@ -7,6 +7,10 @@
     <app-home-page (addDroneEvent)="onAddDroneEvent()"></app-home-page>
 </ng-template>
 
+<ng-template #blockZone>
+    <app-block-zone></app-block-zone>
+</ng-template>
+
 <div id="main-container">
     <app-side-bar [template]="currentTemplate" [displayType]="displayType" (previousPageEvent)="onPreviousPageEvent()"></app-side-bar>
     <app-base-map (leafletMouseEvent)="onMapClick($event)"></app-base-map>
