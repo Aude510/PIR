@@ -7,9 +7,13 @@ import { Component, EventEmitter, Output } from '@angular/core';
 })
 export class HomePageComponent {
   @Output() addDroneEvent: EventEmitter<void>;
+  @Output() blockZoneEvent: EventEmitter<void>;
+
 
   public constructor() {
     this.addDroneEvent = new EventEmitter<void>();
+    this.blockZoneEvent = new EventEmitter<void>();
+
   }
 
   public onAddDrone(e: MouseEvent): void {
@@ -17,6 +21,7 @@ export class HomePageComponent {
   } 
 
   public onBlockZone(e: MouseEvent): void {
+    this.blockZoneEvent.emit();
     console.log("go to block zone");
   }
 }

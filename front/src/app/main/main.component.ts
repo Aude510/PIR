@@ -39,7 +39,7 @@ export class MainComponent {
 
   public onBlockZoneEvent(): void {
     this.previousTemplate = this.currentTemplate;
-    this.currentTemplate = this.addDroneTemplate;
+    this.currentTemplate = this.blockZoneTemplate;
     this.displayType = 'flex';
   }
 
@@ -53,6 +53,7 @@ export class MainComponent {
 
   public onPreviousPageEvent(): void {
     this.currentTemplate = this.previousTemplate;
+    this.eventCallback = (e: MapMouseEvent) => {};
     this.displayType = 'none';
   }
 }
