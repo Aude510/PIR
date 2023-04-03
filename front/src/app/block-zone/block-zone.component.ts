@@ -3,6 +3,8 @@ import { Component } from '@angular/core';
 import {MapMouseEvent} from "../../model/MapMouseEvent";
 import { LatLng } from 'leaflet';
 import * as L from "leaflet";
+import { Square } from 'src/model/Square';
+import { Point } from 'src/model/Point';
 
 
 
@@ -77,7 +79,8 @@ export class BlockZoneComponent {
 
   sendToBack(){
     console.log("envoi des données au serveur");
-    // TODO 
+    let square: Square = {points:this.listePoints.map((p) => new Point(p))};
+    // TODO envoyer square au back 
   }
 
 }
