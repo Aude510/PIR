@@ -23,8 +23,6 @@ export class BlockZoneComponent {
     this.callback.emit((e: MapMouseEvent): void => { this.addPoint(e) });
   }
 
-  
-
 
   private listePoints: Array<LatLng> = []; // ne pas oublier d'init 
   private listeMarkers: Array<L.Marker> = [];
@@ -80,7 +78,6 @@ export class BlockZoneComponent {
   sendToBack(){
     console.log("envoi des données au serveur");
     // TODO 
-
   }
 
 }
