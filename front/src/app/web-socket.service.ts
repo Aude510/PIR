@@ -21,7 +21,7 @@ export class WebSocketService {
     if(this.socket != undefined) {
       this.socket.onopen = (event) => {
         console.log("Connected to the server !\n")
-        this.sendNewDrone(new Drone(10, "Cador", {ID:69},10,{points:[]},{x:10,y:10},{x:50,y:50}))
+        this.sendNewDrone(new Drone("Cador", {ID: 69}, 10, {points: []}, {x: 10, y: 10}, {x: 50, y: 50}))
           .then((data) => console.log(data))
           .catch((e) => console.log(e));
       }
