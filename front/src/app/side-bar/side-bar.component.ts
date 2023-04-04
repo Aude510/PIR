@@ -1,4 +1,5 @@
 import { Component, Input, TemplateRef } from '@angular/core';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-side-bar',
@@ -16,7 +17,7 @@ export class SideBarComponent {
 
   @Input() template: TemplateRef<any> | null;
 
-  public constructor() {
+  public constructor(private location: Location) {
     this.sideBarWidth = "250px";
     this.resizeElement = null;
     this.sideBar = null;
@@ -44,5 +45,9 @@ export class SideBarComponent {
       document.addEventListener('mousemove', this.onMouseMove);
       document.addEventListener('mouseup', this.onMouseRelease);
     }
+  }
+
+  onBack(): void {
+      this.location.back();
   }
 }

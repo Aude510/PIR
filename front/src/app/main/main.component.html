@@ -12,6 +12,6 @@
 </ng-template>
 
 <div id="main-container">
-    <app-side-bar [template]="currentTemplate" [displayType]="displayType" (previousPageEvent)="onPreviousPageEvent()"></app-side-bar>
+    <app-side-bar [template]="currentTemplate" ></app-side-bar>
     <app-base-map (leafletMouseEvent)="onMapClick($event)"></app-base-map>
 </div>
