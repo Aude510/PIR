@@ -10,22 +10,45 @@
 *
   margin: 0
   padding: 0
+  -webkit-user-select: none
+  -ms-user-select: none
+  user-select: none
 
 body
   overflow: hidden
   width: 100vw
   height: 100vh
 
-.flex-h 
+.flex-c
   display: flex
-  flex-direction: columns
+  flex-direction: column
 
-.flex-h-center-h
+.flex-r
+  display: flex
+  flex-direction: row
+
+.flex-r-center-y
+  align-items: center
+
+.flex-r-center-x 
   justify-content: center
+
+.flex-c-center-x
+  align-items: center
+
+.button-shy-moment
+  border: none
+  border-radius: 5px
+  background-color: $shy-moment
+  transition-duration: 0.3s
+
+.button-shy-moment:hover 
+  cursor: pointer
+  background-color: #918be2
 
 .floating-label
   position: relative
-  border: 1px solid #a29bfe
+  border: 1px solid $shy-moment
   border-radius: 5px
   padding: 0 10px
 
