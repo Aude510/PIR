@@ -16,27 +16,28 @@ async def handler(websocket,path):
             match convertionJson.jsonToType(message): #Identifies the type of the message if not, raise MessageTypeError
                 case "answer_path":
                     pass
-                    sendUnicast("I have received answer_path",websocket)
+                    await sendUnicast("I have received answer_path",websocket)
                     print("answer_path")
                 case "delete_zone":
                     pass
-                    sendUnicast(convertionJson.ackMessage(),websocket)
+                    await sendUnicast(convertionJson.ackMessage(),websocket)
                     print("delete_zone")
                 case "block_zone":
                     pass
-                    sendUnicast("I have received block_zone",websocket)
+                    await sendUnicast("I have received block_zone",websocket)
                     print("block_zone")
                 case "new_drone":
                     id,name,owner,priority,start,destination = convertionJson.jsonToDrone(message)
-                    sendUnicast(f"I have received new_drone with ID:{id} and owner {owner}",websocket)
-                    print(f"new_drone with id:{id} and owner:{owner}")
+                    print(f"new_drone with id:{id}, owner:{owner}, name:{name},")
+                    print(f"priority:{priority},start:{start},destination:{destination}")
+                    await sendUnicast(convertionJson.ackMessage(),websocket)
                 case "delete_drone":
                     pass
-                    sendUnicast("I have received delete_drone",websocket)
+                    await sendUnicast("I have received delete_drone",websocket)
                     print("delete_drone")
                 case "get_status":
                     pass
-                    sendUnicast("I have received get_status",websocket)
+                    await sendUnicast("I have received get_status",websocket)
                     print("get_status")
                 case _:
                     raise convertionJson.MessageTypeError
@@ -45,7 +46,7 @@ async def handler(websocket,path):
         connect.remove(websocket) #Delete the connection from the list
     except convertionJson.MessageTypeError:
         print("Erreur sur le type du message reçu")
-        sendUnicast(convertionJson.errorMessage(),websocket) #Send an error message to the client
+        await sendUnicast(convertionJson.errorMessage(),websocket) #Send an error message to the client
 
 
 #Send a message to an unique client 
@@ -80,12 +81,12 @@ async def sendPeriodically(message):
 #Créer le serveur websocket et envoi périodiquement à tous les clients le statu
 async def main():
     async with websockets.serve(handler, "", 80):
-        envoiPeriodique = asyncio.create_task(sendPeriodically("Status")) #TODO Faire en sorte qu'on envoi le statu
-        # while True:
+        #envoiPeriodique = asyncio.create_task(sendPeriodically("Status")) #TODO Faire en sorte qu'on envoi le statu
+        while True:
         #     #await sendAllClients("Multicast")
         #     #if len(connect)>0:
         #         #await sendUnicast("Unicast",connect[0])
-        #     await asyncio.sleep(2)
+            await asyncio.sleep(2)
 
 if __name__ == "__main__":
     asyncio.run(main())
