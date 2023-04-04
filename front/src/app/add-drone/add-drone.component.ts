@@ -1,8 +1,9 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import {NgForm} from "@angular/forms";
-import {CircleMarker, LatLng, Marker} from "leaflet";
+import {CircleMarker, LeafletMouseEvent} from "leaflet";
 import * as L from 'leaflet';
 import {MapMouseEvent} from "../../model/MapMouseEvent";
+import {MapService} from "../services/map.service";
 
 @Component({
   selector: 'app-add-drone',
@@ -16,24 +17,25 @@ export class AddDroneComponent {
 
   @Output() callback: EventEmitter<(e: MapMouseEvent) => void>;
 
-  public constructor() {
+  public constructor(private mapService: MapService) {
     this.callback = new EventEmitter<(e: MapMouseEvent) => void>();
+    this.mapService.onMapClicked().subscribe((e) => {
+      this.leafletClick(e);
+    })
   }
-
-  public ngOnInit(): void {
-    this.callback.emit((e: MapMouseEvent): void => { this.leafletClick(e) });
-  }
-
-  public leafletClick(event: MapMouseEvent): void {
-    let point = event.event.latlng;
-
+  public leafletClick(event: LeafletMouseEvent) {
+    let point = event.latlng;
+    if( !this.mapService.map ) {
+      alert("The map is not initialised, please refresh and try again");
+      return;
+    }
     if (this.mapState === "SettingStart") {
       this.start?.remove();
-      this.start = L.circleMarker(point).setStyle({color: 'green'}).setLatLng(event.event.latlng).addTo(event.map);
+      this.start = L.circleMarker(point).setStyle({color: 'green'}).setLatLng(event.latlng).addTo(this.mapService.map);
       this.mapState = "SettingArrival";
     } else {
       this.arrival?.remove()
-      this.arrival = L.circleMarker(point).setStyle({color:'blue'}).setLatLng(event.event.latlng).addTo(event.map);
+      this.arrival = L.circleMarker(point).setStyle({color:'blue'}).setLatLng(event.latlng).addTo(this.mapService.map);
       this.mapState = "SettingStart";
     }
   }
@@ -46,7 +48,7 @@ export class AddDroneComponent {
     if (!f.value.drName) {
       throw new Error("Please enter your drone name");
     }
-    
+
     let obj = {
       name: f.value.drName,
       start: this.start.getLatLng(),

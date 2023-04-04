@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Output } from '@angular/core';
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-home-page',
@@ -10,18 +11,19 @@ export class HomePageComponent {
   @Output() blockZoneEvent: EventEmitter<void>;
 
 
-  public constructor() {
+  public constructor(private router: Router) {
     this.addDroneEvent = new EventEmitter<void>();
     this.blockZoneEvent = new EventEmitter<void>();
 
   }
 
   public onAddDrone(e: MouseEvent): void {
-    this.addDroneEvent.emit();
-  } 
+    this.router.navigateByUrl("/add-drone");
+  }
 
   public onBlockZone(e: MouseEvent): void {
     this.blockZoneEvent.emit();
+    this.router.navigateByUrl("/block-zone");
     console.log("go to block zone");
   }
 }

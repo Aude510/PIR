@@ -2,6 +2,7 @@ import {Component, EventEmitter, Output} from '@angular/core';
 import * as L from "leaflet";
 import {LeafletMouseEvent} from "leaflet";
 import {MapMouseEvent} from "../../model/MapMouseEvent";
+import {MapService} from "../services/map.service";
 
 /**
  * This is a component to adapt leaflet in the angular architecture.
@@ -15,23 +16,23 @@ import {MapMouseEvent} from "../../model/MapMouseEvent";
   styleUrls: ['./base-map.component.sass']
 })
 export class BaseMapComponent {
-  private map: L.Map | undefined;
   @Output() leafletMouseEvent: EventEmitter<MapMouseEvent> = new EventEmitter();
-  
+
+  constructor(private mapService: MapService) { }
   private initMap() {
-    this.map = L.map('map', {
+    this.mapService.map = L.map('map', {
       center: [ 51.5, -0.09 ],
       zoom: 14
     });
-    
+
     const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
       minZoom: 3,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     });
-    
-    this.map.on('click', (e: LeafletMouseEvent) => this.onMapClick(e));
-    tiles.addTo(this.map);
+
+    this.mapService.map.on('click', (e: LeafletMouseEvent) => this.onMapClick(e));
+    tiles.addTo(this.mapService.map);
   }
 
   ngAfterViewInit() {
@@ -40,6 +41,7 @@ export class BaseMapComponent {
 
   onMapClick(e: LeafletMouseEvent) {
     // @ts-ignore as when the component is rendered a map will be here
-    this.leafletMouseEvent.emit({map: this.map, event: e});
+    this.leafletMouseEvent.emit({map: this.mapService.map, event: e});
+    this.mapService.notifyMapClicked(e);
   }
 }

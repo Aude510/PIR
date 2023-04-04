@@ -11,6 +11,8 @@ export class MainComponent {
   public previousTemplate: TemplateRef<any> | null;
   public displayType: string;
 
+  public something: any = "someData";
+
   @ViewChild('addDrone', { static: true }) addDroneTemplate: TemplateRef<any> | null;
   @ViewChild('blockZone', { static: true }) blockZoneTemplate: TemplateRef<any> | null;
   @ViewChild('homePage', { static: true }) homePageTemplate: TemplateRef<any> | null;
@@ -23,7 +25,7 @@ export class MainComponent {
     this.previousTemplate = null;
     this.addDroneTemplate = null;
     this.homePageTemplate = null;
-    this.blockZoneTemplate = null; 
+    this.blockZoneTemplate = null;
     this.eventCallback = (e: MapMouseEvent) => {};
   }
 
@@ -49,6 +51,7 @@ export class MainComponent {
 
   public onMapClick(e: MapMouseEvent): void {
     this.eventCallback(e);
+    this.something = e;
   }
 
   public onPreviousPageEvent(): void {
