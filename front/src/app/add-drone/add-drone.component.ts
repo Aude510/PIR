@@ -5,6 +5,8 @@ import * as L from 'leaflet';
 import {MapMouseEvent} from "../../model/MapMouseEvent";
 import {MapService} from "../services/map.service";
 import {Router} from "@angular/router";
+import {WebSocketService} from "../web-socket.service";
+import {Drone} from "../../model/Drone";
 
 @Component({
   selector: 'app-add-drone',
@@ -15,11 +17,11 @@ export class AddDroneComponent {
   private start: CircleMarker | undefined;
   private arrival: CircleMarker | undefined;
   private mapState: "SettingStart" | "SettingArrival" = "SettingStart";
-  public isLoading = true;
+  public isLoading = false;
 
   @Output() callback: EventEmitter<(e: MapMouseEvent) => void>;
 
-  public constructor(private mapService: MapService, private router: Router) {
+  public constructor(private mapService: MapService, private router: Router, private webSocket: WebSocketService ) {
     this.callback = new EventEmitter<(e: MapMouseEvent) => void>();
     this.mapService.onMapClicked().subscribe((e) => {
       this.leafletClick(e);
@@ -56,7 +58,7 @@ export class AddDroneComponent {
       start: this.start.getLatLng(),
       arrival: this.arrival?.getLatLng()
     };
-
+    const drone = new Drone()
     console.log(JSON.stringify(obj));
   }
 }
