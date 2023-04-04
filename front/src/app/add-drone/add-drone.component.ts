@@ -7,6 +7,7 @@ import {MapService} from "../services/map.service";
 import {Router} from "@angular/router";
 import {WebSocketService} from "../web-socket.service";
 import {Drone} from "../../model/Drone";
+import {Point} from "../../model/Point";
 
 @Component({
   selector: 'app-add-drone',
@@ -55,10 +56,29 @@ export class AddDroneComponent {
 
     let obj = {
       name: f.value.drName,
+      owner: f.value.owner,
+      priority: f.value.priority,
       start: this.start.getLatLng(),
       arrival: this.arrival?.getLatLng()
     };
-    const drone = new Drone()
-    console.log(JSON.stringify(obj));
+    const drone = new Drone(obj.name,
+      obj.owner,
+      obj.priority,
+      {points: []},
+      new Point(obj.start),
+      new Point(obj.arrival)
+    );
+    console.log(JSON.stringify(drone));
+    this.isLoading = true;
+    this.webSocket.sendNewDrone(drone)
+      .then((data) => {
+        console.log("received: ", data);
+      })
+      .catch((e) => {
+        alert("cant connect to server. Error: " + e);
+      })
+      .finally(() => {
+        this.isLoading = false;
+      });
   }
 }

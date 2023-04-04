@@ -37,7 +37,6 @@ export class WebSocketService {
         this.socket.onmessage = (event) => {
           console.log(event.data)
           resolve(event.data);
-
         }
       })
     }
