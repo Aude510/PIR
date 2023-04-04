@@ -1,4 +1,5 @@
-<form #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
+<h3 *ngIf="isLoading">Loading...</h3>
+<form *ngIf="!isLoading" #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
   <h3>Click twice to add your start and end point</h3>
   <div class="form-input">
     <div class="floating-label">

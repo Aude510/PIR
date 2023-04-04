@@ -4,6 +4,7 @@ import {CircleMarker, LeafletMouseEvent} from "leaflet";
 import * as L from 'leaflet';
 import {MapMouseEvent} from "../../model/MapMouseEvent";
 import {MapService} from "../services/map.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-add-drone',
@@ -14,10 +15,11 @@ export class AddDroneComponent {
   private start: CircleMarker | undefined;
   private arrival: CircleMarker | undefined;
   private mapState: "SettingStart" | "SettingArrival" = "SettingStart";
+  public isLoading = true;
 
   @Output() callback: EventEmitter<(e: MapMouseEvent) => void>;
 
-  public constructor(private mapService: MapService) {
+  public constructor(private mapService: MapService, private router: Router) {
     this.callback = new EventEmitter<(e: MapMouseEvent) => void>();
     this.mapService.onMapClicked().subscribe((e) => {
       this.leafletClick(e);
