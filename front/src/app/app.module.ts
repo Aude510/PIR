@@ -11,6 +11,7 @@ import {FormsModule} from "@angular/forms";
 import {DroneInformationsComponent} from "./drone-informations/drone-informations.component";
 import { SideBarComponent } from './side-bar/side-bar.component';
 import { HomePageComponent } from './home-page/home-page.component';
+import { ConfirmPathNotificationComponent } from './confirm-path-notification/confirm-path-notification.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { HomePageComponent } from './home-page/home-page.component';
     AddDroneComponent,
     DroneInformationsComponent,
     SideBarComponent,
-    HomePageComponent
+    HomePageComponent,
+    ConfirmPathNotificationComponent
   ],
   imports: [
     BrowserModule,

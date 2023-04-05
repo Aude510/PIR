@@ -8,19 +8,16 @@ import { Location } from '@angular/common';
 })
 export class SideBarComponent {
   public sideBarWidth: string;
-  private resizeElement: HTMLDivElement | null;
-  private sideBar: HTMLDivElement | null
 
   public onMousePress: (e: MouseEvent) => void;
-  public onMouseRelease: (e: MouseEvent) => void;
+  private onMouseRelease: (e: MouseEvent) => void;
   private onMouseMove: (e: MouseEvent) => void;
 
   @Input() template: TemplateRef<any> | null;
 
   public constructor(private location: Location) {
     this.sideBarWidth = "250px";
-    this.resizeElement = null;
-    this.sideBar = null;
+
     this.template = null;
 
     this.onMouseMove = (e: MouseEvent): void => {};
@@ -29,9 +26,6 @@ export class SideBarComponent {
   }
 
   public ngOnInit(): void {
-    this.resizeElement = <HTMLDivElement>document.getElementById('resize');
-    this.sideBar = <HTMLDivElement>document.getElementById('side-bar-root"');
-
     this.onMouseMove = (e: MouseEvent): void => {
       this.sideBarWidth = `${e.x + 2.5}px`;
     }

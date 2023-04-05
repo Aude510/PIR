@@ -1,0 +1,37 @@
+@import ../../shared.sass
+
+#confirm-path-root
+    position: relative
+    padding: 20px
+    background-color: $cloud
+    border-radius: 5px
+    animation: 0.8s notification-animation
+
+    div
+        h3
+            text-align: center
+
+        button
+            width: 100px
+            height: 40px
+            margin: 0 10px
+            transition-duration: 0.3s
+
+        button:hover
+            cursor: pointer
+
+#confirm-path-button-reject
+    background-color: #e74c3c
+    border: none
+    border-radius: 5px
+
+#confirm-path-button-confirm
+    background-color: #27ae60
+    border: none
+    border-radius: 5px
+
+@keyframes notification-animation
+    0%
+        top: -100px
+    100%
+        top: 0

@@ -7,7 +7,7 @@ import {HomePageComponent} from "./home-page/home-page.component";
 const routes: Routes = [
   { path:'add-drone', component: AddDroneComponent },
   { path:'block-zone', component: BlockZoneComponent},
-  { path: "**",component: HomePageComponent}
+  { path: "**", component: HomePageComponent}
 ];
 
 @NgModule({
