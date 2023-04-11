@@ -24,7 +24,7 @@ export class AddDroneComponent {
 
   public constructor(private mapService: MapService, private router: Router, private webSocket: WebSocketService ) {
     this.callback = new EventEmitter<(e: MapMouseEvent) => void>();
-    this.mapService.onMapClicked().subscribe((e) => {
+    this.mapService.onMapClickedTakeSubscription().subscribe((e) => {
       this.leafletClick(e);
     })
   }

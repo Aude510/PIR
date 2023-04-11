@@ -23,7 +23,8 @@ export class MapService {
   notifyMapClicked(e: L.LeafletMouseEvent) {
     this.sub.next(e);
   }
-  onMapClicked(): Subject<LeafletMouseEvent> {
+  onMapClickedTakeSubscription(): Subject<LeafletMouseEvent> {
+    this.sub = new Subject();
     return this.sub;
   }
 }
