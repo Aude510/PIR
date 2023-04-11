@@ -1,10 +1,10 @@
-import { EventEmitter, Input, Output } from '@angular/core';
 import { Component } from '@angular/core';
-import {MapMouseEvent} from "../../model/MapMouseEvent";
 import { LatLng } from 'leaflet';
 import * as L from "leaflet";
 import { Square } from 'src/model/Square';
 import { Point } from 'src/model/Point';
+import { MapService } from '../services/map.service';
+import { WebSocketService } from '../web-socket.service';
 
 
 
@@ -15,14 +15,14 @@ import { Point } from 'src/model/Point';
 })
 export class BlockZoneComponent {
 
-  @Output() callback: EventEmitter<(e: MapMouseEvent) => void>;
 
-  public constructor() {
-    this.callback = new EventEmitter<(e: MapMouseEvent) => void>();
+
+  public constructor(private mapService:MapService, private webSocket: WebSocketService) {
+    this.mapService.onMapClicked().subscribe(this.addPoint);
+    
   }
 
   public ngOnInit(): void {
-    this.callback.emit((e: MapMouseEvent): void => { this.addPoint(e) });
   }
 
 
@@ -31,10 +31,9 @@ export class BlockZoneComponent {
   private map: any = null; 
   private polygon: any = null; 
 
-  addPoint(event: MapMouseEvent){
+  addPoint(event: L.LeafletMouseEvent){
 
-    // TODO si un connard clique pas dans l'ordre
-
+    // TODO si un connard clique pas dans l'ordre    
 
     let tailleSquare: number = 4; 
 
@@ -45,14 +44,14 @@ export class BlockZoneComponent {
     
     // assignation de la map : 
     if (this.map==null){
-      this.map=event.map;
+      this.map=this.mapService.map;
     }
 
     if (this.listePoints.length<tailleSquare){
       // add point à la liste 
-      this.listePoints.push(event.event.latlng); 
+      this.listePoints.push(event.latlng); 
       /* add marqueur sur la map de l'event à la position du point */ 
-      let marker: L.Marker = new L.Marker(event.event.latlng); 
+      let marker: L.Marker = new L.Marker(event.latlng); 
       this.listeMarkers.push(marker); 
       this.map.addLayer(marker);
     } else {
