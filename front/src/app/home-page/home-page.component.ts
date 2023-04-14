@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import {Router} from "@angular/router";
+import {MapService} from "../services/map.service";
 
 @Component({
   selector: 'app-home-page',
@@ -11,10 +12,10 @@ export class HomePageComponent {
   @Output() blockZoneEvent: EventEmitter<void>;
 
 
-  public constructor(private router: Router) {
+  public constructor(private router: Router, private mapService: MapService) {
     this.addDroneEvent = new EventEmitter<void>();
     this.blockZoneEvent = new EventEmitter<void>();
-
+    this.mapService.onMapClickedTakeSubscription();
   }
 
   public onAddDrone(e: MouseEvent): void {

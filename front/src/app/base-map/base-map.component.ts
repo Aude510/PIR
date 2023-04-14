@@ -30,7 +30,6 @@ export class BaseMapComponent {
       minZoom: 3,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     });
-
     this.mapService.map.on('click', (e: LeafletMouseEvent) => this.onMapClick(e));
     tiles.addTo(this.mapService.map);
   }
