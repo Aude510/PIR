@@ -16,18 +16,21 @@ import { WebSocketService } from '../web-socket.service';
 export class BlockZoneComponent {
 
   private listePoints: Array<LatLng> = []; // ne pas oublier d'init 
-  private listeMarkers: Array<L.Marker> = [];
   private map: any = null; 
-  private polygon: any = null; 
-  private layer: LayerGroup; 
+  private layer: any = null;
+  private tailleSquare: number = 4 ; 
 
-  public constructor(private mapService:MapService, private webSocket: WebSocketService) {
+  private subscribe(){ // quand je clear le layer il faut se réinscrire donc je fais une fonction 
     this.mapService.onMapClickedTakeSubscription().subscribe((e) => {
       this.addPoint(e);
     })
-
     this.layer = new L.LayerGroup();
     this.mapService.addToMap(this.layer);
+  }
+
+  public constructor(private mapService:MapService, private webSocket: WebSocketService) {
+    this.subscribe(); 
+    
   }
 
   private checkCorrectZone(listePoints: Array<LatLng>){
@@ -41,7 +44,6 @@ export class BlockZoneComponent {
 
     // TODO si un connard clique pas dans l'ordre    
 
-    let tailleSquare: number = 4; 
 
     // let scope {}
     // var scope par fonction (à éviter)
@@ -53,40 +55,42 @@ export class BlockZoneComponent {
       this.map=this.mapService.map;
     }
 
-    if (this.listePoints.length<tailleSquare){
+    if (this.listePoints.length<this.tailleSquare-1){ // premiers points 
       // add point à la liste 
       this.listePoints.push(event.latlng); 
       /* add marqueur sur la map de l'event à la position du point */ 
       let marker: L.Marker = new L.Marker(event.latlng); 
-      this.listeMarkers.push(marker); 
       marker.addTo(this.layer); 
-    } else {
+    }
+    else if (this.listePoints.length==this.tailleSquare-1){ // dernier point 
+      // add point à la liste 
+      this.listePoints.push(event.latlng); 
+      /* add marqueur sur la map de l'event à la position du point */ 
+      let marker: L.Marker = new L.Marker(event.latlng); 
+      marker.addTo(this.layer); 
+      // tracer polygone 
+      let polygon: L.Polygon = L.polygon(this.listePoints);
+      polygon.addTo(this.layer); 
+    } 
+    else {
+      console.log(this.listePoints.length);
       alert("veuillez valider ou retracer la zone");
     }
 
-    if (this.listePoints.length==tailleSquare && this.polygon==null){
-      // tracer polygone 
-      this.polygon = L.polygon(this.listePoints);
-      this.polygon.addTo(this.layer); 
-    }
   }
 
   deleteZone(){
     console.log("effacement des points");
     this.listePoints=[];
-    // virer les marqueurs 
-    for (let marker of this.listeMarkers){
-      this.map.removeLayer(marker);
-    }
-    this.listeMarkers = [];
-    // virer le polygone
-    if (this.polygon!=null){
-      this.map.removeLayer(this.polygon);
-    }
-    this.polygon=null; 
+    // enlever tout ce qu'il y a sur la carte : 
+    this.layer.remove(); 
+    this.subscribe();
   }
 
   sendToBack(){
+    if (this.listePoints.length != this.tailleSquare){
+      alert("veuillez tracer une zone valide avant de valider : " + this.tailleSquare + " points.")
+    }
     console.log("envoi des données au serveur");
     let square: Square = {points:this.listePoints.map((p) => new Point(p))};
     // TODO envoyer square au back 
