@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import {NgForm} from "@angular/forms";
-import {CircleMarker, LeafletMouseEvent} from "leaflet";
+import {CircleMarker, Layer, LayerGroup, LeafletMouseEvent} from "leaflet";
 import * as L from 'leaflet';
 import {MapMouseEvent} from "../../model/MapMouseEvent";
 import {MapService} from "../services/map.service";
@@ -19,6 +19,7 @@ export class AddDroneComponent {
   private arrival: CircleMarker | undefined;
   private mapState: "SettingStart" | "SettingArrival" = "SettingStart";
   public isLoading = false;
+  private layer: LayerGroup;
 
   @Output() callback: EventEmitter<(e: MapMouseEvent) => void>;
 
@@ -27,20 +28,25 @@ export class AddDroneComponent {
     this.mapService.onMapClickedTakeSubscription().subscribe((e) => {
       this.leafletClick(e);
     })
+    this.layer = new L.LayerGroup();
+    this.mapService.addToMap(this.layer);
   }
   public leafletClick(event: LeafletMouseEvent) {
     let point = event.latlng;
-    if( !this.mapService.map ) {
-      alert("The map is not initialised, please refresh and try again");
-      return;
-    }
     if (this.mapState === "SettingStart") {
       this.start?.remove();
-      this.start = L.circleMarker(point).setStyle({color: 'green'}).setLatLng(event.latlng).addTo(this.mapService.map);
+      this.start = L.circleMarker(point)
+        .setStyle({color: 'green'})
+        .setLatLng(event.latlng)
+        .addTo(this.layer);
       this.mapState = "SettingArrival";
     } else {
       this.arrival?.remove()
-      this.arrival = L.circleMarker(point).setStyle({color:'blue'}).setLatLng(event.latlng).addTo(this.mapService.map);
+      this.arrival = L
+        .circleMarker(point)
+        .setStyle({color:'blue'})
+        .setLatLng(event.latlng).
+        addTo(this.layer);
       this.mapState = "SettingStart";
     }
   }
