@@ -31,11 +31,15 @@ export class MapService {
    * Il also clears the map
    */
   onMapClickedTakeSubscription(): Subject<LeafletMouseEvent> {
-    this.componentLayers.forEach((layer) => {
-      layer.remove();
-    });
     this.sub = new Subject();
     return this.sub;
+  }
+
+  clearMap() {
+    this.componentLayers.forEach((layer) => {
+      layer.remove();
+      this.componentLayers.pop();
+    });
   }
 
   addToMap(layer: Layer) {
