@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { LatLng } from 'leaflet';
+import { LatLng, LayerGroup } from 'leaflet';
 import * as L from "leaflet";
 import { Square } from 'src/model/Square';
 import { Point } from 'src/model/Point';
@@ -15,27 +15,27 @@ import { WebSocketService } from '../web-socket.service';
 })
 export class BlockZoneComponent {
 
-
+  private listePoints: Array<LatLng> = []; // ne pas oublier d'init 
+  private listeMarkers: Array<L.Marker> = [];
+  private map: any = null; 
+  private polygon: any = null; 
+  private layer: LayerGroup; 
 
   public constructor(private mapService:MapService, private webSocket: WebSocketService) {
-    this.mapService.onMapClicked().subscribe((e) => {
+    this.mapService.onMapClickedTakeSubscription().subscribe((e) => {
       this.addPoint(e);
     })
-  }
 
-  public ngOnInit(): void {
+    this.layer = new L.LayerGroup();
+    this.mapService.addToMap(this.layer);
   }
-
 
   private checkCorrectZone(listePoints: Array<LatLng>){
     // vérifier que les points ont été rentrés dans l'ordre 
     // checker si les droites entre les points se croisent 
   }
 
-  private listePoints: Array<LatLng> = []; // ne pas oublier d'init 
-  private listeMarkers: Array<L.Marker> = [];
-  private map: any = null; 
-  private polygon: any = null; 
+
 
   addPoint(event: L.LeafletMouseEvent){
 
@@ -59,7 +59,7 @@ export class BlockZoneComponent {
       /* add marqueur sur la map de l'event à la position du point */ 
       let marker: L.Marker = new L.Marker(event.latlng); 
       this.listeMarkers.push(marker); 
-      this.map.addLayer(marker);
+      marker.addTo(this.layer); 
     } else {
       alert("veuillez valider ou retracer la zone");
     }
@@ -67,7 +67,7 @@ export class BlockZoneComponent {
     if (this.listePoints.length==tailleSquare && this.polygon==null){
       // tracer polygone 
       this.polygon = L.polygon(this.listePoints);
-      this.map.addLayer(this.polygon);
+      this.polygon.addTo(this.layer); 
     }
   }
 
