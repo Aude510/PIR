@@ -45,8 +45,8 @@ export class AddDroneComponent {
       this.arrival = L
         .circleMarker(point)
         .setStyle({color:'blue'})
-        .setLatLng(event.latlng).
-        addTo(this.layer);
+        .setLatLng(event.latlng)
+        .addTo(this.layer);
       this.mapState = "SettingStart";
     }
   }
