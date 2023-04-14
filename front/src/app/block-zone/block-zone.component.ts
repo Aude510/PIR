@@ -18,13 +18,19 @@ export class BlockZoneComponent {
 
 
   public constructor(private mapService:MapService, private webSocket: WebSocketService) {
-    this.mapService.onMapClicked().subscribe(this.addPoint);
-    
+    this.mapService.onMapClicked().subscribe((e) => {
+      this.addPoint(e);
+    })
   }
 
   public ngOnInit(): void {
   }
 
+
+  private checkCorrectZone(listePoints: Array<LatLng>){
+    // vérifier que les points ont été rentrés dans l'ordre 
+    // checker si les droites entre les points se croisent 
+  }
 
   private listePoints: Array<LatLng> = []; // ne pas oublier d'init 
   private listeMarkers: Array<L.Marker> = [];
