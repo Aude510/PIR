@@ -1,5 +1,6 @@
 import { Component, Input, TemplateRef } from '@angular/core';
 import { Location } from '@angular/common';
+import {MapService} from "../services/map.service";
 
 @Component({
   selector: 'app-side-bar',
@@ -15,7 +16,7 @@ export class SideBarComponent {
 
   @Input() template: TemplateRef<any> | null;
 
-  public constructor(private location: Location) {
+  public constructor(private location: Location, private mapService: MapService) {
     this.sideBarWidth = "250px";
 
     this.template = null;
@@ -43,5 +44,6 @@ export class SideBarComponent {
 
   onBack(): void {
       this.location.back();
+      this.mapService.clearMap();
   }
 }

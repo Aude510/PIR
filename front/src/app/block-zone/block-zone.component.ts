@@ -1,10 +1,10 @@
-import { EventEmitter, Input, Output } from '@angular/core';
 import { Component } from '@angular/core';
-import {MapMouseEvent} from "../../model/MapMouseEvent";
-import { LatLng } from 'leaflet';
+import { LatLng, LayerGroup } from 'leaflet';
 import * as L from "leaflet";
 import { Square } from 'src/model/Square';
 import { Point } from 'src/model/Point';
+import { MapService } from '../services/map.service';
+import { WebSocketService } from '../web-socket.service';
 
 
 
@@ -15,28 +15,54 @@ import { Point } from 'src/model/Point';
 })
 export class BlockZoneComponent {
 
-  @Output() callback: EventEmitter<(e: MapMouseEvent) => void>;
-
-  public constructor() {
-    this.callback = new EventEmitter<(e: MapMouseEvent) => void>();
-  }
-
-  public ngOnInit(): void {
-    this.callback.emit((e: MapMouseEvent): void => { this.addPoint(e) });
-  }
-
-
   private listePoints: Array<LatLng> = []; // ne pas oublier d'init 
   private listeMarkers: Array<L.Marker> = [];
   private map: any = null; 
   private polygon: any = null; 
+  private layer: LayerGroup; 
+  private tailleSquare: number = 4 ; 
 
-  addPoint(event: MapMouseEvent){
+  public constructor(private mapService:MapService, private webSocket: WebSocketService) {
+    this.mapService.onMapClickedTakeSubscription().subscribe((e) => {
+      this.addPoint(e);
+    })
+    this.layer = new L.LayerGroup();
+    this.mapService.addToMap(this.layer);    
+  }
 
-    // TODO si un connard clique pas dans l'ordre
+  // returns true if the line from (a,b)->(c,d) intersects with (p,q)->(r,s)
+  // https://stackoverflow.com/questions/9043805/test-if-two-lines-intersect-javascript-function/16725715#16725715
+  private intersects(a: number,b: number,c: number,d: number,p: number,q: number,r: number,s: number) {
+    var det, gamma, lambda;
+    det = (c - a) * (s - q) - (r - p) * (d - b);
+    if (det === 0) {
+      return false;
+    } else {
+      lambda = ((s - q) * (r - a) + (p - r) * (s - b)) / det;
+      gamma = ((b - d) * (r - a) + (c - a) * (s - b)) / det;
+      return (0 < lambda && lambda < 1) && (0 < gamma && gamma < 1);
+    }
+  };
 
 
-    let tailleSquare: number = 4; 
+  // return false si la zone est incorrecte (deux triangles collés au lieu d'un polygone à 4 côtés) 
+  private checkWrongZone(listePoints: Array<LatLng>){
+    // vérifier que les points ont été rentrés dans l'ordre 
+    // côté entre P0 et P3 et entre P1 et P2
+    // si ils se croisent alors la zone est mal formée 
+    let croisent:boolean = this.intersects(listePoints[0].lat,listePoints[0].lng,
+                                            listePoints[3].lat,listePoints[3].lng,
+                                            listePoints[1].lat,listePoints[1].lng,
+                                            listePoints[2].lat,listePoints[2].lng);
+    return croisent;
+  }
+
+
+
+  addPoint(event: L.LeafletMouseEvent){
+
+    // TODO si un connard clique pas dans l'ordre    
+
 
     // let scope {}
     // var scope par fonction (à éviter)
@@ -45,26 +71,32 @@ export class BlockZoneComponent {
     
     // assignation de la map : 
     if (this.map==null){
-      this.map=event.map;
+      this.map=this.mapService.map;
     }
 
-    if (this.listePoints.length<tailleSquare){
+    if (this.listePoints.length<this.tailleSquare-1){ // premiers points 
       // add point à la liste 
-      this.listePoints.push(event.event.latlng); 
-      /* add marqueur sur la map de l'event à la position du point */ 
-      let marker: L.Marker = new L.Marker(event.event.latlng); 
+      this.listePoints.push(event.latlng); 
+      /* add marqueur sur la map à la position du point */ 
+      let marker: L.Marker = new L.Marker(event.latlng); 
       this.listeMarkers.push(marker); 
-      this.map.addLayer(marker);
+      marker.addTo(this.layer); 
+    } else if (this.listePoints.length==this.tailleSquare-1) { // dernier point 
+      // add point à la liste 
+      this.listePoints.push(event.latlng); 
+      /* add marqueur sur la map de l'event à la position du point */ 
+      let marker: L.Marker = new L.Marker(event.latlng); 
+      this.listeMarkers.push(marker); 
+      marker.addTo(this.layer); 
+      // tracer polygone 
+      this.polygon = L.polygon(this.listePoints);
+      this.polygon.addTo(this.layer); 
     } else {
       alert("veuillez valider ou retracer la zone");
     }
 
-    if (this.listePoints.length==tailleSquare && this.polygon==null){
-      // tracer polygone 
-      this.polygon = L.polygon(this.listePoints);
-      this.map.addLayer(this.polygon);
-    }
   }
+
 
   deleteZone(){
     console.log("effacement des points");
@@ -82,9 +114,17 @@ export class BlockZoneComponent {
   }
 
   sendToBack(){
-    console.log("envoi des données au serveur");
-    let square: Square = {points:this.listePoints.map((p) => new Point(p))};
-    // TODO envoyer square au back 
-  }
+    if (this.listePoints.length != this.tailleSquare){
+      alert("veuillez tracer une zone valide avant de valider : " + this.tailleSquare + " points.")
+    } else if (this.checkWrongZone(this.listePoints)){
+      alert("veuillez tracer une zone sans croisement des lignes");
+    }
+     else {
+      console.log("envoi des données au serveur");
+      let square: Square = {points:this.listePoints.map((p) => new Point(p))};
+      // TODO envoyer square au back 
+      this.deleteZone();
+    }
+   }
 
 }
