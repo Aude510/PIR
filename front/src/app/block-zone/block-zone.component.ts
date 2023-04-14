@@ -16,21 +16,18 @@ import { WebSocketService } from '../web-socket.service';
 export class BlockZoneComponent {
 
   private listePoints: Array<LatLng> = []; // ne pas oublier d'init 
+  private listeMarkers: Array<L.Marker> = [];
   private map: any = null; 
-  private layer: any = null;
+  private polygon: any = null; 
+  private layer: LayerGroup; 
   private tailleSquare: number = 4 ; 
 
-  private subscribe(){ // quand je clear le layer il faut se réinscrire donc je fais une fonction 
+  public constructor(private mapService:MapService, private webSocket: WebSocketService) {
     this.mapService.onMapClickedTakeSubscription().subscribe((e) => {
       this.addPoint(e);
     })
     this.layer = new L.LayerGroup();
-    this.mapService.addToMap(this.layer);
-  }
-
-  public constructor(private mapService:MapService, private webSocket: WebSocketService) {
-    this.subscribe(); 
-    
+    this.mapService.addToMap(this.layer);    
   }
 
   private checkCorrectZone(listePoints: Array<LatLng>){
@@ -60,6 +57,7 @@ export class BlockZoneComponent {
       this.listePoints.push(event.latlng); 
       /* add marqueur sur la map à la position du point */ 
       let marker: L.Marker = new L.Marker(event.latlng); 
+      this.listeMarkers.push(marker); 
       marker.addTo(this.layer); 
     }
     else if (this.listePoints.length==this.tailleSquare-1){ // dernier point 
@@ -67,10 +65,11 @@ export class BlockZoneComponent {
       this.listePoints.push(event.latlng); 
       /* add marqueur sur la map de l'event à la position du point */ 
       let marker: L.Marker = new L.Marker(event.latlng); 
+      this.listeMarkers.push(marker); 
       marker.addTo(this.layer); 
       // tracer polygone 
-      let polygon: L.Polygon = L.polygon(this.listePoints);
-      polygon.addTo(this.layer); 
+      this.polygon = L.polygon(this.listePoints);
+      this.polygon.addTo(this.layer); 
     } 
     else {
       console.log(this.listePoints.length);
@@ -79,12 +78,20 @@ export class BlockZoneComponent {
 
   }
 
+
   deleteZone(){
     console.log("effacement des points");
     this.listePoints=[];
-    // enlever tout ce qu'il y a sur la carte : 
-    this.layer.remove(); 
-    this.subscribe();
+    // virer les marqueurs 
+    for (let marker of this.listeMarkers){
+      this.map.removeLayer(marker);
+    }
+    this.listeMarkers = [];
+    // virer le polygone
+    if (this.polygon!=null){
+      this.map.removeLayer(this.polygon);
+    }
+    this.polygon=null; 
   }
 
   sendToBack(){
@@ -94,10 +101,7 @@ export class BlockZoneComponent {
       console.log("envoi des données au serveur");
       let square: Square = {points:this.listePoints.map((p) => new Point(p))};
       // TODO envoyer square au back 
-      this.listePoints=[];
-      this.layer.remove();
-      this.subscribe();
-    
+      this.deleteZone();
     }
    }
 
