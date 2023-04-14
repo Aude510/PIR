@@ -58,7 +58,7 @@ export class BlockZoneComponent {
     if (this.listePoints.length<this.tailleSquare-1){ // premiers points 
       // add point à la liste 
       this.listePoints.push(event.latlng); 
-      /* add marqueur sur la map de l'event à la position du point */ 
+      /* add marqueur sur la map à la position du point */ 
       let marker: L.Marker = new L.Marker(event.latlng); 
       marker.addTo(this.layer); 
     }
@@ -90,10 +90,15 @@ export class BlockZoneComponent {
   sendToBack(){
     if (this.listePoints.length != this.tailleSquare){
       alert("veuillez tracer une zone valide avant de valider : " + this.tailleSquare + " points.")
+    } else {
+      console.log("envoi des données au serveur");
+      let square: Square = {points:this.listePoints.map((p) => new Point(p))};
+      // TODO envoyer square au back 
+      this.listePoints=[];
+      this.layer.remove();
+      this.subscribe();
+    
     }
-    console.log("envoi des données au serveur");
-    let square: Square = {points:this.listePoints.map((p) => new Point(p))};
-    // TODO envoyer square au back 
-  }
+   }
 
 }

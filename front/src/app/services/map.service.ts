@@ -40,6 +40,7 @@ export class MapService {
       layer.remove();
       this.componentLayers.pop();
     });
+    console.log("suppression des layers");
   }
 
   addToMap(layer: Layer) {
