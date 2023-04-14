@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as L from "leaflet";
 import {Subject} from "rxjs";
-import {LeafletMouseEvent} from "leaflet";
+import {Layer, LeafletMouseEvent} from "leaflet";
 
 /**
  * As all angular services, this is a singleton. As such we can share the subscription of
@@ -18,12 +18,36 @@ import {LeafletMouseEvent} from "leaflet";
 export class MapService {
   public map: L.Map | undefined;
   private sub: Subject<L.LeafletMouseEvent> = new Subject();
+  private componentLayers: Layer[] = [];
   constructor() { }
 
   notifyMapClicked(e: L.LeafletMouseEvent) {
     this.sub.next(e);
   }
-  onMapClicked(): Subject<LeafletMouseEvent> {
+
+  /**
+   * Creates a new subject to unsubscribe all other subscribed components.
+   * You basically get control of the map component
+   * Il also clears the map
+   */
+  onMapClickedTakeSubscription(): Subject<LeafletMouseEvent> {
+    this.sub = new Subject();
     return this.sub;
+  }
+
+  clearMap() {
+    this.componentLayers.forEach((layer) => {
+      layer.remove();
+      this.componentLayers.pop();
+    });
+  }
+
+  addToMap(layer: Layer) {
+    if (this.map) {
+      this.componentLayers.push(layer);
+      layer.addTo(this.map);
+    } else {
+      alert("The map is not initialised, please refresh and try again");
+    }
   }
 }
