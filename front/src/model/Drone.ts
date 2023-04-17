@@ -10,9 +10,6 @@ export class Drone {
               public priority: number,
               public path: Path,
               public start: Point,
-              public destination: Point)
-  {
-   console.log("Drone instanciated")
-  }
+              public destination: Point) { }
 
 }

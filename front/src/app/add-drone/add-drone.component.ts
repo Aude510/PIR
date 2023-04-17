@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import {NgForm} from "@angular/forms";
-import {CircleMarker, Layer, LayerGroup, LeafletMouseEvent} from "leaflet";
+import {CircleMarker, LayerGroup, LeafletMouseEvent} from "leaflet";
 import * as L from 'leaflet';
 import {MapMouseEvent} from "../../model/MapMouseEvent";
 import {MapService} from "../services/map.service";
@@ -8,6 +8,7 @@ import {Router} from "@angular/router";
 import {WebSocketService} from "../web-socket.service";
 import {Drone} from "../../model/Drone";
 import {Point} from "../../model/Point";
+import {Path} from "../../model/Path";
 
 @Component({
   selector: 'app-add-drone',
@@ -18,12 +19,13 @@ export class AddDroneComponent {
   private start: CircleMarker | undefined;
   private arrival: CircleMarker | undefined;
   private mapState: "SettingStart" | "SettingArrival" = "SettingStart";
-  public isLoading = false;
-  private layer: LayerGroup;
+  public pathDefinedByServer: "input" | "loading" | "confirm" = "input";
+  private readonly layer: LayerGroup;
+  public drone: Drone | undefined;
 
   @Output() callback: EventEmitter<(e: MapMouseEvent) => void>;
 
-  public constructor(private mapService: MapService, private router: Router, private webSocket: WebSocketService ) {
+  public constructor(public mapService: MapService, protected router: Router, private webSocket: WebSocketService ) {
     this.callback = new EventEmitter<(e: MapMouseEvent) => void>();
     this.mapService.onMapClickedTakeSubscription().subscribe((e) => {
       this.leafletClick(e);
@@ -51,13 +53,23 @@ export class AddDroneComponent {
     }
   }
 
-  public onSubmit(f: NgForm): void {
+  public async onSubmit(f: NgForm) {
     if (!this.start || !this.arrival) {
+      alert("Please click twice to add your start and end point")
       throw new Error("Please click twice to add your start and end point");
     }
 
     if (!f.value.drName) {
+      alert("Please enter your drone name");
       throw new Error("Please enter your drone name");
+    }
+    if (!f.value.owner) {
+      alert("Please enter your drone owner");
+      throw new Error("Please enter your drone owner");
+    }
+    if (!f.value.priority) {
+      alert("Please enter your drone priority");
+      throw new Error("Please enter your drone priority");
     }
 
     let obj = {
@@ -67,24 +79,41 @@ export class AddDroneComponent {
       start: this.start.getLatLng(),
       arrival: this.arrival?.getLatLng()
     };
-    const drone = new Drone(obj.name,
+    const drone = new Drone(
+      obj.name,
       obj.owner,
       obj.priority,
-      {points: []},
+      new Path([]),
       new Point(obj.start),
       new Point(obj.arrival)
     );
     console.log(JSON.stringify(drone));
-    this.isLoading = true;
-    this.webSocket.sendNewDrone(drone)
+    let msg = await this.sendDrone(drone);
+    this.displayPath(msg.data.path);
+  }
+
+  displayPath(path: Path) {
+    L.polyline(path.toLatLang()).addTo(this.layer);
+  }
+
+  public confirmPath() {
+    // this.webSocket.confirmNewDronePath()...
+  }
+
+  public sendDrone(drone: Drone) {
+    this.drone = drone;
+    this.pathDefinedByServer = "loading";
+    return this.webSocket.sendNewDrone(drone)
       .then((data) => {
-        console.log("received: ", data);
+        console.info("received: ", data);
+        return data;
       })
       .catch((e) => {
         alert("cant connect to server. Error: " + e);
+        throw e;
       })
       .finally(() => {
-        this.isLoading = false;
+        this.pathDefinedByServer = "confirm";
       });
   }
 }

@@ -1,5 +1,5 @@
-<h3 *ngIf="isLoading">Loading...</h3>
-<form *ngIf="!isLoading" #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
+<h3 *ngIf="pathDefinedByServer === 'loading'">Loading...</h3>
+<form *ngIf="pathDefinedByServer === 'input'" #f="ngForm" (ngSubmit)="onSubmit(f)">
   <h3>Click twice to add your start and end point</h3>
   <div class="form-input">
     <div class="floating-label">
@@ -23,3 +23,12 @@
     <button class="button-shy-moment cursor-hover">Submit</button>
   </div>
 </form>
+
+
+<div  *ngIf="pathDefinedByServer === 'confirm'" class="home-page-title-container">
+  <div class="flex-c flex-c-center-x">
+    <button class="button-shy-moment cursor-hover">Confirm</button>
+    <button class="button-shy-moment cursor-hover" (click)="router.navigateByUrl('/')">Back</button>
+  </div>
+</div>
+
