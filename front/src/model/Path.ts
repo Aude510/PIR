@@ -1,6 +1,15 @@
 import {Point} from "./Point";
-import {point} from "leaflet";
+import {LatLng, point} from "leaflet";
 
-export type Path = {
-    points: Point[]
+export class Path {
+    // public points: Point[] = [];
+
+    constructor(public points: Point[]) {
+
+    }
+
+    toLatLang(): LatLng[] {
+        return this.points.map((p) => p.toLatLng());
+    }
+
 }

@@ -1,3 +1,3 @@
-export type Owner= {
+export type Owner = {
   ID: number
 };

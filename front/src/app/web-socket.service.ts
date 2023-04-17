@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import {Drone} from "../model/Drone";
 import {ServerMessage} from "../model/ServerMessage";
 import {ServerRequest} from "../model/ServerRequest";
+import {Point} from "../model/Point";
+import {latLng} from "leaflet";
+import {Path} from "../model/Path";
 ;
 
 @Injectable({
@@ -20,8 +23,8 @@ export class WebSocketService {
 
     if(this.socket != undefined) {
       this.socket.onopen = (event) => {
-        console.log("Connected to the server !\n")
-        this.sendNewDrone(new Drone("Cador", {ID: 69}, 10, {points: []}, {x: 10, y: 10}, {x: 50, y: 50}))
+        console.log("Connected to the server !\n");
+        this.sendNewDrone(new Drone("Cador", {ID: 69}, 10, new Path([]), Point.fromTuple(10, 10), Point.fromTuple(50,50)))
           .then((data) => console.log(data))
           .catch((e) => console.log(e));
       }
@@ -29,6 +32,7 @@ export class WebSocketService {
   }
 
   sendNewDrone(drone : Drone): Promise<ServerMessage<Drone>> {
+
     const data: ServerRequest<Drone> = {type: "new_drone", data: drone};
     this.socket?.send(JSON.stringify(data));
     if(this.socket) {
