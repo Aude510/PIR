@@ -2,10 +2,7 @@ import {Point} from "./Point";
 import {LatLng, point} from "leaflet";
 
 export class Path {
-    // public points: Point[] = [];
-
-    constructor(public points: Point[]) {
-
+    constructor(private points : Point[]) {
     }
 
     toLatLang(): LatLng[] {
