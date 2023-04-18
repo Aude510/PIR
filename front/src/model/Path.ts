@@ -2,9 +2,7 @@ import {Point} from "./Point";
 import {point} from "leaflet";
 
 export class Path {
-    points: Point[]
-    constructor(pointList : Point[]) {
-      this.points = pointList;
+    constructor(private points : Point[]) {
     }
 
     addPoint(point: Point){
