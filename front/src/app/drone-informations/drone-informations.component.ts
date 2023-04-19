@@ -33,8 +33,5 @@ export class DroneInformationsComponent {
     if(this.drone){
       this.webSocketService.sendDeleteDrone(this.drone).then(r => console.log(r));
     }
-    this.webSocketService.statusSubscription.subscribe((data) => {
-      dtryfguhijklpm
-    });
   }
 }
