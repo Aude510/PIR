@@ -6,6 +6,7 @@ import {Path} from "../../model/Path";
 import {Subject} from "rxjs";
 import {Status} from "../../model/Status";
 import {Zone} from "../../model/Zone";
+import {Point} from "../../model/Point";
 
 
 @Injectable({
@@ -48,7 +49,7 @@ export class WebSocketService {
       this.socket.onopen = (event) => {
         console.log("Connected to the server !\n")
 
-        const dd = new Drone(10, "Cador", {ID:69},10,new Path([]),{x:50,y:50},{x:50,y:50});
+        const dd = new Drone("Cador", {ID:69},10,new Path([]),Point.fromTuple(10,10),Point.fromTuple(50,50));
         this.sendNewDrone(dd)
           .then((data) => console.log(data))
           .catch((e) => {
