@@ -6,6 +6,7 @@ import {Path} from "../../model/Path";
 import {Subject} from "rxjs";
 import {Zone} from "../../model/Zone";
 import {Point} from "../../model/Point";
+import {Status} from "../../model/Status";
 
 
 @Injectable({
@@ -16,16 +17,16 @@ export class WebSocketService {
   public socket: WebSocket | undefined;
 
   private pop_up_status_subscription: Subject<ServerMessage<any>> | undefined;
-  private map_update_subscription: Subject<ServerMessage<any>> | undefined;
+  private map_update_subscription: Subject<ServerMessage<Status>> | undefined;
   private statusReceive : Subject<ServerMessage<any>>;
 
-  SubToPopUp(){
+  subToPopUp(){
     if(!this.pop_up_status_subscription){
       this.pop_up_status_subscription = new Subject<ServerMessage<any>>();
     }
     return this.pop_up_status_subscription;
   }
-  SubToMapUpdate(){
+  subToMapUpdate(){
     if(!this.map_update_subscription){
       this.map_update_subscription = new Subject<ServerMessage<any>>();
     }
