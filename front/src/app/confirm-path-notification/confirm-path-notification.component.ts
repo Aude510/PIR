@@ -6,5 +6,11 @@ import { Component } from '@angular/core';
   styleUrls: ['./confirm-path-notification.component.sass']
 })
 export class ConfirmPathNotificationComponent {
+  public cond = true;
+
+
+
+
+
 
 }
