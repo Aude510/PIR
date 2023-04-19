@@ -21,45 +21,79 @@ def ackMessage():
     }
     return json.dumps(x)
 
+#Convert a Zone to the right format in order to send it to the client
+def formatBlockedZones(zones):
+    formatedZones = []
+    for square in zones:
+        auxPoint=[]
+        for point in square:
+            auxPoint.append({"x":point[0],"y":point[1]})
+        formatedZones.append({"points":auxPoint})
+    return formatedZones
+
+#Convert a Path to the right format in order to send it to the client
+def formatPath(path):
+    pathFormated = []
+    for point in path:
+        pathFormated.append({"x":point[0],"y":point[1]})
+    return pathFormated
+
+#Convert a drone to the right format in order to send it to the client
+def formatDrone(drone):
+    formatedDrone={}
+    formatedDrone["name"] = drone["name"]
+    formatedDrone["owner"] = {"ID" : drone["owner"]}
+    formatedDrone["priority"] = drone["priority"]
+    formatedDrone["path"] = formatPath(drone["path"])
+    formatedDrone["start"] = {"x": drone["start"][0],"y":drone["start"][1]}
+    formatedDrone["destination"] = {"x": drone["destination"][0],"y":drone["destination"][1]}  
+    return(formatedDrone)
+
+
+#Convert a list of drone to the right format in order to send it to the client
+def formatDroneList(listDrone):
+    formatedListDrone = []
+    for drone in listDrone:
+        formatedListDrone.append(formatDrone(drone))
+    return formatedListDrone
+
 
 #Convert from status to Json
 #input = (owner : int, drones: drone[], blockeZones: zone[], time : int)
 #return = message : str
 #TODO bien formater l'envoi de la liste de drone et des zones
 def statusToJson(owner, drones, blockedZones, time):
-    x={
-        "code":200,
-        "data":{
-            "owner":{"ID":owner},
-            "drones":drones,
-            "blocked_Zones":blockedZones,
-            "time":time
+    try:
+        formatedDrones = formatDroneList(drones)
+        formatedZones = formatBlockedZones(blockedZones)
+        x={
+            "code":200,
+            "data":{
+                "owner":{"ID":owner},
+                "drones": formatedDrones,
+                "blocked_Zones":formatedZones,
+                "time":time
+            }
         }
-    }
-    return json.dumps(x)
+        return json.dumps(x)
+    except:
+        print("Erreur lors du formatage du drone")
+        return None
+
 
 #Convert from drone to Json
-#input = (id : int, name : str, owner : int, priority : int
-#   path : list of points([[x,y]]), start : point([x,y])
-#   destination : point([x,y]))
+#input = drone : Drone
 #return = message : str
-def droneToJson(id, name, owner, priority, path, start, destination):
-    auxPath=[]
-    for point in path:
-        auxPath.append({"x":point[0],"y":point[1]})
-    x={
-        "code":200,
-        "data":{
-            "ID":id,
-            "name":name,
-            "owner":{"ID":owner},
-            "priority":priority,
-            "path":{"points":auxPath},
-            "start":{"x":start[0],"y":start[1]},
-            "destination":{"x":destination[0],"y":destination[1]}
+def droneToJson(drone):
+    try:
+        x={
+            "code":200,
+            "data":formatDrone(drone)
         }
-    }
-    return json.dumps(x)
+        return json.dumps(x)
+    except:
+        print("Erreur lors du formatage du drone")
+        return None
 
 #Convert from Json to type the message
 #input = str
@@ -78,15 +112,17 @@ def jsonToType(message):
 #return = ID:int, name:str, owner:int,
 #   priority:int, start:list[x,y], destination:list[x,y]
 def jsonToDrone(message):
+    droneReceived = {}
     y=json.loads(message)
     drone=y["data"]
-    id=drone["ID"]
-    name=drone["name"]
-    owner=drone["owner"]["ID"]
-    priority=drone["priority"]
-    start=[drone["start"]["x"],drone["start"]["y"]]
-    destination=[drone["destination"]["x"],drone["destination"]["y"]]
-    return id,name,owner,priority,start,destination
+    droneReceived["id"]=drone["ID"]
+    droneReceived["name"]=drone["name"]
+    droneReceived["owner"]=drone["owner"]["ID"]
+    droneReceived["priority"]=drone["priority"]
+    droneReceived["path"]=[]
+    droneReceived["start"]=[drone["start"]["x"],drone["start"]["y"]]
+    droneReceived["destination"]=[drone["destination"]["x"],drone["destination"]["y"]]
+    return droneReceived
 
 
 #Convert from Json to Owner

@@ -27,10 +27,9 @@ async def handler(websocket,path):
                     await sendUnicast("I have received block_zone",websocket)
                     print("block_zone")
                 case "new_drone":
-                    id,name,owner,priority,start,destination = convertionJson.jsonToDrone(message)
-                    print(f"new_drone with id:{id}, owner:{owner}, name:{name},")
-                    print(f"priority:{priority},start:{start},destination:{destination}")
-                    await sendUnicast(convertionJson.ackMessage(),websocket)
+                    drone = convertionJson.jsonToDrone(message)
+                    drone["path"].append(drone["start"],drone["destination"])
+                    await sendUnicast(convertionJson.droneToJson(drone),websocket)
                 case "delete_drone":
                     pass
                     await sendUnicast("I have received delete_drone",websocket)
@@ -86,7 +85,7 @@ async def main():
         #     #await sendAllClients("Multicast")
         #     #if len(connect)>0:
         #         #await sendUnicast("Unicast",connect[0])
-            await asyncio.sleep(2)
+            await asyncio.sleep(period)
 
-if __name__ == "__main__":
-    asyncio.run(main())
+
+asyncio.run(main())
