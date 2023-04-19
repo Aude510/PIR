@@ -5,10 +5,10 @@ import * as L from 'leaflet';
 import {MapMouseEvent} from "../../model/MapMouseEvent";
 import {MapService} from "../services/map.service";
 import {Router} from "@angular/router";
-import {WebSocketService} from "../web-socket.service";
 import {Drone} from "../../model/Drone";
 import {Point} from "../../model/Point";
 import {Path} from "../../model/Path";
+import { WebSocketService } from '../services/web-socket.service';
 
 @Component({
   selector: 'app-add-drone',

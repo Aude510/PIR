@@ -4,7 +4,6 @@ import * as L from "leaflet";
 import { Square } from 'src/model/Square';
 import { Point } from 'src/model/Point';
 import { MapService } from '../services/map.service';
-import { WebSocketService } from '../web-socket.service';
 
 
 
@@ -22,7 +21,7 @@ export class BlockZoneComponent {
   private layer: LayerGroup; 
   private tailleSquare: number = 4 ; 
 
-  public constructor(private mapService:MapService, private webSocket: WebSocketService) {
+  public constructor(private mapService:MapService) {
     this.mapService.onMapClickedTakeSubscription().subscribe((e) => {
       this.addPoint(e);
     })
