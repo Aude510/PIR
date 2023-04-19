@@ -54,7 +54,7 @@ describe('AddDroneComponent', () => {
   let fixture: ComponentFixture<AddDroneComponent>;
   let drone = new Drone(
     'toto',
-    {ID: 5},
+    {id: 5},
     1,
     new Path([]),
     new Point(latLng(0,0)),
@@ -76,7 +76,7 @@ describe('AddDroneComponent', () => {
     fixture.detectChanges();
     drone = new Drone(
       'toto',
-      {ID: 5},
+      {id: 5},
       1,
       new Path([Point.fromTuple(1,2), Point.fromTuple(3,5), Point.fromTuple(6,9)]),
       new Point(latLng(0,0)),

@@ -48,7 +48,7 @@ export class WebSocketService {
       this.socket.onopen = (event) => {
         console.log("Connected to the server !\n")
 
-        const dd = new Drone("Cador", {ID:69},10,new Path([]),Point.fromTuple(10,10),Point.fromTuple(50,50));
+        const dd = new Drone("Cador", {id:"69"},10,new Path([]),Point.fromTuple(10,10),Point.fromTuple(50,50));
         this.sendNewDrone(dd)
           .then((data) => console.log(data))
           .catch((e) => {

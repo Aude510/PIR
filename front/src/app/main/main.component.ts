@@ -1,6 +1,5 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { MapMouseEvent } from 'src/model/MapMouseEvent';
-import {OwnerServiceService} from "../services/owner-service.service";
 
 @Component({
   selector: 'app-main',

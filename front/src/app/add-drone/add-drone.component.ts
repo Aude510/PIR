@@ -9,6 +9,8 @@ import {Drone} from "../../model/Drone";
 import {Point} from "../../model/Point";
 import {Path} from "../../model/Path";
 import { WebSocketService } from '../services/web-socket.service';
+import {OwnerService} from "../services/owner.service";
+import {Owner} from "../../model/Owner";
 
 @Component({
   selector: 'app-add-drone',
@@ -25,7 +27,10 @@ export class AddDroneComponent {
 
   @Output() callback: EventEmitter<(e: MapMouseEvent) => void>;
 
-  public constructor(public mapService: MapService, protected router: Router, private webSocket: WebSocketService ) {
+  public constructor(public mapService: MapService,
+                     protected router: Router,
+                     private webSocket: WebSocketService,
+                     private ownerService: OwnerService) {
     this.callback = new EventEmitter<(e: MapMouseEvent) => void>();
     this.mapService.onMapClickedTakeSubscription().subscribe((e) => {
       this.leafletClick(e);
@@ -63,10 +68,6 @@ export class AddDroneComponent {
       alert("Please enter your drone name");
       throw new Error("Please enter your drone name");
     }
-    if (!f.value.owner) {
-      alert("Please enter your drone owner");
-      throw new Error("Please enter your drone owner");
-    }
     if (!f.value.priority) {
       alert("Please enter your drone priority");
       throw new Error("Please enter your drone priority");
@@ -74,14 +75,14 @@ export class AddDroneComponent {
 
     let obj = {
       name: f.value.drName,
-      owner: f.value.owner,
+      owner: this.ownerService.id,
       priority: f.value.priority,
       start: this.start.getLatLng(),
       arrival: this.arrival?.getLatLng()
     };
     const drone = new Drone(
       obj.name,
-      obj.owner,
+      new Owner(obj.owner),
       obj.priority,
       new Path([]),
       new Point(obj.start),

@@ -22,7 +22,7 @@ describe('WebSocketService', () => {
   it('aled', () => {
     const msg : ServerMessage<Drone> = {type:"new_drone",
       status: 400,
-      data :new Drone("Cador", {ID:69},10,new Path([]),Point.fromTuple(50,50),Point.fromTuple(10,10))
+      data :new Drone("Cador", {id:69},10,new Path([]),Point.fromTuple(50,50),Point.fromTuple(10,10))
     }
     // @ts-ignore
     service.statusReceive.subscribe((e) => console.log(e.data))
