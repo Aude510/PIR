@@ -8,6 +8,7 @@ import {WebSocketService} from "../services/web-socket.service";
   templateUrl: './drone-informations.component.html',
   styleUrls: ['./drone-informations.component.sass'],
   providers:  []
+
 })
 
 @Injectable()
@@ -20,12 +21,9 @@ export class DroneInformationsComponent {
   public drone : Drone | undefined
 
 
-  constructor(private webSocketService: WebSocketService) {
-  }
+  constructor(private webSocketService: WebSocketService) { // TODO: Add drone to the constructor
+    console.log("Drone information ready")
 
-
-  getDrone(){ // Send a message to the webSocket to get the drone's information
-    //this.drone =new Drone(1,"Cador",{ID: 4},0,{points:[]},{x:0,y:0},{x:48,y:52})
   }
 
   deleteDrone(){  // Send a message to the webSocket to remove the drone from the map
