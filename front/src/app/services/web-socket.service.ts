@@ -37,17 +37,19 @@ export class WebSocketService {
     this.statusReceive = new  Subject<ServerMessage<any>>();
     console.log("Initialising the web socket\n");
     try {
-      this.socket = new WebSocket("ws://192.168.43.17:80");
-
-    } catch (e) {
+     const s = new WebSocket("ws://192.168.43.17:80");
+     s.onopen = () => this.socket = s;
+     s.onerror = () => this.socket = undefined;
+    } catch (e) { // webSocket only throws syntax error
       this.socket = undefined
-      console.error("Error initialising the web socket");
+      console.error("Erro parsing the URI");
     }
 
     if(this.socket != undefined) {
       this.socket.onopen = (event) => {
         console.log("Connected to the server !\n")
 
+        // @ts-ignore
         const dd = new Drone("Cador", {id:"69"},10,new Path([]),Point.fromTuple(10,10),Point.fromTuple(50,50));
         this.sendNewDrone(dd)
           .then((data) => console.log(data))
