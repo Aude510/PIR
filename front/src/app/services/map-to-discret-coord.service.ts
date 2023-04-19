@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { LatLng, LayerGroup, Marker, Point } from 'leaflet';
+import { Circle, LatLng, LayerGroup, Marker, Point } from 'leaflet';
 import { MapService } from './map.service';
 
-const MAX_POINTS: number = 50; 
+const MAX_POINTS: number = 50;
+const DIST: number = 10; 
 
 @Injectable({
   providedIn: 'root'
@@ -34,16 +35,31 @@ export class MapToDiscretCoordService {
   
   public computeArea(lat: number, lng: number): void {
     this.mapService.addToMap(this.layer);
-    // console.log(lat, lng);
+
+    // let k: number = DIST / 6371 * 1000;
+    // let a: number = Math.cos(k);
+    // let b: number = Math.sin(lat) * Math.sin(lat);
+    // let c: number = Math.cos(lat) * Math.cos(lat);
+
+    // let deltaX: number = Math.acos((a - b) / c);
+    // let deltaY: number = DIST / k; 
+
+    // console.log(deltaX, deltaY, (a - b) / c);
+
     for (let y: number = 0; y < MAX_POINTS; y++) {
       this.points[y] = [];
       for (let x: number = 0; x < MAX_POINTS; x++) {
         this.points[y][x] = new LatLng(
-          lat + y * 0.01,
-          lng + x * 0.01
+          lat + y * 0.0000730,
+          lng + x * 0.0001329
         );
 
-        let point: Marker = new Marker(this.points[y][x])
+        let point: Circle = new Circle(this.points[y][x], { 
+          color: "red",
+          fillColor: "#f03",
+          fillOpacity: 0.5,
+          radius: 2.5
+        })
         point.addTo(this.layer);
       }
     }
