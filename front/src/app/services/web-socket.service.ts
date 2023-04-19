@@ -4,7 +4,6 @@ import {ServerMessage} from "../../model/ServerMessage";
 import {ServerRequest} from "../../model/ServerRequest";
 import {Path} from "../../model/Path";
 import {Subject} from "rxjs";
-import {Status} from "../../model/Status";
 import {Zone} from "../../model/Zone";
 import {Point} from "../../model/Point";
 
@@ -154,7 +153,7 @@ export class WebSocketService {
       return new Promise((resolve, reject) => reject("Socket is not open"));
     }
   }
-  sendAnswerPath(response: boolean): Promise<void>{
+  sendAnswerPath(response: boolean): Promise<void> {
     console.log("Answering the path");
     this.socket?.send(JSON.stringify(response));
     if(this.socket) {
@@ -167,6 +166,4 @@ export class WebSocketService {
       return new Promise((resolve, reject) => reject("Socket is not open"));
     }
   }
-
-
 }
