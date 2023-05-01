@@ -5,18 +5,22 @@ import json
 class MessageTypeError(Exception):
     pass
 
+class ConnectionError(Exception):
+    pass
 
 #Create an error message to send to the client
-def errorMessage():
+def errorMessage(type):
     x={
+        "type":type,
         "code":401
     }
     return json.dumps(x)
 
 
 #Create an ack message to send to the client
-def ackMessage():
+def ackMessage(type):
     x={
+        "type":type,
         "code":200
     }
     return json.dumps(x)
@@ -68,6 +72,7 @@ def statusToJson(owner, drones, blockedZones, time):
         formatedZones = formatBlockedZones(blockedZones)
         x={
             "code":200,
+            "type":"get_status",
             "data":{
                 "owner":{"ID":owner},
                 "drones": formatedDrones,
@@ -80,6 +85,12 @@ def statusToJson(owner, drones, blockedZones, time):
         print("Erreur lors du formatage du drone")
         return None
 
+def jsonToDrone(message):
+    try:
+        y = json.loads(message)
+        return y["data"]
+    except:
+        raise MessageTypeError
 
 #Convert from drone to Json
 #input = drone : Drone
@@ -88,6 +99,7 @@ def droneToJson(drone):
     try:
         x={
             "code":200,
+            "type":"new_drone",
             "data":formatDrone(drone)
         }
         return json.dumps(x)
@@ -111,30 +123,29 @@ def jsonToType(message):
 #input = message : str
 #return = ID:int, name:str, owner:int,
 #   priority:int, start:list[x,y], destination:list[x,y]
-def jsonToDrone(message):
+def jsonToDroneDijkstra(message):
     droneReceived = {}
     y=json.loads(message)
     drone=y["data"]
-    droneReceived["id"]=drone["ID"]
-    droneReceived["name"]=drone["name"]
-    droneReceived["owner"]=drone["owner"]["ID"]
-    droneReceived["priority"]=drone["priority"]
-    droneReceived["path"]=[]
-    droneReceived["start"]=[drone["start"]["x"],drone["start"]["y"]]
-    droneReceived["destination"]=[drone["destination"]["x"],drone["destination"]["y"]]
-    return droneReceived
-
+    #id=drone["ID"]
+    name=drone["name"]
+    owner=drone["owner"]["ID"]
+    priority=drone["priority"]
+    start=[drone["start"]["x"],drone["start"]["y"]]
+    destination=[drone["destination"]["x"],drone["destination"]["y"]]
+    return name, owner, priority, start, destination
+#Fonction de Killian : (indentifier, prio, source : tuple, destination : tuple, starting_time(optionnel))
+# return dictionnaire tous les drones et leurs path
 
 #Convert from Json to Owner
 #input = message : str
 #return = owner : int
-def jsonToOwner(message) -> int:
+def jsonToOwner(message) -> str:
     y=json.loads(message)
-    if(type(y["owner"]["ID"])==int):
-        return(y["owner"])
+    if(type(y["data"]["owner"])== str):
+        return y["data"]["owner"]
     else:
         raise MessageTypeError
-
 
 #Convert from Json to Squares
 #input = message : str
@@ -146,20 +157,27 @@ def jsonToZone(message):
         return zone["square"]["points"]
     else:
         raise MessageTypeError
+#Envoyer liste de liste de 4 points [[x,y]]
+#return dictionaire {id : path} contenant tous les drones
 
+def jsonToNewPathResponse(message): #TODO A implémenter (voir avec Killian et Joel)
+    y = json.load(message)
+    return y["data"]["response"],y["data"]["drone"]
 
-#def jsonToNewPathResponse(): #TODO A implémenter (voir avec Killian et Joel)
+############ TODO #############
+# Architecture du main  :
+#     - Init l'environnement au début du main
+#     - Mettre à jour le  status à chaque message reçu
+# Déterminer si un path à changer pour zone bloquée
+# Rajouter une liste de notification au status envoyé (liste de tous les path qui ont changé avec le in)
+# Appeler les fonctions de Killian dans tous les case du handler
+# Tester
+# Ajouter des fonction add et del du dictionnaire partagé dans le main
 
-
-########## TEST ECRITURE ######################
-# fichier = open("testEcriture.json","w",encoding="utf-8")
-# json.dump(statusToJson(3,5,6,7),fichier,ensure_ascii=False,indent=4)
-# fichier.close()
-# ########## TEST LECTURE #######################
-# fichier = open("testEcriture.json","r")
-# contenu = fichier.read()
-# print(f"Fichier json de base : {contenu}")
-# test=jsonToOwner(contenu)
-# print(f"Owner obtenu depuis le fichier {test}")
-# fichier.close()
-# print(jsonToZone("{\"squares\":[]}"))
+## DONE :
+# Formater les dronesToJson
+# modifier ownerid en string
+# Implémenter le NewPathResponse si réponse non alors supprimer drone 
+# Delete drone après qu'il ait finit son path 
+# Status : {(owner,name):id_drone} {id_drone : path_drone} {connect : (owner, [name_drone])} [blocked_zone]
+# Faire évoluer le path en fonction du temps qui passe
