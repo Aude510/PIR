@@ -11,11 +11,10 @@ export class HomePageComponent {
   @Output() addDroneEvent: EventEmitter<void>;
   @Output() blockZoneEvent: EventEmitter<void>;
 
-
   public constructor(private router: Router, private mapService: MapService) {
     this.addDroneEvent = new EventEmitter<void>();
     this.blockZoneEvent = new EventEmitter<void>();
-    this.mapService.onMapClickedTakeSubscription();
+    this.mapService.onMapClickedTakeSubscription()
   }
 
   public onAddDrone(e: MouseEvent): void {
