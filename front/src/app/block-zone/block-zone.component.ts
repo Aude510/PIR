@@ -4,6 +4,8 @@ import * as L from "leaflet";
 import { Square } from 'src/model/Square';
 import { Point } from 'src/model/Point';
 import { MapService } from '../services/map.service';
+import { MapToDiscretCoordService } from '../services/map-to-discret-coord.service';
+import { AreaMouseEvent } from 'src/model/AreaMouseEvent';
 
 
 
@@ -21,10 +23,18 @@ export class BlockZoneComponent {
   private layer: LayerGroup; 
   private tailleSquare: number = 4 ; 
 
-  public constructor(private mapService:MapService) {
+  public constructor(private mapService:MapService, private MTDCS: MapToDiscretCoordService) {
+    //Callback pour récupérer les coord sur la zone discretisée
+    this.MTDCS.setAreaClickCallback((e: AreaMouseEvent) => this.addPointButDiscret(e));
+
     this.mapService.onMapClickedTakeSubscription().subscribe((e) => {
-      this.addPoint(e);
-    })
+      // j'ai juste commenté ton code pour tester le miens 😊
+      // this.addPoint(e);
+
+      // permet de pas supprimer le callback quand on clique sur la map
+      this.MTDCS.onMapClick(e);
+    });
+    
     this.layer = new L.LayerGroup();
     this.mapService.addToMap(this.layer);    
   }
@@ -126,4 +136,7 @@ export class BlockZoneComponent {
     }
    }
 
+   private addPointButDiscret(e: AreaMouseEvent) {
+    new L.Marker([e.lat, e.lng]).addTo(this.layer);
+   }
 }

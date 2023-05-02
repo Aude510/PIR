@@ -4,6 +4,7 @@ import {LeafletMouseEvent} from "leaflet";
 import {MapMouseEvent} from "../../model/MapMouseEvent";
 import {MapService} from "../services/map.service";
 import { MapToDiscretCoordService } from '../services/map-to-discret-coord.service';
+import { AreaMouseEvent } from 'src/model/AreaMouseEvent';
 
 /**
  * This is a component to adapt leaflet in the angular architecture.
@@ -17,19 +18,14 @@ import { MapToDiscretCoordService } from '../services/map-to-discret-coord.servi
   styleUrls: ['./base-map.component.sass']
 })
 export class BaseMapComponent {
-  private MTDCS: MapToDiscretCoordService
+  private MTDCS: MapToDiscretCoordService;
 
   @Output() leafletMouseEvent: EventEmitter<MapMouseEvent> = new EventEmitter();
 
   constructor(private mapService: MapService, MTDCS: MapToDiscretCoordService) { 
     this.MTDCS = MTDCS;
-
-    document.addEventListener('keydown', (e: KeyboardEvent) => {
-      if (e.key == 'a') {
-        MTDCS.computeArea(51.5, -0.09);
-      }
-    });
   }
+
   private initMap() {
     this.mapService.map = L.map('map', {
       center: [ 51.5, -0.09 ],
@@ -41,7 +37,9 @@ export class BaseMapComponent {
       minZoom: 3,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     });
+
     this.mapService.map.on('click', (e: LeafletMouseEvent) => this.onMapClick(e));
+    this.MTDCS.initArea(51.5, -0.09);
     tiles.addTo(this.mapService.map);
   }
 
