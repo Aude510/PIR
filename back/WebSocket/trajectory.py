@@ -141,7 +141,7 @@ class Environment:
 
             # self.listDrones.clear()
 
-            self.ax = self.fig.add_subplot(111, projection='3d')
+            # self.ax = self.fig.add_subplot(111, projection='3d')
             for drone in self.listDrones:
                 result = self.addDrone(drone[0], drone[1], drone[2], drone[3], drone[4], isANewDrone=False,
                                        addToPlot=addToPlot)
@@ -165,7 +165,7 @@ class Environment:
             for drone in self.listDrones:
                 if k == drone[0]:
                     drone[2] = v
-                    
+
     def plotting(self):
         plt.show()
 

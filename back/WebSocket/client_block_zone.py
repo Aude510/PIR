@@ -23,10 +23,10 @@ def main():
     ws.send(json.dumps(d))
     event.wait()
     time.sleep(20)
-    dic = {"type":"block_zone","data":{"square":{"points":[{"x":10,"y":10},{"x":20,"y":20},{"x":30,"y":30},{"x":40,"y":40}]}}}
+    dic = {"type":"block_zone","data":{"square":{"points":[{"x":0,"y":70},{"x":0,"y":60},{"x":200,"y":60},{"x":200,"y":70}]}}}
     ws.send(json.dumps(dic))
     time.sleep(20)
-    dic={"type":"delete_zone","data":{"square":{"points":[{"x":10,"y":10},{"x":20,"y":20},{"x":30,"y":30},{"x":40,"y":40}]}}}
+    dic={"type":"delete_zone","data":{"square":{"points":[{"x":0,"y":70},{"x":0,"y":60},{"x":200,"y":60},{"x":200,"y":70}]}}}
     ws.send(json.dumps(dic))
     while True:
         event.wait()

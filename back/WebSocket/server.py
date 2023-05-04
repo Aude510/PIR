@@ -23,38 +23,48 @@ async def handler(websocket,path):
             #id = newIdConnect()
             connect.append(websocket)
             #map_connect[id] = websocket
-            map_connect_droneList[websocket]=(convertionJson.jsonToOwner(message),[])
-            print(map_connect_droneList)
+            main.add_connect(websocket,convertionJson.jsonToOwner(message))
             sem.release()
         else:
             raise convertionJson.ConnectionError
         async for message in websocket: #Handle every message from the connection
             match convertionJson.jsonToType(message): #Identifies the type of the message if not, raise MessageTypeError
                 case "answer_path":
+                    sem.acquire()
                     answer, drone = convertionJson.jsonToNewPathResponse(message)
                     if(not(answer)):
                         identifier = await main.deleteDrone(websocket,drone)
                         environnement.deleteDrone(identifier)
                     await sendUnicast(convertionJson.ackMessage("answer_path"),websocket)
+                    sem.release()
                 case "delete_zone":
+                    sem.acquire()
                     zone = convertionJson.jsonToZone(message)
                     await main.deleteBlockedZone(zone)
-                    environnement.deleteBlockedZone(zone)
+                    environnement.deleteBlockedZone(convertionJson.formatZoneDijkstra(zone))
                     ## TODO : exécuter fonction de Kiki pour delete zone
                     await sendUnicast(convertionJson.ackMessage("delete_zone"),websocket)
+                    sem.release()
                 case "block_zone":
+                    sem.acquire()
                     zone = convertionJson.jsonToZone(message)
                     main.addBlockedZone(zone)
-                    paths = environnement.blockAZone(zone)
+                    #environnement.updateDrone(map_idDrone_path)
+                    print(convertionJson.formatZoneDijkstra(zone))
+                    paths = environnement.blockAZone(convertionJson.formatZoneDijkstra(zone))
+                    print(paths)
                     main.detectChangedPath(paths)
                     ## TODO : exécuter la fonction de Kiki pour add zone
                     await sendUnicast(convertionJson.ackMessage("block_zone"),websocket)
+                    sem.release()
                 case "new_drone":
                     sem.acquire()
-                    name, owner, priority, start, destination = convertionJson.jsonToDroneDijkstra(message)
+                    owner, priority, start, destination = convertionJson.jsonToDroneDijkstra(message)
                     drone = convertionJson.jsonToDrone(message)
-                    idDrone = main.addDrone(websocket,drone,path)
+                    idDrone = main.addDrone(websocket,drone)
+                    #environnement.updateDrone(map_idDrone_path)
                     paths = environnement.addDrone(idDrone,priority,start,destination)
+                    print(paths)
                     main.changePath(paths)
                     await sendUnicast(convertionJson.ackMessage("new_drone"),websocket)
                     sem.release()
@@ -67,9 +77,7 @@ async def handler(websocket,path):
                     sem.release()
                 case "get_status":
                     sem.acquire()
-                    owner = map_connect_droneList[websocket][0]
-                    droneList = map_connect_droneList[websocket][1]
-                    await sendUnicast(convertionJson.statusToJson(owner,droneList,blocked_zones,0),websocket)
+                    await main.sendStatus
                     sem.release()
                 case _:
                     raise convertionJson.MessageTypeError
