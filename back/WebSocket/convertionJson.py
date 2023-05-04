@@ -36,7 +36,7 @@ def formatBlockedZones(zones):
 def formatPath(path):
     pathFormated = []
     for point in path:
-        pathFormated.append({"x":point[0],"y":point[1]})
+        pathFormated.append({"x":int(point[0]),"y":int(point[1])})
     return pathFormated
 
 #Convert a drone to the right format in order to send it to the client
@@ -78,6 +78,7 @@ def statusToJson(owner, drones, blockedZones, time, changedNameList):
                 "changed" : changedNameList
             }
         }
+        print(x)
         return json.dumps(x)
     # except:
     #     print("Erreur lors du formatage du drone")
@@ -122,16 +123,14 @@ def jsonToType(message):
 #return = ID:int, name:str, owner:int,
 #   priority:int, start:list[x,y], destination:list[x,y]
 def jsonToDroneDijkstra(message):
-    droneReceived = {}
     y=json.loads(message)
     drone=y["data"]
     #id=drone["ID"]
-    name=drone["name"]
     owner=drone["owner"]["ID"]
     priority=drone["priority"]
     start=[drone["start"]["x"],drone["start"]["y"]]
     destination=[drone["destination"]["x"],drone["destination"]["y"]]
-    return name, owner, priority, start, destination
+    return owner, priority, start, destination
 #Fonction de Killian : (indentifier, prio, source : tuple, destination : tuple, starting_time(optionnel))
 # return dictionnaire tous les drones et leurs path
 
@@ -155,6 +154,12 @@ def jsonToZone(message):
         return zone["square"]["points"]
     else:
         raise MessageTypeError
+    
+def formatZoneDijkstra(zone):
+    formatedZone = []
+    for point in zone:
+        formatedZone.append([point["x"],point["y"]])
+    return formatedZone
 #Envoyer liste de liste de 4 points [[x,y]]
 #return dictionaire {id : path} contenant tous les drones
 
@@ -163,11 +168,7 @@ def jsonToNewPathResponse(message): #TODO A implémenter (voir avec Killian et J
     return y["data"]["response"],y["data"]["drone"]
 
 ############ TODO #############
-# Architecture du main  :
-#     - Init l'environnement au début du main
-# Déterminer si un path à changer pour zone bloquée
-# Rajouter une liste de notification au status envoyé (liste de tous les path qui ont changé avec le in)
-# Appeler les fonctions de Killian dans tous les case du handler
+
 
 
 
@@ -181,3 +182,8 @@ def jsonToNewPathResponse(message): #TODO A implémenter (voir avec Killian et J
 # Ajouter des fonction add et del du dictionnaire partagé dans le main
 # Mettre à jour le  status à chaque message reçu
 # Tester
+# Architecture du main  :
+#     - Init l'environnement au début du main
+# Déterminer si un path à changer pour zone bloquée
+# Rajouter une liste de notification au status envoyé (liste de tous les path qui ont changé avec le in)
+# Appeler les fonctions de Killian dans tous les case du handler

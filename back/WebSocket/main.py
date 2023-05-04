@@ -11,15 +11,15 @@ freeId = []
 
 def add_connect(websocket,owner):
     map_connect_droneList[websocket]=(owner,[])
+    map_changed_path[owner] = []
     print(map_connect_droneList)
 
 def startServ():
     asyncio.run(server.init_serv())
 
 def addBlockedZone(zone):
-    sem.acquire()
     blocked_zones.append(zone)
-    sem.release()
+    
 
 def newIdDrone():
     if(len(freeId)>0):
@@ -65,7 +65,6 @@ def detectChangedPath(paths):
 
 
 async def deleteConnection(websocket):
-    sem.acquire()
     owner = map_connect_droneList[websocket][0]
     droneList = map_connect_droneList[websocket][1]
     for drone in droneList:
@@ -75,7 +74,6 @@ async def deleteConnection(websocket):
     del map_connect_droneList[websocket]
     print("suppresion finished")
     print(map_connect_droneList)
-    sem.release()
 
 async def deleteDrone(websocket,drone):
     owner = map_connect_droneList[websocket][0]
@@ -92,11 +90,19 @@ async def deleteDrone(websocket,drone):
 
 async def deleteBlockedZone(zone):
     try:
-        sem.acquire()
         blocked_zones.remove(zone)
-        sem.release
     except ValueError:
         raise convertionJson.MessageTypeError()
+
+
+async def sendStatus():
+    for client in server.connect:
+        ownerID = map_connect_droneList[client][0]
+        droneList = map_connect_droneList[client][1]
+        print("la map des changed path est :")
+        print(map_changed_path)
+        await server.sendUnicast(convertionJson.statusToJson(ownerID,droneList,blocked_zones,0,map_changed_path[ownerID]),client)
+        map_changed_path[ownerID]=[]
 
 async def running():
     while(True):
@@ -117,11 +123,7 @@ async def running():
                         delIdDrone(id_drone)
                         del map_owner_idDrone[((ownerID,name))]
                         liste_drone.remove(drone)
-        for client in server.connect:
-            ownerID = map_connect_droneList[client][0]
-            droneList = map_connect_droneList[client][1]
-            await server.sendUnicast(convertionJson.statusToJson(ownerID,droneList,blocked_zones,0,map_changed_path[ownerID]),client)
-            map_changed_path[ownerID]=[]
+        await sendStatus()
         sem.release()
         await asyncio.sleep(period)
 
