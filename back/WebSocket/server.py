@@ -1,26 +1,14 @@
 import asyncio
 import websockets 
 import convertionJson
-from main import map_connect_droneList,sem
 import main
+from main import sem
+from structure import *
+import trajectory
 
-map_connect_droneList = main.map_connect_droneList
+environnement = trajectory.Environment(500,500)
 connect = [] #List of all clients connected
-period = 2 #Time in seconds to send periodic message
-map_connect = {} ## {idConnection : websocket}
-nextID = 0
-freeID=[]
-
-def newIdConnect():
-    if(len(freeID)>0):
-        return freeID.pop()
-    else:
-        global nextID
-        nextID+=1
-        return nextID
-
-def delIdConnect(id):
-    freeID.append(id)
+period = 3
 
 #Handler executed at every new connection
 async def handler(websocket,path):
@@ -35,9 +23,8 @@ async def handler(websocket,path):
             #id = newIdConnect()
             connect.append(websocket)
             #map_connect[id] = websocket
-            map_connect_droneList.update({websocket:(convertionJson.jsonToOwner(message),[])})
+            map_connect_droneList[websocket]=(convertionJson.jsonToOwner(message),[])
             print(map_connect_droneList)
-            print("test")
             sem.release()
         else:
             raise convertionJson.ConnectionError
@@ -46,53 +33,55 @@ async def handler(websocket,path):
                 case "answer_path":
                     answer, drone = convertionJson.jsonToNewPathResponse(message)
                     if(not(answer)):
-                        main.deleteDrone(websocket,drone)
+                        identifier = await main.deleteDrone(websocket,drone)
+                        environnement.deleteDrone(identifier)
                     await sendUnicast(convertionJson.ackMessage("answer_path"),websocket)
                 case "delete_zone":
-                    zone = convertionJson.jsonToZone()
-                    main.deleteBlockedZone(zone)
+                    zone = convertionJson.jsonToZone(message)
+                    await main.deleteBlockedZone(zone)
+                    environnement.deleteBlockedZone(zone)
                     ## TODO : exécuter fonction de Kiki pour delete zone
                     await sendUnicast(convertionJson.ackMessage("delete_zone"),websocket)
                 case "block_zone":
-                    zone = convertionJson.jsonToZone()
+                    zone = convertionJson.jsonToZone(message)
                     main.addBlockedZone(zone)
+                    paths = environnement.blockAZone(zone)
+                    main.detectChangedPath(paths)
                     ## TODO : exécuter la fonction de Kiki pour add zone
                     await sendUnicast(convertionJson.ackMessage("block_zone"),websocket)
                 case "new_drone":
+                    sem.acquire()
                     name, owner, priority, start, destination = convertionJson.jsonToDroneDijkstra(message)
                     drone = convertionJson.jsonToDrone(message)
-                    path=[] ## TODO appeler la fonction de Kiki
-                    main.addDrone(websocket,drone,path)
+                    idDrone = main.addDrone(websocket,drone,path)
+                    paths = environnement.addDrone(idDrone,priority,start,destination)
+                    main.changePath(paths)
                     await sendUnicast(convertionJson.ackMessage("new_drone"),websocket)
+                    sem.release()
                 case "delete_drone":
-                    id, name, owner, priority, start, destination = convertionJson.jsonToDroneDijkstra(message)
+                    sem.acquire()
                     drone = convertionJson.jsonToDrone(message)
-                    main.deleteDrone(websocket,drone) ## Suppression drone du status
-                    ## TODO : appeler fonction Killian pour delete drone
+                    identifier = await main.deleteDrone(websocket,drone) ## Suppression drone du status
+                    environnement.deleteDrone(identifier) ## Suppresion drone de l'environnement
                     await sendUnicast(convertionJson.ackMessage("delete_drone"),websocket)
-                    print("delete_drone")
+                    sem.release()
                 case "get_status":
                     sem.acquire()
-                    owner = main.map_connect_droneList[websocket][0]
-                    droneList = main.map_connect_droneList[websocket][1]
-                    await sendUnicast(convertionJson.statusToJson(owner,droneList,main.blocked_zones,0),websocket)
+                    owner = map_connect_droneList[websocket][0]
+                    droneList = map_connect_droneList[websocket][1]
+                    await sendUnicast(convertionJson.statusToJson(owner,droneList,blocked_zones,0),websocket)
                     sem.release()
-                    print("get_status")
                 case _:
                     raise convertionJson.MessageTypeError
     except websockets.exceptions.ConnectionClosed as e: #Connection closed 
         print("Session closed") 
-        sem.acquire()
         connect.remove(websocket) #Delete the connection from the list
         await main.deleteConnection(websocket)
-        sem.release()
     except convertionJson.MessageTypeError:
         print("Erreur sur le type du message reçu")
         await sendUnicast(convertionJson.errorMessage("test"),websocket) #Send an error message to the client
-        sem.acquire()
         connect.remove(websocket)
         await main.deleteConnection(websocket)
-        sem.release()
     except convertionJson.ConnectionError:
         print("Erreur sur le message de connect")
         sendUnicast(convertionJson.errorMessage("connect"),websocket)
@@ -102,7 +91,7 @@ async def sendUnicast(message, websocket):
     print("Envoi Unicast")
     try:
         await websocket.send(message)
-    except websockets.exception.ConnectionClosed:
+    except websockets.exceptions.ConnectionClosed:
         print("Impossible to send connection was closed")
 
 #Send a message to all clients

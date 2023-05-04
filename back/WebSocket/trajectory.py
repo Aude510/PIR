@@ -84,7 +84,12 @@ class Environment:
                 self.ax.scatter(x[0], x[1], x[2], c=color)
         return pathToGoRet
 
-    def blockAZone(self, listPoints, recalculateDronesPath=False, addToPlot=False):
+    def deleteDrone(self, identifier):
+        for drone in self.listDrones:
+            if drone[0] == identifier:
+                self.listDrones.remove(drone)
+
+    def blockAZone(self, listPoints, recalculateDronesPath=True, addToPlot=False):
         global returnVal
         for i in range(0, 3):
 
@@ -131,19 +136,19 @@ class Environment:
                 self.listBlockedPoints.append((point[0], point[1], time))
                 self.environment[point[0]][point[1]][time] = 99999999999999
 
+        returnVal = dict()
         if recalculateDronesPath:
 
             # self.listDrones.clear()
 
             self.ax = self.fig.add_subplot(111, projection='3d')
-            returnVal = dict()
             for drone in self.listDrones:
-                print("List drones :", self.listDrones)
                 result = self.addDrone(drone[0], drone[1], drone[2], drone[3], drone[4], isANewDrone=False,
                                        addToPlot=addToPlot)
-                print("HEEEEELP : ", result)
+
                 for key, value in result.items():
                     returnVal[key] = value
+
 
         if addToPlot:
             for point in self.listBlockedPoints:
@@ -153,8 +158,14 @@ class Environment:
             for k,v in returnVal.items():
                 for pointe in v:
                     self.ax.scatter(pointe[0], pointe[1], 0, c=(0.8, 0.8, 0.8))
-
-
+        return returnVal
+    
+    def updateDrone(self, listDronesToUpdate):
+        for (k,v) in listDronesToUpdate.items():
+            for drone in self.listDrones:
+                if k == drone[0]:
+                    drone[2] = v
+                    
     def plotting(self):
         plt.show()
 
