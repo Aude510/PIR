@@ -29,10 +29,7 @@ def ackMessage(type):
 def formatBlockedZones(zones):
     formatedZones = []
     for square in zones:
-        auxPoint=[]
-        for point in square:
-            auxPoint.append({"x":point[0],"y":point[1]})
-        formatedZones.append({"points":auxPoint})
+        formatedZones.append({"points":square})
     return formatedZones
 
 #Convert a Path to the right format in order to send it to the client
@@ -46,11 +43,11 @@ def formatPath(path):
 def formatDrone(drone):
     formatedDrone={}
     formatedDrone["name"] = drone["name"]
-    formatedDrone["owner"] = {"ID" : drone["owner"]}
+    formatedDrone["owner"] = {"ID" : drone["owner"]["ID"]}
     formatedDrone["priority"] = drone["priority"]
     formatedDrone["path"] = formatPath(drone["path"])
-    formatedDrone["start"] = {"x": drone["start"][0],"y":drone["start"][1]}
-    formatedDrone["destination"] = {"x": drone["destination"][0],"y":drone["destination"][1]}  
+    formatedDrone["start"] = drone["start"]
+    formatedDrone["destination"] = drone["destination"]
     return(formatedDrone)
 
 
@@ -66,8 +63,8 @@ def formatDroneList(listDrone):
 #input = (owner : int, drones: drone[], blockeZones: zone[], time : int)
 #return = message : str
 #TODO bien formater l'envoi de la liste de drone et des zones
-def statusToJson(owner, drones, blockedZones, time):
-    try:
+def statusToJson(owner, drones, blockedZones, time, changedNameList):
+    # try:
         formatedDrones = formatDroneList(drones)
         formatedZones = formatBlockedZones(blockedZones)
         x={
@@ -77,13 +74,14 @@ def statusToJson(owner, drones, blockedZones, time):
                 "owner":{"ID":owner},
                 "drones": formatedDrones,
                 "blocked_Zones":formatedZones,
-                "time":time
+                "time":time,
+                "changed" : changedNameList
             }
         }
         return json.dumps(x)
-    except:
-        print("Erreur lors du formatage du drone")
-        return None
+    # except:
+    #     print("Erreur lors du formatage du drone")
+    #     return None
 
 def jsonToDrone(message):
     try:
@@ -96,16 +94,16 @@ def jsonToDrone(message):
 #input = drone : Drone
 #return = message : str
 def droneToJson(drone):
-    try:
+    # try:
         x={
             "code":200,
             "type":"new_drone",
             "data":formatDrone(drone)
         }
         return json.dumps(x)
-    except:
-        print("Erreur lors du formatage du drone")
-        return None
+    # except:
+    #     print("Erreur lors du formatage du drone")
+    #     return None
 
 #Convert from Json to type the message
 #input = str
@@ -167,12 +165,11 @@ def jsonToNewPathResponse(message): #TODO A implémenter (voir avec Killian et J
 ############ TODO #############
 # Architecture du main  :
 #     - Init l'environnement au début du main
-#     - Mettre à jour le  status à chaque message reçu
 # Déterminer si un path à changer pour zone bloquée
 # Rajouter une liste de notification au status envoyé (liste de tous les path qui ont changé avec le in)
 # Appeler les fonctions de Killian dans tous les case du handler
-# Tester
-# Ajouter des fonction add et del du dictionnaire partagé dans le main
+
+
 
 ## DONE :
 # Formater les dronesToJson
@@ -181,3 +178,6 @@ def jsonToNewPathResponse(message): #TODO A implémenter (voir avec Killian et J
 # Delete drone après qu'il ait finit son path 
 # Status : {(owner,name):id_drone} {id_drone : path_drone} {connect : (owner, [name_drone])} [blocked_zone]
 # Faire évoluer le path en fonction du temps qui passe
+# Ajouter des fonction add et del du dictionnaire partagé dans le main
+# Mettre à jour le  status à chaque message reçu
+# Tester
