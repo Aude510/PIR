@@ -19,10 +19,10 @@ def main():
     event = threading.Event() ## Event pour notify de la réception ##
     th_receiv = threading.Thread(target=receiving, args=(ws,event),daemon=True) ## Création du thread réception ##
     th_receiv.start()
-    d={"type":"connect","data":{"owner":"1"}}
+    d={"type":"connect","data":{"owner":"3"}}
     ws.send(json.dumps(d))
     event.wait()
-    dic = {"type":"new_drone","data":{"name":"test","owner":{"ID":"1"},"priority":2,"start":{"x":10,"y":20},"destination":{"x":10,"y":80}}}
+    dic = {"type":"new_drone","data":{"name":"drone2","owner":{"ID":"3"},"priority":1,"start":{"x":100,"y":50},"destination":{"x":0,"y":50}}}
     ws.send(json.dumps(dic))
     #time.sleep(20)
     #dic={"type":"delete_drone","data":{"name":"test","owner":{"ID":"1"},"priority":1,"start":{"x":10,"y":20},"destination":{"x":10,"y":30}}}

@@ -49,10 +49,10 @@ async def handler(websocket,path):
                     sem.acquire()
                     zone = convertionJson.jsonToZone(message)
                     main.addBlockedZone(zone)
-                    #environnement.updateDrone(map_idDrone_path)
-                    print(convertionJson.formatZoneDijkstra(zone))
+                    environnement.updateDrone(map_idDrone_path)
                     paths = environnement.blockAZone(convertionJson.formatZoneDijkstra(zone))
-                    print(paths)
+                    #print("map_idDrone_path : "+ str(map_idDrone_path))
+                    #print("paths : " + str(paths))
                     main.detectChangedPath(paths)
                     ## TODO : exécuter la fonction de Kiki pour add zone
                     await sendUnicast(convertionJson.ackMessage("block_zone"),websocket)
@@ -62,10 +62,10 @@ async def handler(websocket,path):
                     owner, priority, start, destination = convertionJson.jsonToDroneDijkstra(message)
                     drone = convertionJson.jsonToDrone(message)
                     idDrone = main.addDrone(websocket,drone)
-                    #environnement.updateDrone(map_idDrone_path)
+                    #print("New drone with id : " + str(idDrone))
+                    environnement.updateDrone(map_idDrone_path)
                     paths = environnement.addDrone(idDrone,priority,start,destination)
-                    print(paths)
-                    main.changePath(paths)
+                    main.changePath(paths,idDrone)
                     await sendUnicast(convertionJson.ackMessage("new_drone"),websocket)
                     sem.release()
                 case "delete_drone":
@@ -102,26 +102,6 @@ async def sendUnicast(message, websocket):
     except websockets.exceptions.ConnectionClosed:
         print("Impossible to send connection was closed")
 
-#Send a message to all clients
-async def sendAllClients(message):
-    print("Envoi à tous les clients")
-    for websocket in connect:
-        try:
-            await websocket.send(message)
-        except websockets.exception.ConnectionClosed:
-            print("Connection closed")
-
-#Send periodically to all clients
-async def sendPeriodically(message):
-    while True:
-        print("Envoi périodique")
-        for websocket in connect:
-            try:
-                await websocket.send(message)
-            except websockets.exception.ConnectionClosed:
-                print(f"Session Closed  in {__name__}")
-        await asyncio.sleep(period)
-        
 
 #Créer le serveur websocket et envoi périodiquement à tous les clients le statu
 async def init_serv():

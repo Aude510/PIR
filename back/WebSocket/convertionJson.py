@@ -78,7 +78,6 @@ def statusToJson(owner, drones, blockedZones, time, changedNameList):
                 "changed" : changedNameList
             }
         }
-        print(x)
         return json.dumps(x)
     # except:
     #     print("Erreur lors du formatage du drone")
@@ -112,7 +111,7 @@ def droneToJson(drone):
 def jsonToType(message):
     try:
         y=json.loads(message)
-        print(y)
+        #print(y)
         return(y["type"])
     except:
         raise MessageTypeError()
@@ -183,7 +182,8 @@ def jsonToNewPathResponse(message): #TODO A implémenter (voir avec Killian et J
 # Mettre à jour le  status à chaque message reçu
 # Tester
 # Architecture du main  :
-#     - Init l'environnement au début du main
+# Init l'environnement au début du main
+# Update la position des drones avant calcul new path
 # Déterminer si un path à changer pour zone bloquée
 # Rajouter une liste de notification au status envoyé (liste de tous les path qui ont changé avec le in)
 # Appeler les fonctions de Killian dans tous les case du handler
