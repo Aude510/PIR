@@ -15,9 +15,12 @@ class Environment:
     listBlockedPoints = list()
 
     def __init__(self, x, y):
+        self.listDrones = list()
+        self.listBlockedPoints = list()
         self.x = x
         self.y = y
-        self.environment = np.ones(shape=(x, y, 50))
+        self.z = 10
+        self.   environment = np.ones(shape=(x, y, self.z))
         for i in range(0, x):
             for j in range(0, y):
                 for k in range(0, self.z):

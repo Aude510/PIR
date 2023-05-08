@@ -5,14 +5,13 @@ import convertionJson
 from structure import *
 
 period = 5 ## Period to send status ##
-sem = threading.Semaphore()
 nextIdDrone=0
 freeId = []
 
 def add_connect(websocket,owner):
     map_connect_droneList[websocket]=(owner,[])
     map_changed_path[owner] = []
-    print(map_connect_droneList)
+    #print(map_connect_droneList)
 
 def startServ():
     asyncio.run(server.init_serv())
@@ -40,13 +39,14 @@ def addDrone(websocket,drone):
     map_owner_idDrone[((owner,drone["name"]))] = idDrone
     return idDrone
     
-def changePath(paths):
+def changePath(paths,addedDrone):
     for identifier in paths:
         map_idDrone_path[identifier] = paths[identifier]
-        drone = getKeyFromDic(map_owner_idDrone,identifier)
-        owner=drone[0]
-        name=drone[1]
-        map_changed_path[owner].append(name)
+        if(identifier != addedDrone):
+            drone = getKeyFromDic(map_owner_idDrone,identifier)
+            owner=drone[0]
+            name=drone[1]
+            map_changed_path[owner].append(name)
     
 def getKeyFromDic(map :dict, value):
     auxKey = list(map.keys())
@@ -58,6 +58,7 @@ def detectChangedPath(paths):
         if(paths[identifier] != map_idDrone_path[identifier]):
             map_idDrone_path[identifier] = paths[identifier]
             drone = getKeyFromDic(map_owner_idDrone,identifier)
+            print("changed path")
             owner=drone[0]
             name=drone[1]
             map_changed_path[owner].append(name)
@@ -73,7 +74,6 @@ async def deleteConnection(websocket):
         del map_owner_idDrone[(owner,name)]
     del map_connect_droneList[websocket]
     print("suppresion finished")
-    print(map_connect_droneList)
 
 async def deleteDrone(websocket,drone):
     owner = map_connect_droneList[websocket][0]
@@ -99,8 +99,7 @@ async def sendStatus():
     for client in server.connect:
         ownerID = map_connect_droneList[client][0]
         droneList = map_connect_droneList[client][1]
-        print("la map des changed path est :")
-        print(map_changed_path)
+        print(droneList)
         await server.sendUnicast(convertionJson.statusToJson(ownerID,droneList,blocked_zones,0,map_changed_path[ownerID]),client)
         map_changed_path[ownerID]=[]
 
@@ -116,8 +115,8 @@ async def running():
                     name = drone["name"]
                     id_drone = map_owner_idDrone[(ownerID,name)]
                     if(len(map_idDrone_path[id_drone])>1):
-                        map_idDrone_path[id_drone]=map_idDrone_path[id_drone][1:]
                         drone["path"]=map_idDrone_path[id_drone]
+                        map_idDrone_path[id_drone]=map_idDrone_path[id_drone][1:]
                     else:
                         del map_idDrone_path[id_drone]
                         delIdDrone(id_drone)
@@ -125,6 +124,7 @@ async def running():
                         liste_drone.remove(drone)
         await sendStatus()
         sem.release()
+        
         await asyncio.sleep(period)
 
 
@@ -132,5 +132,4 @@ async def running():
 if __name__ == "__main__":
     t = threading.Thread(target=startServ)
     t.start()
-    print("Hello")
     asyncio.run(running())
