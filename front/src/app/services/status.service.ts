@@ -25,4 +25,8 @@ export class StatusService {
     return this.status.drones
       .filter((d) => d.start.toLatLng().equals(latLang, margin));
   }
+
+  public getDroneList(){
+    return this.status ? this.status.drones : [];
+  }
 }
