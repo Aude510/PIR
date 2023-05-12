@@ -27,9 +27,9 @@ export class WebSocketService {
     }
     return this.pop_up_status_subscription;
   }
-  subToMapUpdate(){
+  subToMapUpdate(): Subject<ServerMessage<Status>> {
     if(!this.map_update_subscription){
-      this.map_update_subscription = new Subject<ServerMessage<any>>();
+      this.map_update_subscription = new Subject<ServerMessage<Status>>();
     }
     return this.map_update_subscription;
   }
@@ -158,6 +158,8 @@ export class WebSocketService {
       return new Promise((resolve, reject) => reject("Socket is not open"));
     }
   }
+
+  // TODO: we need to know which drone were talking about
   sendAnswerPath(response: boolean): Promise<void> {
     console.log("Answering the path");
     this.socket?.send(JSON.stringify(response));

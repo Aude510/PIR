@@ -1,4 +1,8 @@
 import { Component } from '@angular/core';
+import { WebSocketService } from '../services/web-socket.service';
+import { ServerMessage } from 'src/model/ServerMessage';
+import { Status } from 'src/model/Status';
+import { Drone } from 'src/model/Drone';
 
 @Component({
   selector: 'app-confirm-path-notification',
@@ -13,7 +17,20 @@ export class ConfirmPathNotificationComponent {
 
 
 
+  public notification: string[] = [];
 
+  constructor(private socket: WebSocketService) {
+    this.socket.subToMapUpdate().subscribe((v: ServerMessage<Status>) => {
+        const status = v.data;
+        status.changed.forEach((c) => {
+            this.notification.push(`Path modified for drone ${c}`);
+            setTimeout(
+              () => this.notification.pop(),
+              30000
+            );
+        })
+    })
+  }
 
 //Αρχικά, χρειάζεται να έχουμε μια μεταβλητή η οποία θα αποθηκεύει την απάντηση του χρήστη, οπότε θα δηλώσουμε μια μεταβλητή userResponse στην αρχή της κλάσης μας ως εξής:
 //First, we need to have a variable that will store the user's response, so we'll declare a userResponse variable at the beginning of our class like this:
@@ -30,8 +47,10 @@ userResponse: boolean | undefined;
 
 sendAnswerPath(response: boolean): Promise<void> {
   console.log("Answering the path");
-  this.socket?.send(JSON.stringify(response));
+  this.notification.pop();
+  return this.socket?.sendAnswerPath(response);
 
+  /*
   // Θέτουμε την τιμή της userResponse  // Set the value of userResponse
   this.userResponse = response;
 
@@ -46,7 +65,7 @@ sendAnswerPath(response: boolean): Promise<void> {
     });
   } else {
     return new Promise((executor: (resolve: () => void, reject: (reason: string) => void) => void, reject: (reason: string) => void) => reject("Socket is not open"));
-  }
+  }*/
 
 
   //Στο επόμενο βήμα, θα πρέπει να προσθέσουμε λειτουργικότητα στη συνάρτηση handleMessage, έτσι ώστε να εκτελεί διαφορετικές ενέργειες ανάλογα με το μήνυμα που λαμβάνει από τον server.
@@ -55,7 +74,7 @@ sendAnswerPath(response: boolean): Promise<void> {
 //(First, we need to add a variable to hold the current state of the confirmation.)
 //Ας την ονομάσουμε confirmStatus και αρχικοποιούμε την τιμή της σε null, γιατί δεν έχουμε ακόμα λάβει επιβεβαίωση από τον χρήστη.
 //(Let's call it confirmStatus and initialize its value to null, because we haven't received a confirmation from the user yet.)
-
+/*
 export class ConfirmPathNotificationComponent {
   confirmStatus: boolean | null = null;
   // ...
@@ -87,5 +106,6 @@ export class ConfirmPathNotificationComponent {
           this.sendAnswer
         }
       }
-    }
+    }*/
+  }
   }
