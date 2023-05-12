@@ -4,6 +4,7 @@ import {Point} from "./Point";
 
 export class Drone {
 
+  public id: number | undefined;
 
   constructor(public name: string,
               public owner: Owner,
