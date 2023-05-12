@@ -53,6 +53,14 @@ export class MapService {
     }
   }
 
+  insertInMap(layer: Layer) {
+    if (this.map) {
+      layer.addTo(this.map);
+    } else {
+      alert("The map is not initialised, please refresh and try again");
+    }
+  }
+
   addDroneToMap(drone: Drone, layer: LayerGroup) {
     L.circleMarker(drone.start.toLatLng(),{color: 'green'}).addTo(layer);
     L.circleMarker(drone.destination.toLatLng(), {color: 'blue'}).addTo(layer);
