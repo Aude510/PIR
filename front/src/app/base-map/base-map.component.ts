@@ -28,7 +28,7 @@ export class BaseMapComponent {
 
   private initMap() {
     this.mapService.map = L.map('map', {
-      center: [ 51.5, -0.09 ],
+      center: [43.630764, 1.363702],
       zoom: 14
     });
 
@@ -39,7 +39,7 @@ export class BaseMapComponent {
     });
 
     this.mapService.map.on('click', (e: LeafletMouseEvent) => this.onMapClick(e));
-    this.MTDCS.initArea(51.5, -0.09);
+    this.MTDCS.initArea(43.630764, 1.363702);
     tiles.addTo(this.mapService.map);
   }
 
