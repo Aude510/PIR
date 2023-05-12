@@ -48,9 +48,15 @@ export class MapToDiscretCoordService {
     return (x >= 0 && x < MAX_POINTS && y >= 0 && y < MAX_POINTS ); 
   }
 
-  public convert(point: LatLng): Point{
+  public latLngToDiscret(point: LatLng): Point{
     let x: number = Math.floor((point.lng - this.origin.lng) / this.deltaX);
     let y: number = Math.floor((point.lat - this.origin.lat) / this.deltaY);
     return new Point(latLng(x, y)); 
+  }
+
+  public discretToLatLng(x: number, y: number): LatLng {
+    let lat: number = this.origin.lat + y * this.deltaY;
+    let lng: number = this.origin.lng + x * this.deltaX;
+    return new LatLng(lat, lng);
   }
 }

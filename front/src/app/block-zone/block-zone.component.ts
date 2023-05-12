@@ -132,7 +132,7 @@ export class BlockZoneComponent {
     }
      else {
       console.log("envoi des données au serveur");
-      let square: Square = {points:this.listePoints.map((p=>this.MTDCS.convert(p)))};
+      let square: Square = {points:this.listePoints.map((p=>this.MTDCS.latLngToDiscret(p)))};
       console.log(square.points[0]); 
       // TODO envoyer square au back 
       this.deleteZone();
