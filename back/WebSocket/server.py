@@ -71,7 +71,7 @@ async def handler(websocket,path):
                 case "delete_drone":
                     sem.acquire()
                     drone = convertionJson.jsonToDrone(message)
-                    identifier = await main.deleteDrone(websocket,drone) ## Suppression drone du status
+                    identifier = main.deleteDrone(websocket,drone) ## Suppression drone du status
                     environnement.deleteDrone(identifier) ## Suppresion drone de l'environnement
                     await sendUnicast(convertionJson.ackMessage("delete_drone"),websocket)
                     sem.release()
@@ -84,12 +84,12 @@ async def handler(websocket,path):
     except websockets.exceptions.ConnectionClosed as e: #Connection closed 
         print("Session closed") 
         connect.remove(websocket) #Delete the connection from the list
-        await main.deleteConnection(websocket)
+        main.deleteConnection(websocket,environnement)
     except convertionJson.MessageTypeError:
         print("Erreur sur le type du message reçu")
         await sendUnicast(convertionJson.errorMessage("test"),websocket) #Send an error message to the client
         connect.remove(websocket)
-        await main.deleteConnection(websocket)
+        main.deleteConnection(websocket,environnement)
     except convertionJson.ConnectionError:
         print("Erreur sur le message de connect")
         sendUnicast(convertionJson.errorMessage("connect"),websocket)

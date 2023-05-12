@@ -167,7 +167,8 @@ class Environment:
         for (k,v) in listDronesToUpdate.items():
             for drone in self.listDrones:
                 if k == drone[0]:
-                    drone[2] = v
+                    self.listDrones.remove(drone)
+                    self.listDrones.append((drone[0], drone[1], [v[0][0], v[0][1], 0], drone[3], drone[4]))
 
     def plotting(self):
         plt.show()

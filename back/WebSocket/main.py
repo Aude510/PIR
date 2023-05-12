@@ -3,6 +3,7 @@ import server
 import threading
 import convertionJson
 from structure import *
+import trajectory
 
 period = 5 ## Period to send status ##
 nextIdDrone=0
@@ -65,17 +66,18 @@ def detectChangedPath(paths):
 
 
 
-async def deleteConnection(websocket):
+def deleteConnection(websocket,env : trajectory.Environment):
     owner = map_connect_droneList[websocket][0]
     droneList = map_connect_droneList[websocket][1]
     for drone in droneList:
         name = drone["name"]
-        del map_idDrone_path[map_owner_idDrone[(owner,name)]]
-        del map_owner_idDrone[(owner,name)]
+        identifier = map_owner_idDrone[(owner,name)]
+        env.deleteDrone(identifier)
+        deleteDrone(websocket,drone)
     del map_connect_droneList[websocket]
     print("suppresion finished")
 
-async def deleteDrone(websocket,drone):
+def deleteDrone(websocket,drone):
     owner = map_connect_droneList[websocket][0]
     droneList = map_connect_droneList[websocket][1]
     name = drone["name"]
