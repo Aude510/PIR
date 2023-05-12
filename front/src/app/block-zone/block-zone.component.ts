@@ -5,6 +5,7 @@ import { Square } from 'src/model/Square';
 import { Point } from 'src/model/Point';
 import { MapService } from '../services/map.service';
 import { MapToDiscretCoordService } from '../services/map-to-discret-coord.service';
+import {WebSocketService} from "../services/web-socket.service";
 
 
 
@@ -15,14 +16,14 @@ import { MapToDiscretCoordService } from '../services/map-to-discret-coord.servi
 })
 export class BlockZoneComponent {
 
-  private listePoints: Array<LatLng> = []; // ne pas oublier d'init 
+  private listePoints: Array<LatLng> = []; // ne pas oublier d'init
   private listeMarkers: Array<L.Marker> = [];
-  private map: any = null; 
-  private polygon: any = null; 
-  private layer: LayerGroup; 
-  private tailleSquare: number = 4 ; 
+  private map: any = null;
+  private polygon: any = null;
+  private layer: LayerGroup;
+  private tailleSquare: number = 4 ;
 
-  public constructor(private mapService:MapService, private MTDCS: MapToDiscretCoordService) {
+  public constructor(private mapService:MapService, private MTDCS: MapToDiscretCoordService,private webSocket:WebSocketService) {
     //Callback pour récupérer les coord sur la zone discretisée
 
     this.mapService.onMapClickedTakeSubscription().subscribe((e) => {
@@ -32,9 +33,9 @@ export class BlockZoneComponent {
       // permet de pas supprimer le callback quand on clique sur la map
       // this.MTDCS.onMapClick(e);
     });
-    
+
     this.layer = new L.LayerGroup();
-    this.mapService.addToMap(this.layer);    
+    this.mapService.addToMap(this.layer);
   }
 
   // returns true if the line from (a,b)->(c,d) intersects with (p,q)->(r,s)
@@ -52,11 +53,11 @@ export class BlockZoneComponent {
   };
 
 
-  // return false si la zone est incorrecte (deux triangles collés au lieu d'un polygone à 4 côtés) 
+  // return false si la zone est incorrecte (deux triangles collés au lieu d'un polygone à 4 côtés)
   private checkWrongZone(listePoints: Array<LatLng>){
-    // vérifier que les points ont été rentrés dans l'ordre 
+    // vérifier que les points ont été rentrés dans l'ordre
     // côté entre P0 et P3 et entre P1 et P2
-    // si ils se croisent alors la zone est mal formée 
+    // si ils se croisent alors la zone est mal formée
     let croisent:boolean = this.intersects(listePoints[0].lat,listePoints[0].lng,
                                             listePoints[3].lat,listePoints[3].lng,
                                             listePoints[1].lat,listePoints[1].lng,
@@ -68,40 +69,40 @@ export class BlockZoneComponent {
 
   addPoint(event: L.LeafletMouseEvent){
 
-   
+
 
     // let scope {}
     // var scope par fonction (à éviter)
-    // attention const = final en java, pas constante 
-    
-    
-    // assignation de la map : 
+    // attention const = final en java, pas constante
+
+
+    // assignation de la map :
     if (this.map==null){
       this.map=this.mapService.map;
     }
 
     if (!this.MTDCS.onZone(event.latlng)) {
-      alert("You are outside the zone!"); 
-      return ; 
+      alert("You are outside the zone!");
+      return ;
     }
 
-    if (this.listePoints.length<this.tailleSquare-1){ // premiers points 
-      // add point à la liste 
-      this.listePoints.push(event.latlng); 
-      /* add marqueur sur la map à la position du point */ 
-      let marker: L.Marker = new L.Marker(event.latlng); 
-      this.listeMarkers.push(marker); 
-      marker.addTo(this.layer); 
-    } else if (this.listePoints.length==this.tailleSquare-1) { // dernier point 
-      // add point à la liste 
-      this.listePoints.push(event.latlng); 
-      /* add marqueur sur la map de l'event à la position du point */ 
-      let marker: L.Marker = new L.Marker(event.latlng); 
-      this.listeMarkers.push(marker); 
-      marker.addTo(this.layer); 
-      // tracer polygone 
+    if (this.listePoints.length<this.tailleSquare-1){ // premiers points
+      // add point à la liste
+      this.listePoints.push(event.latlng);
+      /* add marqueur sur la map à la position du point */
+      let marker: L.Marker = new L.Marker(event.latlng);
+      this.listeMarkers.push(marker);
+      marker.addTo(this.layer);
+    } else if (this.listePoints.length==this.tailleSquare-1) { // dernier point
+      // add point à la liste
+      this.listePoints.push(event.latlng);
+      /* add marqueur sur la map de l'event à la position du point */
+      let marker: L.Marker = new L.Marker(event.latlng);
+      this.listeMarkers.push(marker);
+      marker.addTo(this.layer);
+      // tracer polygone
       this.polygon = L.polygon(this.listePoints);
-      this.polygon.addTo(this.layer); 
+      this.polygon.addTo(this.layer);
     } else {
       alert("please submit or redraw the zone");
     }
@@ -112,7 +113,7 @@ export class BlockZoneComponent {
   deleteZone(){
     console.log("effacement des points");
     this.listePoints=[];
-    // virer les marqueurs 
+    // virer les marqueurs
     for (let marker of this.listeMarkers){
       this.map.removeLayer(marker);
     }
@@ -121,7 +122,7 @@ export class BlockZoneComponent {
     if (this.polygon!=null){
       this.map.removeLayer(this.polygon);
     }
-    this.polygon=null; 
+    this.polygon=null;
   }
 
   sendToBack(){
@@ -133,8 +134,9 @@ export class BlockZoneComponent {
      else {
       console.log("envoi des données au serveur");
       let square: Square = {points:this.listePoints.map((p=>this.MTDCS.latLngToDiscret(p)))};
-      console.log(square.points[0]); 
-      // TODO envoyer square au back 
+      console.log(square.points[0]);
+      // TODO envoyer square au back
+      this.webSocket?.sendBlockedZone({square:square })
       this.deleteZone();
     }
    }

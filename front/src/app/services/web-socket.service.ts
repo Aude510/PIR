@@ -6,8 +6,8 @@ import {Path} from "../../model/Path";
 import {Subject} from "rxjs";
 import {Zone} from "../../model/Zone";
 import {Point} from "../../model/Point";
-import {ServerConnect} from "../../model/ServerConnect";
 import {Status} from "../../model/Status";
+import {ServerConnect} from "../../model/ServerConnect";
 
 
 @Injectable({
@@ -16,67 +16,71 @@ import {Status} from "../../model/Status";
 export class WebSocketService {
 
   public socket: WebSocket | undefined;
-
-  private pop_up_status_subscription: Subject<ServerMessage<any>> | undefined;
+  private drone: Drone |undefined;
+  private pop_up_status_subscription: Subject<ServerMessage<Status>> | undefined;
   private map_update_subscription: Subject<ServerMessage<Status>> | undefined;
-  private statusReceive : Subject<ServerMessage<any>>;
+  private statusReceive: Subject<ServerMessage<any>>;
 
-  subToPopUp(){
-    if(!this.pop_up_status_subscription){
+  subToPopUp() {
+    if (!this.pop_up_status_subscription) {
       this.pop_up_status_subscription = new Subject<ServerMessage<any>>();
     }
     return this.pop_up_status_subscription;
   }
-  subToMapUpdate(): Subject<ServerMessage<Status>> {
-    if(!this.map_update_subscription){
-      this.map_update_subscription = new Subject<ServerMessage<Status>>();
+
+  subToMapUpdate() {
+    if (!this.map_update_subscription) {
+      this.map_update_subscription = new Subject<ServerMessage<any>>();
     }
     return this.map_update_subscription;
   }
 
-
   public constructor() {
-    this.statusReceive = new  Subject<ServerMessage<any>>();
+    this.statusReceive = new Subject<ServerMessage<any>>();
     console.log("Initialising the web socket\n");
     try {
-     const s = new WebSocket("ws://192.168.43.17:80");
-     s.onopen = () => this.socket = s;
-     s.onerror = () => this.socket = undefined;
+       this.socket = new WebSocket("ws://192.168.43.17:80");
+      // s.onopen = () => this.socket = s;
+      //
+      // s.onerror = () => this.socket = undefined;
     } catch (e) { // webSocket only throws syntax error
       this.socket = undefined
-      console.error("Erro parsing the URI");
+      console.error("Error parsing the URI");
     }
 
-    if(this.socket != undefined) {
+    if (this.socket != undefined) {
+
       this.socket.onopen = (event) => {
         console.log("Connected to the server !\n")
+        let message: ServerConnect = {type: "connect", data: {owner: "dsfg"}};
+        this.socket?.send(JSON.stringify(message));
 
-        /*const dd = new Drone("Cador", {ID:69},10,new Path([]),Point.fromTuple(10,10),Point.fromTuple(50,50));
+        const dd = new Drone("Cador", {ID:"q,kdfnqdsjnvjsdn"},10,new Path([]),Point.fromTuple(10,10),Point.fromTuple(50,50));
         this.sendNewDrone(dd)
           .then((data) => console.log(data))
           .catch((e) => {
             console.log("ERRROR : "+e);
-          })*/
+          })
+        this.drone = dd;
 
-        /*this.sendDeleteDrone(dd)
-          .then((data) => console.log(data))
-          .catch((e) => console.log(e));
-        */
-        let message : ServerConnect = {type: "connect",data: {Owner: 3}};
-        this.socket?.send(JSON.stringify(message));
+
+
         // @ts-ignore
-        this.socket.onmessage = (event : ServerMessage<any>) => {
-          const received_message = JSON.parse(event.data);
-          console.log("Réception d'un message:"+ received_message + " " +event.data.type);
+        this.socket.onmessage = (event: ServerMessage<any>) => {
+
+          const received_message = event.data;
+          console.log("Réception d'un message:" + received_message + " " + event.data.type);
           // TODO: check if is the right response
           this.demultiplexMessage(received_message);
         }
       }
 
       this.socket.onclose = (event) => {
-          console.log("Communication with the server is lost");
+        console.log("Communication with the server is lost");
       }
 
+    } else {
+      console.log("ALLLLLLLLLLLLLLLLLLLLLLEEEEEEEEEEEEEEEEEEED");
     }
   }
 
@@ -87,29 +91,36 @@ export class WebSocketService {
       case "block_zone":
       case "new_drone":
       case "delete_drone":
-      case "get_status":
         console.log("ALED")
         this.statusReceive.next(event.data);
+        break;
+      case "pop_up":
+        console.log("Pop-up");
+        this.pop_up_status_subscription?.next(event.data);
+        break;
+      case "get_status":
+        console.log("Map Update");
+        this.map_update_subscription?.next(event.data);
         break;
 
     }
   }
 
-  sendNewDrone(drone : Drone): Promise<ServerMessage<Drone>> {
+  sendNewDrone(drone: Drone): Promise<ServerMessage<Drone>> {
     const data: ServerRequest<Drone> = {type: "new_drone", data: drone};
     console.log("Sending a new drone");
     this.socket?.send(JSON.stringify(data));
 
-    if(this.socket) {
+    if (this.socket) {
       return new Promise((resolve, reject) => {
-        this.statusReceive.subscribe((e)=> {
+        this.statusReceive.subscribe((e) => {
           console.log("Received a message at sendNewDrone")
           this.statusReceive.unsubscribe()
           //console.log(e.data)
           resolve(e);
         })
         // @ts-ignore
-        setTimeout(() => reject(new Error("Timeout")), 5000);
+        setTimeout(() => reject(new Error("Timeout")), 50000);
       })
     } else {
       return new Promise((resolve, reject) => reject("Socket is not open"));
@@ -117,60 +128,63 @@ export class WebSocketService {
 
   }
 
-  sendDeleteDrone(drone: Drone): Promise<ServerMessage<Drone>>{
+  sendDeleteDrone(drone: Drone): Promise<ServerMessage<Drone>> {
     const data: ServerRequest<Drone> = {type: "delete_drone", data: drone};
     console.log("Deleting the drone");
     this.socket?.send(JSON.stringify(data));
 
-    if(this.socket) {
+    if (this.socket) {
       return new Promise((resolve, reject) => {
-        this.statusReceive.subscribe((e)=> {
+        this.statusReceive.subscribe((e) => {
           console.log("Received a message at sendDeleteDrone")
           this.statusReceive.unsubscribe()
           console.log(e.data)
           resolve(e);
         })
         // @ts-ignore
-        setTimeout(() => reject(new Error("Timeout")), 5000);
+        setTimeout(() => reject(new Error("Timeout")), 50000);
       })
     } else {
       return new Promise((resolve, reject) => reject("Socket is not open"));
     }
   }
 
-  sendBlockedZone(zone: Zone): Promise<ServerMessage<Drone>>{
-    const data: ServerRequest<Zone> = {type: "block_zone", data:zone};
+  sendBlockedZone(zone: Zone): Promise<ServerMessage<Drone>> {
+    const data: ServerRequest<Zone> = {type: "block_zone", data: zone};
     console.log("Blocking a new zone");
     this.socket?.send(JSON.stringify(data));
 
-    if(this.socket) {
+    if (this.socket) {
       return new Promise((resolve, reject) => {
-        this.statusReceive.subscribe((e)=> {
+        this.statusReceive.subscribe((e) => {
           console.log("Received a message at blocked zone")
           this.statusReceive.unsubscribe()
           console.log(e.data)
           resolve(e);
         })
         // @ts-ignore
-        setTimeout(() => reject(new Error("Timeout")), 5000);
+        setTimeout(() => reject(new Error("Timeout")), 50000);
       })
     } else {
       return new Promise((resolve, reject) => reject("Socket is not open"));
     }
   }
 
-  // TODO: we need to know which drone were talking about
   sendAnswerPath(response: boolean): Promise<void> {
     console.log("Answering the path");
     this.socket?.send(JSON.stringify(response));
-    if(this.socket) {
+    if (this.socket) {
       return new Promise((resolve, reject) => {
         resolve();
         // @ts-ignore
-        setTimeout(() => reject(new Error("Timeout")), 5000);
+        setTimeout(() => reject(new Error("Timeout")), 50000);
       })
     } else {
       return new Promise((resolve, reject) => reject("Socket is not open"));
     }
+  }
+  suppDD(){
+    if(this.drone)
+      this.sendDeleteDrone(this.drone);
   }
 }
