@@ -59,4 +59,12 @@ export class MapService {
     const path = drone.path.toLatLang();
     L.polyline(path).addTo(layer);
   }
+
+  insertInMap(layer: Layer) {
+    if (this.map) {
+      layer.addTo(this.map);
+    } else {
+      alert("The map is not initialised, please refresh and try again");
+    }
+  }
 }
