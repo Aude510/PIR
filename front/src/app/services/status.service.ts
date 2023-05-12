@@ -15,7 +15,7 @@ export class StatusService {
   public status: Status | undefined;
   constructor(private socket: WebSocketService) {
     this.socket.subToMapUpdate().subscribe((d) => {
-      this.status = d.data;
+      this.status = d;
     })
   }
 

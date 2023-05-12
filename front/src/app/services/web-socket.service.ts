@@ -18,7 +18,7 @@ export class WebSocketService {
   public socket: WebSocket | undefined;
   private drone: Drone |undefined;
   private pop_up_status_subscription: Subject<ServerMessage<Status>> | undefined;
-  private map_update_subscription: Subject<ServerMessage<Status>> | undefined;
+  private map_update_subscription = new Subject<Status>();
   private statusReceive: Subject<ServerMessage<any>>;
 
   subToPopUp() {
@@ -29,9 +29,6 @@ export class WebSocketService {
   }
 
   subToMapUpdate() {
-    if (!this.map_update_subscription) {
-      this.map_update_subscription = new Subject<ServerMessage<any>>();
-    }
     return this.map_update_subscription;
   }
 
@@ -71,7 +68,7 @@ export class WebSocketService {
           const received_message = event.data;
           console.log("Réception d'un message:" + received_message + " " + event.data.type);
           // TODO: check if is the right response
-          this.demultiplexMessage(received_message);
+          this.demultiplexMessage(JSON.parse(event.data));
         }
       }
 
@@ -79,6 +76,9 @@ export class WebSocketService {
         console.log("Communication with the server is lost");
       }
 
+      this.subToMapUpdate().subscribe((v) => {
+        console.log("cqsjyhegdfhoil");
+      })
     } else {
       console.log("ALLLLLLLLLLLLLLLLLLLLLLEEEEEEEEEEEEEEEEEEED");
     }
@@ -100,9 +100,8 @@ export class WebSocketService {
         break;
       case "get_status":
         console.log("Map Update");
-        this.map_update_subscription?.next(event.data);
+        this.map_update_subscription.next(event.data);
         break;
-
     }
   }
 
