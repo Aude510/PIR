@@ -31,7 +31,7 @@ export class MapToDiscretCoordService {
     
     this.deltaX = Math.acos(a / c - b) * 180 / Math.PI;
     this.deltaY = k * 180 / Math.PI; 
-    this.origin = new LatLng(lat - this.deltaY * (MAX_POINTS + 1) / 2, lng - this.deltaX * (MAX_POINTS + 1) / 2);
+    this.origin = new LatLng(lat - this.deltaY * MAX_POINTS / 2, lng - this.deltaX * MAX_POINTS / 2);
 
     let p0 = new LatLng(this.origin.lat, this.origin.lng);
     let p1 = new LatLng(this.origin.lat + this.deltaY * MAX_POINTS, this.origin.lng);
