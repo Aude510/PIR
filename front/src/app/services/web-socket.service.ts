@@ -6,6 +6,7 @@ import {Path} from "../../model/Path";
 import {Subject} from "rxjs";
 import {Zone} from "../../model/Zone";
 import {Point} from "../../model/Point";
+import {ServerConnect} from "../../model/ServerConnect";
 import {Status} from "../../model/Status";
 
 
@@ -50,18 +51,19 @@ export class WebSocketService {
       this.socket.onopen = (event) => {
         console.log("Connected to the server !\n")
 
-        // @ts-ignore
-        const dd = new Drone("Cador", {id:"69"},10,new Path([]),Point.fromTuple(10,10),Point.fromTuple(50,50));
+        /*const dd = new Drone("Cador", {ID:69},10,new Path([]),Point.fromTuple(10,10),Point.fromTuple(50,50));
         this.sendNewDrone(dd)
           .then((data) => console.log(data))
           .catch((e) => {
             console.log("ERRROR : "+e);
-          })
+          })*/
 
         /*this.sendDeleteDrone(dd)
           .then((data) => console.log(data))
           .catch((e) => console.log(e));
         */
+        let message : ServerConnect = {type: "connect",data: {Owner: 3}};
+        this.socket?.send(JSON.stringify(message));
         // @ts-ignore
         this.socket.onmessage = (event : ServerMessage<any>) => {
           const received_message = JSON.parse(event.data);
