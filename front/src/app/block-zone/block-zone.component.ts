@@ -24,17 +24,7 @@ export class BlockZoneComponent {
   private tailleSquare: number = 4 ; 
 
   public constructor(private mapService:MapService, private MTDCS: MapToDiscretCoordService) {
-    //Callback pour récupérer les coord sur la zone discretisée
-    this.MTDCS.setAreaClickCallback((e: AreaMouseEvent) => this.addPointButDiscret(e));
-
-    this.mapService.onMapClickedTakeSubscription().subscribe((e) => {
-      // j'ai juste commenté ton code pour tester le miens 😊
-      this.addPoint(e);
-
-      // permet de pas supprimer le callback quand on clique sur la map
-      // this.MTDCS.onMapClick(e);
-    });
-    
+    this.mapService.onMapClickedTakeSubscription().subscribe((e) => this.addPoint(e));
     this.layer = new L.LayerGroup();
     this.mapService.addToMap(this.layer);    
   }

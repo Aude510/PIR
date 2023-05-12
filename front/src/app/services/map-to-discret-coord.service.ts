@@ -1,20 +1,15 @@
 import { Injectable } from '@angular/core';
-import { LatLng, LayerGroup, LeafletMouseEvent, Polygon, latLng } from 'leaflet';
+import { LatLng, LayerGroup, Polygon, latLng } from 'leaflet';
 import { Point } from 'src/model/Point';
-
-import {Subject} from "rxjs";
 import { MapService } from './map.service';
-import { AreaMouseEvent } from 'src/model/AreaMouseEvent';
 
-const MAX_POINTS: number = 100;
+const MAX_POINTS: number = 500;
 const DIST: number = 10; 
 
 @Injectable({
   providedIn: 'root'
 })
 export class MapToDiscretCoordService {
-  private points: Array<Array<Polygon>>;
-  private sub: Subject<AreaMouseEvent>;
   private layer: LayerGroup;
   private mapService: MapService;
   private origin: LatLng;
@@ -24,22 +19,14 @@ export class MapToDiscretCoordService {
   constructor(mapService: MapService) { 
     this.layer = new LayerGroup();
     this.origin = new LatLng(0, 0);
-    this.sub = new Subject();
-    this.points = [];
     this.deltaX = 0;
     this.deltaY = 0;
     this.mapService = mapService;
-  }
-  
-  public setAreaClickCallback(callback: ((e: AreaMouseEvent) => void)) {
-    this.sub = new Subject();
-    this.sub.subscribe(callback);
   }
 
   public initArea(lat: number, lng: number): void {
     this.mapService.addToMap(this.layer);    
     
-    this.origin = new LatLng(lat, lng);
     let latRad = lat * Math.PI / 180;
     let k: number = DIST / (6371 * 1000);
     let a: number = Math.cos(k);
@@ -48,49 +35,26 @@ export class MapToDiscretCoordService {
     
     this.deltaX = Math.acos(a / c - b) * 180 / Math.PI;
     this.deltaY = k * 180 / Math.PI; 
-    
-    for (let y: number = 0; y < MAX_POINTS; y++) {
-      this.points[y] = [];
-      for (let x: number = 0; x < MAX_POINTS; x++) {        
-        let p1: LatLng = new LatLng(lat + y * this.deltaY, lng + x * this.deltaX);
-        let p2: LatLng = new LatLng(p1.lat, p1.lng + this.deltaX);
-        let p3: LatLng = new LatLng(p1.lat + this.deltaY, p1.lng + this.deltaX);
-        let p4: LatLng = new LatLng(p1.lat + this.deltaY, p1.lng);
-        let point: Polygon = new Polygon([p1, p2, p3, p4], {color: "#00000000", fillColor: "#f03", fillOpacity: 0.5})
-        point.addTo(this.layer);
-        this.points[y][x] = point;
-      }
-    }
-  }
+    this.origin = new LatLng(lat - this.deltaY * (MAX_POINTS + 1) / 2, lng - this.deltaX * (MAX_POINTS + 1) / 2);
 
-  public onMapClick(e: LeafletMouseEvent): void {
-    let pos: LatLng = e.latlng;
-    let x: number = Math.floor((pos.lng - this.origin.lng) / this.deltaX);
-    let y: number = Math.floor((pos.lat - this.origin.lat) / this.deltaY);
-  
-    if (x >= 0 && x < MAX_POINTS && y >= 0 && y < MAX_POINTS ) {
-      this.points[y][x].setStyle({fillColor: '#00ff00'});
-      this.sub.next({
-        x: x, 
-        y: y, 
-        lat: this.origin.lat + this.deltaY * ( y + 0.5 ),
-        lng: this.origin.lng + this.deltaX * ( x + 0.5 )
-      }); 
-    }
+    let p0 = new LatLng(this.origin.lat, this.origin.lng);
+    let p1 = new LatLng(this.origin.lat + this.deltaY * (MAX_POINTS + 1), this.origin.lng);
+    let p2 = new LatLng(this.origin.lat + this.deltaY * (MAX_POINTS + 1), this.origin.lng + this.deltaX * (MAX_POINTS + 1));
+    let p3 = new LatLng(this.origin.lat, this.origin.lng + this.deltaX * (MAX_POINTS + 1));
+    let polygon = new Polygon([p0, p1, p2, p3], {color: "#0000ffff", fillColor: "#00000000", fillOpacity: 0.2});
+
+    polygon.addTo(this.layer);
   }
 
   public onZone(pos: LatLng): boolean{
     let x: number = Math.floor((pos.lng - this.origin.lng) / this.deltaX);
     let y: number = Math.floor((pos.lat - this.origin.lat) / this.deltaY);
-  
     return (x >= 0 && x < MAX_POINTS && y >= 0 && y < MAX_POINTS ); 
-
   }
 
   public convert(point: LatLng): Point{
     let x: number = Math.floor((point.lng - this.origin.lng) / this.deltaX);
     let y: number = Math.floor((point.lat - this.origin.lat) / this.deltaY);
-    return new Point(latLng(x,y)); 
-  
+    return new Point(latLng(x, y)); 
   }
 }
