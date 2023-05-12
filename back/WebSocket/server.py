@@ -16,8 +16,8 @@ async def handler(websocket,path):
     ## TODO : bouger le append du connect au moment où je recevrais le message connexion
     print("Je suis dans le handler")
     try:
-        id = 0
         message = await websocket.recv()
+        print(message)
         if(convertionJson.jsonToType(message)=="connect"):
             sem.acquire()
             #id = newIdConnect()
@@ -28,6 +28,7 @@ async def handler(websocket,path):
         else:
             raise convertionJson.ConnectionError
         async for message in websocket: #Handle every message from the connection
+            print(message)
             match convertionJson.jsonToType(message): #Identifies the type of the message if not, raise MessageTypeError
                 case "answer_path":
                     sem.acquire()
@@ -82,17 +83,28 @@ async def handler(websocket,path):
                 case _:
                     raise convertionJson.MessageTypeError
     except websockets.exceptions.ConnectionClosed as e: #Connection closed 
-        print("Session closed") 
-        connect.remove(websocket) #Delete the connection from the list
-        main.deleteConnection(websocket,environnement)
+        sem.acquire()
+        try:
+            print("Session closed") 
+            connect.remove(websocket) #Delete the connection from the list
+            main.deleteConnection(websocket,environnement)
+        except:
+            print("Erreur sur le message de connect")
+            await sendUnicast(convertionJson.errorMessage("connect"),websocket)
+        finally:
+            sem.release()
     except convertionJson.MessageTypeError:
+        sem.acquire()
         print("Erreur sur le type du message reçu")
         await sendUnicast(convertionJson.errorMessage("test"),websocket) #Send an error message to the client
         connect.remove(websocket)
         main.deleteConnection(websocket,environnement)
+        sem.release()
     except convertionJson.ConnectionError:
+        sem.acquire()
         print("Erreur sur le message de connect")
         sendUnicast(convertionJson.errorMessage("connect"),websocket)
+        sem.release()
 
 #Send a message to an unique client 
 async def sendUnicast(message, websocket):
@@ -100,7 +112,10 @@ async def sendUnicast(message, websocket):
     try:
         await websocket.send(message)
     except websockets.exceptions.ConnectionClosed:
+        sem.acquire()
+        main.deleteConnection(websocket,environnement)
         print("Impossible to send connection was closed")
+        sem.release()
 
 
 #Créer le serveur websocket et envoi périodiquement à tous les clients le statu

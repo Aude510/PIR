@@ -10,8 +10,18 @@ nextIdDrone=0
 freeId = []
 
 def add_connect(websocket,owner):
-    map_connect_droneList[websocket]=(owner,[])
-    map_changed_path[owner] = []
+    found = False
+    for key in map_connect_droneList:
+        ownerID = map_connect_droneList[key][0]
+        if (owner == ownerID):
+            found = True
+    if found:
+        map_connect_droneList[websocket] = (owner,map_connect_droneList[key][1])
+        del map_connect_droneList[key]
+        server.connect.remove(key)
+    else:
+        map_connect_droneList[websocket]=(owner,[])
+        map_changed_path[owner] = []
     #print(map_connect_droneList)
 
 def startServ():
@@ -101,7 +111,6 @@ async def sendStatus():
     for client in server.connect:
         ownerID = map_connect_droneList[client][0]
         droneList = map_connect_droneList[client][1]
-        print(droneList)
         await server.sendUnicast(convertionJson.statusToJson(ownerID,droneList,blocked_zones,0,map_changed_path[ownerID]),client)
         map_changed_path[ownerID]=[]
 
