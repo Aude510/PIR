@@ -29,10 +29,10 @@ export class BlockZoneComponent {
 
     this.mapService.onMapClickedTakeSubscription().subscribe((e) => {
       // j'ai juste commenté ton code pour tester le miens 😊
-      // this.addPoint(e);
+      this.addPoint(e);
 
       // permet de pas supprimer le callback quand on clique sur la map
-      this.MTDCS.onMapClick(e);
+      // this.MTDCS.onMapClick(e);
     });
     
     this.layer = new L.LayerGroup();
@@ -70,8 +70,7 @@ export class BlockZoneComponent {
 
   addPoint(event: L.LeafletMouseEvent){
 
-    // TODO si un connard clique pas dans l'ordre    
-
+   
 
     // let scope {}
     // var scope par fonction (à éviter)
@@ -81,6 +80,11 @@ export class BlockZoneComponent {
     // assignation de la map : 
     if (this.map==null){
       this.map=this.mapService.map;
+    }
+
+    if (!this.MTDCS.onZone(event.latlng)) {
+      alert("vous êtes hors de la zone!"); 
+      return ; 
     }
 
     if (this.listePoints.length<this.tailleSquare-1){ // premiers points 
@@ -130,13 +134,15 @@ export class BlockZoneComponent {
     }
      else {
       console.log("envoi des données au serveur");
-      let square: Square = {points:this.listePoints.map((p) => new Point(p))};
+      let square: Square = {points:this.listePoints.map((p=>this.MTDCS.convert(p)))};
+      console.log(square.points); 
       // TODO envoyer square au back 
       this.deleteZone();
     }
    }
 
-   private addPointButDiscret(e: AreaMouseEvent) {
+  private addPointButDiscret(e: AreaMouseEvent) {
     new L.Marker([e.lat, e.lng]).addTo(this.layer);
-   }
+    console.log(e)
+  }
 }
