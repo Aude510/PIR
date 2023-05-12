@@ -141,16 +141,17 @@ def jsonToOwner(message) -> str:
     if(type(y["data"]["owner"])== str):
         return y["data"]["owner"]
     else:
-        raise MessageTypeError
+        raise ConnectionError
 
 #Convert from Json to Squares
 #input = message : str
 #return = square : list[points]
 def jsonToZone(message):
     y=json.loads(message)
-    zone = y["data"]
-    if(len(zone["square"]["points"])==4):
-        return zone["square"]["points"]
+    data = y["data"]
+    zone = data["square"]["points"]
+    if(len(zone)==4):
+        return zone
     else:
         raise MessageTypeError
     
