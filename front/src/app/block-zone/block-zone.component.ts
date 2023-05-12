@@ -5,7 +5,6 @@ import { Square } from 'src/model/Square';
 import { Point } from 'src/model/Point';
 import { MapService } from '../services/map.service';
 import { MapToDiscretCoordService } from '../services/map-to-discret-coord.service';
-import { AreaMouseEvent } from 'src/model/AreaMouseEvent';
 
 
 

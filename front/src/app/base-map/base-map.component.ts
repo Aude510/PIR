@@ -4,7 +4,6 @@ import {LeafletMouseEvent} from "leaflet";
 import {MapMouseEvent} from "../../model/MapMouseEvent";
 import {MapService} from "../services/map.service";
 import { MapToDiscretCoordService } from '../services/map-to-discret-coord.service';
-import { AreaMouseEvent } from 'src/model/AreaMouseEvent';
 
 /**
  * This is a component to adapt leaflet in the angular architecture.
