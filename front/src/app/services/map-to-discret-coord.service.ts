@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { LatLng, LayerGroup, Polygon, latLng } from 'leaflet';
+import { LatLng, Polygon, latLng } from 'leaflet';
 import { Point } from 'src/model/Point';
 import { MapService } from './map.service';
 
@@ -10,23 +10,19 @@ const DIST: number = 10;
   providedIn: 'root'
 })
 export class MapToDiscretCoordService {
-  private layer: LayerGroup;
   private mapService: MapService;
   private origin: LatLng;
   private deltaX: number;
   private deltaY: number;
 
   constructor(mapService: MapService) { 
-    this.layer = new LayerGroup();
     this.origin = new LatLng(0, 0);
     this.deltaX = 0;
     this.deltaY = 0;
     this.mapService = mapService;
   }
 
-  public initArea(lat: number, lng: number): void {
-    this.mapService.addToMap(this.layer);    
-    
+  public initArea(lat: number, lng: number): void {    
     let latRad = lat * Math.PI / 180;
     let k: number = DIST / (6371 * 1000);
     let a: number = Math.cos(k);
@@ -43,7 +39,7 @@ export class MapToDiscretCoordService {
     let p3 = new LatLng(this.origin.lat, this.origin.lng + this.deltaX * (MAX_POINTS + 1));
     let polygon = new Polygon([p0, p1, p2, p3], {color: "#0000ffff", fillColor: "#00000000", fillOpacity: 0.2});
 
-    polygon.addTo(this.layer);
+    this.mapService.insertInMap(polygon);
   }
 
   public onZone(pos: LatLng): boolean{
