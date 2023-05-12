@@ -51,4 +51,12 @@ export class MapService {
       alert("The map is not initialised, please refresh and try again");
     }
   }
+
+  insertInMap(layer: Layer) {
+    if (this.map) {
+      layer.addTo(this.map);
+    } else {
+      alert("The map is not initialised, please refresh and try again");
+    }
+  }
 }
