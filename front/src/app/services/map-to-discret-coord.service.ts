@@ -34,9 +34,9 @@ export class MapToDiscretCoordService {
     this.origin = new LatLng(lat - this.deltaY * (MAX_POINTS + 1) / 2, lng - this.deltaX * (MAX_POINTS + 1) / 2);
 
     let p0 = new LatLng(this.origin.lat, this.origin.lng);
-    let p1 = new LatLng(this.origin.lat + this.deltaY * (MAX_POINTS + 1), this.origin.lng);
-    let p2 = new LatLng(this.origin.lat + this.deltaY * (MAX_POINTS + 1), this.origin.lng + this.deltaX * (MAX_POINTS + 1));
-    let p3 = new LatLng(this.origin.lat, this.origin.lng + this.deltaX * (MAX_POINTS + 1));
+    let p1 = new LatLng(this.origin.lat + this.deltaY * MAX_POINTS, this.origin.lng);
+    let p2 = new LatLng(this.origin.lat + this.deltaY * MAX_POINTS, this.origin.lng + this.deltaX * MAX_POINTS);
+    let p3 = new LatLng(this.origin.lat, this.origin.lng + this.deltaX * MAX_POINTS);
     let polygon = new Polygon([p0, p1, p2, p3], {color: "#0000ffff", fillColor: "#00000000", fillOpacity: 0.2});
 
     this.mapService.insertInMap(polygon);
