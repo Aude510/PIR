@@ -24,7 +24,16 @@ export class BlockZoneComponent {
   private tailleSquare: number = 4 ; 
 
   public constructor(private mapService:MapService, private MTDCS: MapToDiscretCoordService) {
-    this.mapService.onMapClickedTakeSubscription().subscribe((e) => this.addPoint(e));
+    //Callback pour récupérer les coord sur la zone discretisée
+
+    this.mapService.onMapClickedTakeSubscription().subscribe((e) => {
+      // j'ai juste commenté ton code pour tester le miens 😊
+      this.addPoint(e);
+
+      // permet de pas supprimer le callback quand on clique sur la map
+      // this.MTDCS.onMapClick(e);
+    });
+    
     this.layer = new L.LayerGroup();
     this.mapService.addToMap(this.layer);    
   }
@@ -73,7 +82,7 @@ export class BlockZoneComponent {
     }
 
     if (!this.MTDCS.onZone(event.latlng)) {
-      alert("vous êtes hors de la zone!"); 
+      alert("You are outside the zone!"); 
       return ; 
     }
 
@@ -95,7 +104,7 @@ export class BlockZoneComponent {
       this.polygon = L.polygon(this.listePoints);
       this.polygon.addTo(this.layer); 
     } else {
-      alert("veuillez valider ou retracer la zone");
+      alert("please submit or redraw the zone");
     }
 
   }
@@ -118,21 +127,18 @@ export class BlockZoneComponent {
 
   sendToBack(){
     if (this.listePoints.length != this.tailleSquare){
-      alert("veuillez tracer une zone valide avant de valider : " + this.tailleSquare + " points.")
+      alert("please draw a valid zone before submitting : " + this.tailleSquare + " points.")
     } else if (this.checkWrongZone(this.listePoints)){
-      alert("veuillez tracer une zone sans croisement des lignes");
+      alert("avoid lines crossing while drawing the zone");
     }
      else {
       console.log("envoi des données au serveur");
       let square: Square = {points:this.listePoints.map((p=>this.MTDCS.convert(p)))};
-      console.log(square.points); 
+      console.log(square.points[0]); 
       // TODO envoyer square au back 
       this.deleteZone();
     }
    }
 
-  private addPointButDiscret(e: AreaMouseEvent) {
-    new L.Marker([e.lat, e.lng]).addTo(this.layer);
-    console.log(e)
-  }
+
 }
