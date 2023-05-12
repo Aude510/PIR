@@ -12,6 +12,8 @@ import { WebSocketService } from '../services/web-socket.service';
 import {OwnerService} from "../services/owner.service";
 import {Owner} from "../../model/Owner";
 import {StatusService} from "../services/status.service";
+import { MapToDiscretCoordService } from '../services/map-to-discret-coord.service';
+
 
 @Component({
   selector: 'app-add-drone',
@@ -32,7 +34,8 @@ export class AddDroneComponent {
                      protected router: Router,
                      private webSocket: WebSocketService,
                      private ownerService: OwnerService,
-                     private status: StatusService) {
+                     private status: StatusService,
+                     private MTDCS: MapToDiscretCoordService) {
     this.callback = new EventEmitter<(e: MapMouseEvent) => void>();
     this.mapService.onMapClickedTakeSubscription().subscribe((e) => {
       this.leafletClick(e);
@@ -42,6 +45,10 @@ export class AddDroneComponent {
   }
   public leafletClick(event: LeafletMouseEvent) {
     let point = event.latlng;
+    if (!this.MTDCS.onZone(event.latlng)) {
+      alert("You are outside the zone!"); 
+      throw new Error("You are outside the zone");
+    }
     if (this.mapState === "SettingStart") {
       this.start?.remove();
       this.start = L.circleMarker(point)
