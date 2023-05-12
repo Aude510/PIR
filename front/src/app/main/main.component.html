@@ -7,10 +7,8 @@
     <app-home-page (addDroneEvent)="onAddDroneEvent()" (blockZoneEvent)="onBlockZoneEvent()"></app-home-page>
 </ng-template>
 
-
-
 <div id="main-container">
-    <app-confirm-path-notification></app-confirm-path-notification>
+    <!-- <app-confirm-path-notification></app-confirm-path-notification> -->
     <app-side-bar [template]="currentTemplate"></app-side-bar>
     <app-base-map (leafletMouseEvent)="onMapClick($event)"></app-base-map>
 </div>
