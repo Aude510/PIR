@@ -153,7 +153,7 @@ export class WebSocketService {
     }
   }
 
-  sendBlockedZone(zone: Zone): Promise<ServerMessage<Drone>> {
+  sendBlockedZone(zone: Zone): Promise<ServerMessage<Zone>> {
     const data: ServerRequest<Zone> = {type: "block_zone", data: zone};
     console.log("Blocking a new zone");
     this.socket?.send(JSON.stringify(data));
