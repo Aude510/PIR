@@ -53,8 +53,6 @@ export class MapService {
     }
   }
 
-
-
   addDroneToMap(drone: Drone, layer: LayerGroup) {
     L.circleMarker(drone.start.toLatLng(),{color: 'green'}).addTo(layer);
     L.circleMarker(drone.destination.toLatLng(), {color: 'blue'}).addTo(layer);

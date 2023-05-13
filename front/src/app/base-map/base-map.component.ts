@@ -28,8 +28,11 @@ export class BaseMapComponent {
   private initMap() {
     this.mapService.map = L.map('map', {
       center: [43.630764, 1.363702],
-      zoom: 14
+      zoom: 14,
+      zoomControl: false
     });
+
+    L.control.zoom({position: 'bottomright'}).addTo(this.mapService.map);
 
     const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
