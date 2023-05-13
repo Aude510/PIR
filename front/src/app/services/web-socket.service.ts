@@ -15,11 +15,13 @@ import {ServerConnect} from "../../model/ServerConnect";
 })
 export class WebSocketService {
 
+  private TIMEOUT : number = 20000;  // Time before rejection
+
   public socket: WebSocket | undefined;
   private drone: Drone |undefined;
-  private pop_up_status_subscription: Subject<ServerMessage<Status>> | undefined;
+  private pop_up_status_subscription: Subject<ServerMessage<Status>> = new Subject<ServerMessage<Status>>();
   private map_update_subscription = new Subject<Status>();
-  private statusReceive: Subject<ServerMessage<any>>;
+  private statusReceive: Subject<ServerMessage<any>> = new Subject<ServerMessage<any>>();
 
   subToPopUp() {
     if (!this.pop_up_status_subscription) {
@@ -33,26 +35,31 @@ export class WebSocketService {
   }
 
   public constructor() {
-    this.statusReceive = new Subject<ServerMessage<any>>();
     console.log("Initialising the web socket\n");
-    try {
-       this.socket = new WebSocket("ws://192.168.43.17:80");
-      // s.onopen = () => this.socket = s;
-      //
-      // s.onerror = () => this.socket = undefined;
-    } catch (e) { // webSocket only throws syntax error
-      this.socket = undefined
-      console.error("Error parsing the URI");
-    }
+    this.connect();
+    console.log("Connection complete");
+  }
+  connect(){
+    let isConnected : boolean =false;
+    while(!isConnected){ // Replace with timeout maybe
+      try {
+        this.socket = new WebSocket("ws://192.168.43.17:80");
+        isConnected = true;
 
-    if (this.socket != undefined) {
+      } catch (e) { // webSocket only throws syntax error
+        this.socket = undefined
+        console.error("Error parsing the URI");
+        isConnected = false;
+      }
+    }
+    if(this.socket){
 
       this.socket.onopen = (event) => {
-        console.log("Connected to the server !\n")
-        let message: ServerConnect = {type: "connect", data: {owner: "dsfg"}};
-        this.socket?.send(JSON.stringify(message));
 
-        const dd = new Drone("Cador", {ID:"q,kdfnqdsjnvjsdn"},10,new Path([]),Point.fromTuple(10,10),Point.fromTuple(50,50));
+        this.socket?.send(JSON.stringify({type: "connect", data: {owner: "dsfg"}}));
+        console.log("Connected to the server !\n");
+
+        const dd = new Drone("Cador", {ID:"q,kdfnqdsjnvjsdn"},10,new Path([]),Point.fromTuple(10,10),Point.fromTuple(50,50)); // TEST CASE
         this.sendNewDrone(dd)
           .then((data) => console.log(data))
           .catch((e) => {
@@ -60,38 +67,32 @@ export class WebSocketService {
           })
         this.drone = dd;
 
-
-
-        // @ts-ignore
-        this.socket.onmessage = (event: ServerMessage<any>) => {
-
-          const received_message = event.data;
-          console.log("Réception d'un message:" + received_message + " " + event.data.type);
-          // TODO: check if is the right response
-          this.demultiplexMessage(JSON.parse(event.data));
-        }
       }
-
-      this.socket.onclose = (event) => {
-        console.log("Communication with the server is lost");
-      }
-
-      this.subToMapUpdate().subscribe((v) => {
-        console.log("cqsjyhegdfhoil");
-      })
     } else {
-      console.log("ALLLLLLLLLLLLLLLLLLLLLLEEEEEEEEEEEEEEEEEEED");
+      console.log("Socket is still not open");
     }
-  }
+      // @ts-ignore
+      this.socket.onmessage = (event: ServerMessage<any>) =>  this.messageHandler(event);
 
-  private demultiplexMessage(event: ServerMessage<any>) {
+      // @ts-ignore
+      this.socket.onclose = (event) => {
+        console.log("Communication with the server is lost"); // Todo : Reconnect through the connect method (also needs to be implemented)
+        this.connect();
+      }
+
+    }
+
+  private messageHandler(event: ServerMessage<any>) {
+    const received_message = event.data;
+    console.log("Réception d'un message:" + received_message + " " + event.data.type);
+    // TODO: check if is the right response
     switch (event.type) {
       case "answer_path":
       case "delete_zone":
       case "block_zone":
       case "new_drone":
       case "delete_drone":
-        console.log("ALED")
+        console.log("Status Receive")
         this.statusReceive.next(event.data);
         break;
       case "pop_up":
@@ -102,8 +103,12 @@ export class WebSocketService {
         console.log("Map Update");
         this.map_update_subscription.next(event.data);
         break;
+
     }
   }
+
+
+
 
   sendNewDrone(drone: Drone): Promise<ServerMessage<Drone>> {
     const data: ServerRequest<Drone> = {type: "new_drone", data: drone};
@@ -119,7 +124,7 @@ export class WebSocketService {
           resolve(e);
         })
         // @ts-ignore
-        setTimeout(() => reject(new Error("Timeout")), 50000);
+        setTimeout(() => reject(new Error("Timeout")), this.TIMEOUT);
       })
     } else {
       return new Promise((resolve, reject) => reject("Socket is not open"));
@@ -141,7 +146,7 @@ export class WebSocketService {
           resolve(e);
         })
         // @ts-ignore
-        setTimeout(() => reject(new Error("Timeout")), 50000);
+        setTimeout(() => reject(new Error("Timeout")), this.TIMEOUT);
       })
     } else {
       return new Promise((resolve, reject) => reject("Socket is not open"));
@@ -162,7 +167,7 @@ export class WebSocketService {
           resolve(e);
         })
         // @ts-ignore
-        setTimeout(() => reject(new Error("Timeout")), 50000);
+        setTimeout(() => reject(new Error("Timeout")), this.TIMEOUT);
       })
     } else {
       return new Promise((resolve, reject) => reject("Socket is not open"));
@@ -176,14 +181,14 @@ export class WebSocketService {
       return new Promise((resolve, reject) => {
         resolve();
         // @ts-ignore
-        setTimeout(() => reject(new Error("Timeout")), 50000);
+        setTimeout(() => reject(new Error("Timeout")), this.TIMEOUT);
       })
     } else {
       return new Promise((resolve, reject) => reject("Socket is not open"));
     }
   }
-  suppDD(){
-    if(this.drone)
+  suppDD() {
+    if (this.drone)
       this.sendDeleteDrone(this.drone);
   }
 }
