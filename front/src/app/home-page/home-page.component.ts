@@ -57,8 +57,9 @@ export class HomePageComponent {
     this.webSocket.subToMapUpdate().subscribe((status) => {
       console.log("mmmmmmmmmmmmmmmmmmmmmm")
       console.log(status.drones)
-      // this.layer.remove();
-      // this.layer = new L.LayerGroup();
+      this.layer.remove();
+      this.layer = new L.LayerGroup();
+      this.mapService.addToMap(this.layer);
       status.drones.forEach((drone) => {
         console.log("Drone: " + drone.name);
         this.coords.addDroneToMap(drone, this.layer);

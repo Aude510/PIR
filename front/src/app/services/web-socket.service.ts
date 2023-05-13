@@ -79,7 +79,6 @@ export class WebSocketService {
         console.log("Communication with the server is lost"); // Todo : Reconnect through the connect method (also needs to be implemented)
         this.connect();
       }
-
     }
 
   private messageHandler(event: ServerMessage<any>) {
@@ -102,6 +101,7 @@ export class WebSocketService {
         break;
       case "get_status":
         console.log("Map Update");
+        // @ts-ignore
         this.map_update_subscription.next(Status.formServer(mes.data));
         break;
 
