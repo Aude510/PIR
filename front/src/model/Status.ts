@@ -6,5 +6,6 @@ export type Status = {
   owner : Owner
   drones: Drone[]
   blocked_Zones:Zone[]
-  time:number
+  time: number,
+  changed: string[] // names of all drone who've changed path
 }

@@ -4,16 +4,13 @@ import {Point} from "./Point";
 
 export class Drone {
 
+  public id: number | undefined;
 
-  constructor(  public ID : number,
-                public name :  string,
-                public owner : Owner,
-                public priority: number,
-                public path: Path,
-                public start: Point,
-                public destination: Point)
-  {
-   console.log("Drone instanciated")
-  }
+  constructor(public name: string,
+              public owner: Owner,
+              public priority: number,
+              public path: Path,
+              public start: Point,
+              public destination: Point) { }
 
 }

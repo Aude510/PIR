@@ -1,18 +1,14 @@
 <!--page principale-->
+<ng-template #addDrone>
+    <app-add-drone (callback)="onMapClickCallback($event)"></app-add-drone>
+</ng-template>
 
+<ng-template #homePage>
+    <app-home-page (addDroneEvent)="onAddDroneEvent()" (blockZoneEvent)="onBlockZoneEvent()"></app-home-page>
+</ng-template>
 
-<div class="page">
-    <div class="menu">
-        <button class="bouton">block a zone</button>
-        <button class="bouton">block a zone</button>
-        <button class="bouton">block a zone</button>
-        <button class="bouton">block a zone</button>
-        <button class="bouton">block a zone</button>
-        <button class="bouton">block a zone</button>
-    </div> 
-    <app-base-map class="map-size"></app-base-map>
- 
+<div id="main-container">
+    <!-- <app-confirm-path-notification></app-confirm-path-notification> -->
+    <app-side-bar [template]="currentTemplate"></app-side-bar>
+    <app-base-map (leafletMouseEvent)="onMapClick($event)"></app-base-map>
 </div>
-
-
-  

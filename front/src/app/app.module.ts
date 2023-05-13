@@ -9,6 +9,9 @@ import { BlockZoneComponent } from './block-zone/block-zone.component';
 import {AddDroneComponent} from "./add-drone/add-drone.component";
 import {FormsModule} from "@angular/forms";
 import {DroneInformationsComponent} from "./drone-informations/drone-informations.component";
+import { SideBarComponent } from './side-bar/side-bar.component';
+import { HomePageComponent } from './home-page/home-page.component';
+import { ConfirmPathNotificationComponent } from './confirm-path-notification/confirm-path-notification.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +20,10 @@ import {DroneInformationsComponent} from "./drone-informations/drone-information
     MainComponent,
     BlockZoneComponent,
     AddDroneComponent,
-    DroneInformationsComponent
+    DroneInformationsComponent,
+    SideBarComponent,
+    HomePageComponent,
+    ConfirmPathNotificationComponent
   ],
   imports: [
     BrowserModule,

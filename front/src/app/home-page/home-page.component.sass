@@ -1,0 +1,92 @@
+@import ../../shared.sass
+
+#home-page-root
+    padding: 20px
+    max-width: 400px
+
+#home-page-title-container
+    padding: 10px 0
+
+#home-page-total-flights-container
+    margin: 30px 0
+
+    h2
+        font-weight: 400
+
+#home-page-flights-status-container
+    margin: 65px 0
+
+#home-page-flights-status-title
+    padding: 7px 0
+
+    div
+        border: none
+        border-bottom: 1px solid
+        margin: 5px 0
+
+#home-page-actions
+    display: flex
+    flex-direction: column
+
+    button
+        width: 150px
+        height: 50px
+        font-size: 16px
+        margin: 10px 0
+
+#drones-informations-root
+    position: relative
+
+#drones-informations-container
+    padding: 0 10px 0 0
+    height: 10rem
+    overflow-y: scroll
+    
+    div
+        margin: 2px 0
+        display: flex
+        justify-content: space-between
+        transition-duration: 0.3s
+
+        p
+            width: 80px
+            text-align: center
+
+    div:hover
+        background-color: #c5cccc
+        cursor: pointer
+
+#drones-informations-container::-webkit-scrollbar-track
+    background-color: $cloud
+
+#drones-informations-container::-webkit-scrollbar
+    width: 5px
+    background-color: $cloud
+
+#drones-informations-container::-webkit-scrollbar-thumb
+    border-radius: 10px
+    background-color: #c5cccc
+
+#drones-informations-container::-webkit-scrollbar-thumb:hover
+    background-color: #aaafaf
+
+#drones-informations-blur
+    pointer-events: none
+    position: absolute
+    transform: translateY(-100%)
+    top: 100%
+    width: 100%
+    height: 20px
+    background: linear-gradient(0deg, rgba(236,240,241,1) 0%, rgba(255,255,255,0) 100%)
+
+.flying-status 
+    color: orange
+
+.cancelled-status
+    color: red
+
+.arrived-status
+    color: green
+
+.bouton-rouge
+    background: red

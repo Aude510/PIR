@@ -1,15 +1,28 @@
-<div>
-  <form #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
-    <h3>Click twice to add your start and end point</h3>
-    <div class="formInput">
-      <p>Drone name:</p>
-      <input name="drName" ngModel required #first="ngModel" placeholder="name">
+<h3 *ngIf="pathDefinedByServer === 'loading'">Loading...</h3>
+<form *ngIf="pathDefinedByServer === 'input'" #f="ngForm" (ngSubmit)="onSubmit(f)">
+  <h3>Click twice to add your start and end point</h3>
+  <div class="form-input">
+    <div class="floating-label">
+      <input name="drName" ngModel required #first="ngModel">
+      <span>Name</span>
     </div>
-    <div class="formInput">
-      <p>Drone priority:</p>
-      <input name="drName" ngModel required #first="ngModel" placeholder="name">
+  </div>
+  <div class="form-input ">
+    <div class="floating-label">
+      <input name="priority" ngModel required #first="ngModel">
+      <span>Priority</span>
     </div>
-    <button>Submit</button>
-  </form>
-  <app-base-map (leafletMouseEvent)="leafletClick($event)"></app-base-map>
+  </div>
+  <div class="flex-r flex-r-center-x">
+    <button class="button-shy-moment cursor-hover">Submit</button>
+  </div>
+</form>
+
+
+<div  *ngIf="pathDefinedByServer === 'confirm'" class="home-page-title-container">
+  <div class="flex-c flex-c-center-x">
+    <button class="button-shy-moment cursor-hover">Confirm</button>
+    <button class="button-shy-moment cursor-hover" (click)="router.navigateByUrl('/')">Back</button>
+  </div>
 </div>
+

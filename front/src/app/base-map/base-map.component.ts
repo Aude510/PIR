@@ -2,6 +2,8 @@ import {Component, EventEmitter, Output} from '@angular/core';
 import * as L from "leaflet";
 import {LeafletMouseEvent} from "leaflet";
 import {MapMouseEvent} from "../../model/MapMouseEvent";
+import {MapService} from "../services/map.service";
+import { MapToDiscretCoordService } from '../services/map-to-discret-coord.service';
 
 /**
  * This is a component to adapt leaflet in the angular architecture.
@@ -15,16 +17,22 @@ import {MapMouseEvent} from "../../model/MapMouseEvent";
   styleUrls: ['./base-map.component.sass']
 })
 export class BaseMapComponent {
-  private map: L.Map | undefined;
+  private MTDCS: MapToDiscretCoordService;
+
   @Output() leafletMouseEvent: EventEmitter<MapMouseEvent> = new EventEmitter();
-  
+
+  constructor(private mapService: MapService, MTDCS: MapToDiscretCoordService) { 
+    this.MTDCS = MTDCS;
+  }
+
   private initMap() {
-    this.map = L.map('map', {
-      center: [ 51.5, -0.09 ],
-      zoom: 14
+    this.mapService.map = L.map('map', {
+      center: [43.630764, 1.363702],
+      zoom: 14,
+      zoomControl: false
     });
 
-    this.map.on('click', (e: LeafletMouseEvent) => this.onMapClick(e));
+    L.control.zoom({position: 'bottomright'}).addTo(this.mapService.map);
 
     const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
@@ -32,7 +40,9 @@ export class BaseMapComponent {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     });
 
-    tiles.addTo(this.map);
+    this.mapService.map.on('click', (e: LeafletMouseEvent) => this.onMapClick(e));
+    this.MTDCS.initArea(43.630764, 1.363702);
+    tiles.addTo(this.mapService.map);
   }
 
   ngAfterViewInit() {
@@ -41,6 +51,7 @@ export class BaseMapComponent {
 
   onMapClick(e: LeafletMouseEvent) {
     // @ts-ignore as when the component is rendered a map will be here
-    this.leafletMouseEvent.emit({map: this.map, event: e});
+    this.leafletMouseEvent.emit({map: this.mapService.map, event: e});
+    this.mapService.notifyMapClicked(e);
   }
 }
