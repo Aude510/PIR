@@ -1,8 +1,7 @@
 import asyncio
-import websockets 
+import websockets ##pip install websockets
 import convertionJson
 import main
-from main import sem
 from structure import *
 import trajectory
 
