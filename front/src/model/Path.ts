@@ -19,4 +19,9 @@ export class Path {
       })
     )
   }
+  getPath(){
+    return this.points;
+  }
+
+
 }
