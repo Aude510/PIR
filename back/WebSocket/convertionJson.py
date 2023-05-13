@@ -117,7 +117,7 @@ def jsonToType(message):
         raise MessageTypeError()
 
 
-#Convert from JSON to Drone
+#Convert from JSON to Drone to be implemented by the Dijkstra
 #input = message : str
 #return = ID:int, name:str, owner:int,
 #   priority:int, start:list[x,y], destination:list[x,y]
@@ -130,8 +130,6 @@ def jsonToDroneDijkstra(message):
     start=[drone["start"]["x"],drone["start"]["y"]]
     destination=[drone["destination"]["x"],drone["destination"]["y"]]
     return owner, priority, start, destination
-#Fonction de Killian : (indentifier, prio, source : tuple, destination : tuple, starting_time(optionnel))
-# return dictionnaire tous les drones et leurs path
 
 #Convert from Json to Owner
 #input = message : str
@@ -155,19 +153,20 @@ def jsonToZone(message):
     else:
         raise MessageTypeError
     
+# Format a zone to be implemented by the Dijkstra
+# input = message : str
+# return = list[[x,y]]
 def formatZoneDijkstra(zone):
     formatedZone = []
     for point in zone:
         formatedZone.append([point["x"],point["y"]])
     return formatedZone
-#Envoyer liste de liste de 4 points [[x,y]]
-#return dictionaire {id : path} contenant tous les drones
 
-def jsonToNewPathResponse(message): #TODO A implémenter (voir avec Killian et Joel)
+
+def jsonToNewPathResponse(message): 
     y = json.load(message)
     return y["data"]["response"],y["data"]["drone"]
 
-############ TODO #############
 
 
 
