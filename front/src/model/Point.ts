@@ -1,5 +1,9 @@
 import { LatLng } from "leaflet";
 
+export type IPoint = {
+  x: number;
+  y: number;
+}
 export class Point {
   x: number
   y: number

@@ -1,7 +1,16 @@
-import {Owner} from "./Owner";
-import {Path} from "./Path";
-import {Point} from "./Point";
+import {IOwner, Owner} from "./Owner";
+import {IPath, Path} from "./Path";
+import {IPoint, Point} from "./Point";
 
+export type IDrone = {
+  id: number,
+  name: string,
+  owner: IOwner,
+  priority: number,
+  path: IPoint[],
+  start: IPoint,
+  destination: IPoint
+}
 export class Drone {
 
   public id: number | undefined;
@@ -13,4 +22,15 @@ export class Drone {
               public start: Point,
               public destination: Point) { }
 
+  static fromServer(drone: IDrone) {
+    console.log(`Parsed path ${JSON.stringify(drone.path)}`);
+    return new Drone(
+      drone.name,
+      Owner.fromServer(drone.owner),
+      drone.priority,
+      Path.fromServer(drone.path),
+      Point.fromTuple(drone.start.x, drone.start.y),
+      Point.fromTuple(drone.destination.x, drone.destination.y)
+    );
+  }
 }

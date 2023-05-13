@@ -119,7 +119,7 @@ async def sendUnicast(message, websocket):
 
 #Créer le serveur websocket et envoi périodiquement à tous les clients le statu
 async def init_serv():
-    async with websockets.serve(handler, "", 80):
+    async with websockets.serve(handler, "", 8080):
         #envoiPeriodique = asyncio.create_task(sendPeriodically("Status")) #TODO Faire en sorte qu'on envoi le statu
         while True:
         #     #await sendAllClients("Multicast")

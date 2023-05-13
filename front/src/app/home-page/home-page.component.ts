@@ -4,6 +4,7 @@ import {MapService} from "../services/map.service";
 import {WebSocketService} from "../services/web-socket.service";
 import {LayerGroup} from "leaflet";
 import * as L from "leaflet";
+import {MapToDiscretCoordService} from "../services/map-to-discret-coord.service";
 
 @Component({
   selector: 'app-home-page',
@@ -16,7 +17,10 @@ export class HomePageComponent {
 
   private layer: LayerGroup = new L.LayerGroup();
 
-  public constructor(private router: Router, private mapService: MapService, private webSocket: WebSocketService) {
+  public constructor(private router: Router,
+                     private mapService: MapService,
+                     private webSocket: WebSocketService,
+                     private coords: MapToDiscretCoordService) {
     this.addDroneEvent = new EventEmitter<void>();
     this.blockZoneEvent = new EventEmitter<void>();
     this.mapService.onMapClickedTakeSubscription();
@@ -24,9 +28,11 @@ export class HomePageComponent {
     this.webSocket.subToMapUpdate().subscribe((status) => {
       console.log("mmmmmmmmmmmmmmmmmmmmmm")
       console.log(status.drones)
+      // this.layer.remove();
+      // this.layer = new L.LayerGroup();
       status.drones.forEach((drone) => {
         console.log("Drone: " + drone.name);
-        this.mapService.addDroneToMap(drone, this.layer);
+        this.coords.addDroneToMap(drone, this.layer);
       })
     })
   }

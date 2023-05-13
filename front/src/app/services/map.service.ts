@@ -3,6 +3,7 @@ import * as L from "leaflet";
 import {Subject} from "rxjs";
 import {Layer, LayerGroup, LeafletMouseEvent} from "leaflet";
 import {Drone} from "../../model/Drone";
+import {MapToDiscretCoordService} from "./map-to-discret-coord.service";
 
 /**
  * As all angular services, this is a singleton. As such we can share the subscription of
@@ -51,13 +52,6 @@ export class MapService {
     } else {
       alert("The map is not initialised, please refresh and try again");
     }
-  }
-
-  addDroneToMap(drone: Drone, layer: LayerGroup) {
-    L.circleMarker(drone.start.toLatLng(),{color: 'green'}).addTo(layer);
-    L.circleMarker(drone.destination.toLatLng(), {color: 'blue'}).addTo(layer);
-    const path = drone.path.toLatLang();
-    L.polyline(path).addTo(layer);
   }
 
   insertInMap(layer: Layer) {

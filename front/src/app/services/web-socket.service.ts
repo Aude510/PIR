@@ -6,7 +6,7 @@ import {Path} from "../../model/Path";
 import {Subject} from "rxjs";
 import {Zone} from "../../model/Zone";
 import {Point} from "../../model/Point";
-import {Status} from "../../model/Status";
+import {IStatus, Status} from "../../model/Status";
 import {ServerConnect} from "../../model/ServerConnect";
 
 
@@ -18,10 +18,10 @@ export class WebSocketService {
   private TIMEOUT : number = 20000;  // Time before rejection
 
   public socket: WebSocket | undefined;
-  private drone: Drone |undefined;
+  private drone: Drone | undefined;
   private pop_up_status_subscription: Subject<ServerMessage<Status>> = new Subject<ServerMessage<Status>>();
   private map_update_subscription = new Subject<Status>();
-  private statusReceive: Subject<ServerMessage<any>> = new Subject<ServerMessage<any>>();
+  private statusReceive = new Subject<ServerMessage<any>>(); // Drone or Zone
 
   subToPopUp() {
     if (!this.pop_up_status_subscription) {
@@ -43,7 +43,7 @@ export class WebSocketService {
     let isConnected : boolean =false;
     while(!isConnected){ // Replace with timeout maybe
       try {
-        this.socket = new WebSocket("ws://192.168.43.17:80");
+        this.socket = new WebSocket("ws://localhost:8080");
         isConnected = true;
 
       } catch (e) { // webSocket only throws syntax error
@@ -83,10 +83,11 @@ export class WebSocketService {
     }
 
   private messageHandler(event: ServerMessage<any>) {
-    const received_message = event.data;
-    console.log("Réception d'un message:" + received_message + " " + event.data.type);
+    const received_message: string = event.data;
+    const mes: ServerMessage<any> = JSON.parse(received_message);
+    console.log("Réception d'un message:" + received_message + " " + mes.type);
     // TODO: check if is the right response
-    switch (event.type) {
+    switch (mes.type) {
       case "answer_path":
       case "delete_zone":
       case "block_zone":
@@ -101,7 +102,7 @@ export class WebSocketService {
         break;
       case "get_status":
         console.log("Map Update");
-        this.map_update_subscription.next(event.data);
+        this.map_update_subscription.next(Status.formServer(mes.data));
         break;
 
     }
