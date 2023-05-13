@@ -172,19 +172,3 @@ def jsonToNewPathResponse(message): #TODO A implémenter (voir avec Killian et J
 
 
 
-## DONE :
-# Formater les dronesToJson
-# modifier ownerid en string
-# Implémenter le NewPathResponse si réponse non alors supprimer drone 
-# Delete drone après qu'il ait finit son path 
-# Status : {(owner,name):id_drone} {id_drone : path_drone} {connect : (owner, [name_drone])} [blocked_zone]
-# Faire évoluer le path en fonction du temps qui passe
-# Ajouter des fonction add et del du dictionnaire partagé dans le main
-# Mettre à jour le  status à chaque message reçu
-# Tester
-# Architecture du main  :
-# Init l'environnement au début du main
-# Update la position des drones avant calcul new path
-# Déterminer si un path à changer pour zone bloquée
-# Rajouter une liste de notification au status envoyé (liste de tous les path qui ont changé avec le in)
-# Appeler les fonctions de Killian dans tous les case du handler
