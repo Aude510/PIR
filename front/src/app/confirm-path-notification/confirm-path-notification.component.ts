@@ -20,8 +20,8 @@ export class ConfirmPathNotificationComponent {
   public notification: string[] = [];
 
   constructor(private socket: WebSocketService) {
-    this.socket.subToMapUpdate().subscribe((v: ServerMessage<Status>) => {
-        const status = v.data;
+    this.socket.subToMapUpdate().subscribe((v: Status) => {
+        const status = v;
         status.changed.forEach((c) => {
             this.notification.push(`Path modified for drone ${c}`);
             setTimeout(
@@ -40,9 +40,9 @@ userResponse: boolean | undefined;
 //Επειδή η τιμή της userResponse αρχικά δεν είναι γνωστή, τη δηλώνουμε ως undefined.
 //Because the value of userResponse is initially not known, we declare it as undefined.
 
-//Έπειτα, όταν ο χρήστης πατάει το κουμπί, η μέθοδος sendAnswerPath() καλείται με την απάντηση του χρήστη ως παράμετρο. 
+//Έπειτα, όταν ο χρήστης πατάει το κουμπί, η μέθοδος sendAnswerPath() καλείται με την απάντηση του χρήστη ως παράμετρο.
 //Then, when the user presses the button, the sendAnswerPath() method is called with the user's answer as a parameter.
-//Εκεί μπορούμε να θέσουμε την τιμή της userResponse σύμφωνα με την απάντηση του χρήστη ως εξής: 
+//Εκεί μπορούμε να θέσουμε την τιμή της userResponse σύμφωνα με την απάντηση του χρήστη ως εξής:
 //There we can set the value of userResponse according to the user response as follows:
 
 sendAnswerPath(response: boolean): Promise<void> {
@@ -70,7 +70,7 @@ sendAnswerPath(response: boolean): Promise<void> {
 
   //Στο επόμενο βήμα, θα πρέπει να προσθέσουμε λειτουργικότητα στη συνάρτηση handleMessage, έτσι ώστε να εκτελεί διαφορετικές ενέργειες ανάλογα με το μήνυμα που λαμβάνει από τον server.
 //(In the next step, we should add functionality to the handleMessage function so that it performs different actions depending on the message it receives from the server.)
-//Αρχικά, θα πρέπει να προσθέσουμε μια μεταβλητή για να κρατάμε την τρέχουσα κατάσταση της επιβεβαίωσης. 
+//Αρχικά, θα πρέπει να προσθέσουμε μια μεταβλητή για να κρατάμε την τρέχουσα κατάσταση της επιβεβαίωσης.
 //(First, we need to add a variable to hold the current state of the confirmation.)
 //Ας την ονομάσουμε confirmStatus και αρχικοποιούμε την τιμή της σε null, γιατί δεν έχουμε ακόμα λάβει επιβεβαίωση από τον χρήστη.
 //(Let's call it confirmStatus and initialize its value to null, because we haven't received a confirmation from the user yet.)

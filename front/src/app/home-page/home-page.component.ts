@@ -22,7 +22,10 @@ export class HomePageComponent {
     this.mapService.onMapClickedTakeSubscription();
     this.mapService.addToMap(this.layer);
     this.webSocket.subToMapUpdate().subscribe((status) => {
-      status.data.drones.forEach((drone) => {
+      console.log("mmmmmmmmmmmmmmmmmmmmmm")
+      console.log(status.drones)
+      status.drones.forEach((drone) => {
+        console.log("Drone: " + drone.name);
         this.mapService.addDroneToMap(drone, this.layer);
       })
     })

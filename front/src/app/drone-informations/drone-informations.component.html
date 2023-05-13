@@ -1,7 +1,7 @@
 <div class="drone-status">
-  <div class="drone-Name"> Drone Name: {{droneName}}</div>
-  <div class="drone-ID"> Drone ID: {{droneID}}</div>
-  <div class="drone-Start"> Start Point: ({{droneStart}}) </div>
-  <div class="drone-End"> Start Point: ({{droneEnd}})</div>
-  <button > Delete </button>
+  <div class="drone-Name"> Drone Name: {{drone.name}}</div>
+  <div class="drone-ID"> Drone ID: {{drone.id}}</div>
+  <div class="drone-Start"> Start Point: ({{drone.start}}) </div>
+  <div class="drone-End"> End Point: ({{drone.destination}})</div>
+  <button (click)="deleteDrone()" > Delete </button>
 </div>
