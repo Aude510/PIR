@@ -125,7 +125,7 @@ export class BlockZoneComponent {
     this.polygon=null;
   }
 
-  sendToBack(){
+  async sendToBack(){
     if (this.listePoints.length != this.tailleSquare){
       alert("please draw a valid zone before submitting : " + this.tailleSquare + " points.")
     } else if (this.checkWrongZone(this.listePoints)){
@@ -136,7 +136,9 @@ export class BlockZoneComponent {
       let square: Square = {points:this.listePoints.map((p=>this.MTDCS.latLngToDiscret(p)))};
       console.log(square.points[0]);
       // TODO envoyer square au back
-      this.webSocket?.sendBlockedZone({square:square })
+      await this.webSocket?.sendBlockedZone({square:square }).catch((e) => {
+        console.log("cant block zone: " + e);
+      })
       this.deleteZone();
     }
    }
