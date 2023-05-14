@@ -114,13 +114,14 @@ export class WebSocketService {
   sendNewDrone(drone: Drone): Promise<ServerMessage<Drone>> {
     const data: ServerRequest<Drone> = {type: "new_drone", data: drone};
     console.log("Sending a new drone");
+    console.log(JSON.stringify(data));
     this.socket?.send(JSON.stringify(data));
 
     if (this.socket) {
       return new Promise((resolve, reject) => {
         this.statusReceive.subscribe((e) => {
           console.log("Received a message at sendNewDrone")
-          this.statusReceive.unsubscribe()
+          // this.statusReceive.unsubscribe()
           //console.log(e.data)
           resolve(e);
         })
@@ -136,13 +137,14 @@ export class WebSocketService {
   sendDeleteDrone(drone: Drone): Promise<ServerMessage<Drone>> {
     const data: ServerRequest<Drone> = {type: "delete_drone", data: drone};
     console.log("Deleting the drone");
+    console.log(JSON.stringify(data))
     this.socket?.send(JSON.stringify(data));
 
     if (this.socket) {
       return new Promise((resolve, reject) => {
         this.statusReceive.subscribe((e) => {
           console.log("Received a message at sendDeleteDrone")
-          this.statusReceive.unsubscribe()
+          // this.statusReceive.unsubscribe()
           console.log(e.data)
           resolve(e);
         })
@@ -163,7 +165,7 @@ export class WebSocketService {
       return new Promise((resolve, reject) => {
         this.statusReceive.subscribe((e) => {
           console.log("Received a message at blocked zone")
-          this.statusReceive.unsubscribe()
+          // this.statusReceive.unsubscribe()
           console.log(e.data)
           resolve(e);
         })

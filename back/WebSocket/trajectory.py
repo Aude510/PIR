@@ -56,7 +56,7 @@ class Environment:
 
         for drone in self.listDrones:
             print("Priority drone : ", drone, " ", drone[1])
-            if drone[1] > priority:
+            if int(drone[1]) > int(priority):
                 print("Drone is low priority : ", drone[0])
                 result = self.addDroneLessPriority(drone, addToPlot=True)
                 pathToGoRet[drone[0]] = result
