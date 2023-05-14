@@ -24,7 +24,7 @@ export class DroneInformationsComponent {
 
   deleteDrone(){  // Send a message to the webSocket to remove the drone from the map
     console.log("Deleting Drone " + this.drone?.id);
-    if(this.drone){
+    if(this.drone) {
       this.webSocketService.sendDeleteDrone(this.drone).then(r => console.log(r));
     }
   }

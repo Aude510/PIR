@@ -79,6 +79,7 @@ export class MapToDiscretCoordService {
       shadowAnchor: [4, 62],  // the same for the shadow
       popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
     });
-    L.marker(path[0], {icon: icon}).addTo(layer);
+    // @ts-ignore
+    L.marker(path[0], {icon: icon, title: drone.name}).addTo(layer);
   }
 }

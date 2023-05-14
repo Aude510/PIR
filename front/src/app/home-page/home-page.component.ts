@@ -42,6 +42,8 @@ export class HomePageComponent {
     this.component = this.resolver.resolveComponentFactory(DroneInformationsComponent).create(this.injector)
     this.mapService.map?.on('click',(e) => {
       // @ts-ignore
+      console.log(e.originalEvent.originalTarget.title);
+      // @ts-ignore
       //const drone = ((this.status.getDroneList().filter((d) => d.path.getPath().at(0).toLatLng().distanceTo(e.latlng) < 10)).at(0));
       //if(drone){
         const popup = L.popup()
