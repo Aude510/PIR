@@ -14,6 +14,7 @@ import {LayerGroup} from "leaflet";
 import * as L from "leaflet";
 import {MapToDiscretCoordService} from "../services/map-to-discret-coord.service";
 import {DroneInformationsComponent} from "../drone-informations/drone-informations.component";
+import {StatusService} from "../services/status.service";
 
 @Component({
   selector: 'app-home-page',
@@ -32,6 +33,7 @@ export class HomePageComponent {
                      private webSocket: WebSocketService,
                      private coords: MapToDiscretCoordService,
                      private resolver: ComponentFactoryResolver,
+                     private status: StatusService,
                      private injector: Injector) {
 
     this.addDroneEvent = new EventEmitter<void>();
@@ -43,6 +45,16 @@ export class HomePageComponent {
     this.mapService.map?.on('click',(e) => {
       // @ts-ignore
       console.log(e.originalEvent.originalTarget.title);
+      // @ts-ignore
+      const droneName = e.originalEvent.originalTarget.title;
+      Promise.all(this.status.getDroneList()
+        .filter((d) => d.name === droneName)
+        .map((d) => this.webSocket.sendDeleteDrone(d)))
+        .then((d) => {
+          console.log("Drones deleted " + d)
+      }).catch((e) => {
+        console.error("Error deleting drone: " + e);
+      });
       // @ts-ignore
       //const drone = ((this.status.getDroneList().filter((d) => d.path.getPath().at(0).toLatLng().distanceTo(e.latlng) < 10)).at(0));
       //if(drone){
