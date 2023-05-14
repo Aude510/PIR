@@ -67,6 +67,31 @@ export class WebSocketService {
           })
         this.drone = dd;
 
+        const z = {
+          "square": {
+            "points": [
+              {
+                "x": 115,
+                "y": 421
+              },
+              {
+                "x": 197,
+                "y": 421
+              },
+              {
+                "x": 204,
+                "y": 365
+              },
+              {
+                "x": 124,
+                "y": 361
+              }
+            ]
+          }
+        };
+        // @ts-ignore
+        this.sendBlockedZone(z);
+
       }
     } else {
       console.log("Socket is still not open");
@@ -159,6 +184,7 @@ export class WebSocketService {
   sendBlockedZone(zone: Zone): Promise<ServerMessage<Zone>> {
     const data: ServerRequest<Zone> = {type: "block_zone", data: zone};
     console.log("Blocking a new zone");
+    console.log(zone);
     this.socket?.send(JSON.stringify(data));
 
     if (this.socket) {

@@ -43,6 +43,7 @@ export class HomePageComponent {
 
     this.component = this.resolver.resolveComponentFactory(DroneInformationsComponent).create(this.injector)
     this.mapService.map?.on('click',(e) => {
+
       // @ts-ignore
       console.log(e.originalEvent.originalTarget.title);
       // @ts-ignore
@@ -77,6 +78,10 @@ export class HomePageComponent {
       status.drones.forEach((drone) => {
         console.log("Drone: " + drone.name);
         this.coords.addDroneToMap(drone, this.layer);
+      })
+      status.blocked_Zones.forEach((z) => {
+        // @ts-ignore
+        this.coords.addZoneToMap(z.points, this.layer);
       })
     })
   }

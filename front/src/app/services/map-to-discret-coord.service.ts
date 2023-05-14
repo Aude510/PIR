@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import {LatLng, Polygon, latLng, LayerGroup} from 'leaflet';
-import { Point } from 'src/model/Point';
+import {IPoint, Point} from 'src/model/Point';
 import { MapService } from './map.service';
 import {Drone} from "../../model/Drone";
 import * as L from "leaflet";
+import {Zone} from "../../model/Zone";
 
 const MAX_POINTS: number = 500;
 const DIST: number = 10;
@@ -66,6 +67,11 @@ export class MapToDiscretCoordService {
     return this.discretToLatLng(p.x,p.y);
   }
 
+  addZoneToMap(zone: IPoint[], layer: LayerGroup) {
+    console.log(zone)
+    // @ts-ignore
+    L.polygon(zone.map((p) => this.discretToLatLngFromPoint(p))).addTo(layer);
+  }
   addDroneToMap(drone: Drone, layer: LayerGroup) {
     L.circleMarker(this.discretToLatLngFromPoint(drone.start),{color: 'green'}).addTo(layer);
     L.circleMarker(this.discretToLatLngFromPoint(drone.destination), {color: 'blue'}).addTo(layer);
