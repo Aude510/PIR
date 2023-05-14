@@ -45,7 +45,17 @@ export class HomePageComponent {
     this.mapService.map?.on('click',(e) => {
 
       // @ts-ignore
-      console.log(e.originalEvent.originalTarget.title);
+      const classes: string[] = [...e.originalEvent.originalTarget.classList];
+      const classContainsMarker = classes.reduce((prev, current) => {
+        return prev || (current === "leaflet-marker-icon");
+      }, false)
+      if (!classContainsMarker) {
+        console.log("not marker clicked");
+          return;
+      }
+      console.log("event:")
+      // @ts-ignore
+      console.log(e.originalEvent.originalTarget.classList);
       // @ts-ignore
       const droneName = e.originalEvent.originalTarget.title;
       Promise.all(this.status.getDroneList()
