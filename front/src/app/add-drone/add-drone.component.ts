@@ -46,7 +46,7 @@ export class AddDroneComponent {
   public leafletClick(event: LeafletMouseEvent) {
     let point = event.latlng;
     if (!this.MTDCS.onZone(event.latlng)) {
-      alert("You are outside the zone!"); 
+      alert("You are outside the zone!");
       throw new Error("You are outside the zone");
     }
     if (this.mapState === "SettingStart") {
@@ -93,20 +93,25 @@ export class AddDroneComponent {
       name: f.value.drName,
       owner: this.ownerService.id,
       priority: f.value.priority,
-      start: this.start.getLatLng(),
-      arrival: this.arrival?.getLatLng()
+      start: this.MTDCS.latLngToDiscret(this.start.getLatLng()),
+      arrival: this.MTDCS.latLngToDiscret(this.arrival?.getLatLng())
     };
     const drone = new Drone(
       obj.name,
       new Owner(obj.owner),
       obj.priority,
       new Path([]),
-      new Point(obj.start),
-      new Point(obj.arrival)
+      obj.start,
+      obj.arrival
     );
     console.log(JSON.stringify(drone));
-    let msg = await this.sendDrone(drone);
-    this.displayPath(msg.data.path);
+    await this.sendDrone(drone).catch(() => {
+      alert("Cant add the drone");
+      // TODO: clear drone and route
+    }).finally(() => {
+      this.layer.remove();
+      this.router.navigateByUrl("/");
+    })
   }
 
   displayPath(path: Path) {

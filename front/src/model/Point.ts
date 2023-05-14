@@ -13,6 +13,8 @@ export class Point {
     this.y=latlng.lng;
   }
 
+
+
   public static fromTuple(x: number, y: number): Point {
     return new Point(new LatLng(x, y));
   }
