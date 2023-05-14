@@ -34,14 +34,15 @@ export class HomePageComponent {
                      private coords: MapToDiscretCoordService,
                      private resolver: ComponentFactoryResolver,
                      private status: StatusService,
-                     private injector: Injector) {
+                     private injector: Injector,
+                     private viewContainerRef: ViewContainerRef) {
 
     this.addDroneEvent = new EventEmitter<void>();
     this.blockZoneEvent = new EventEmitter<void>();
     this.mapService.onMapClickedTakeSubscription();
     this.mapService.addToMap(this.layer);
 
-    this.component = this.resolver.resolveComponentFactory(DroneInformationsComponent).create(this.injector)
+
     this.mapService.map?.on('click',(e) => {
 
       // @ts-ignore
@@ -58,18 +59,22 @@ export class HomePageComponent {
       console.log(e.originalEvent.originalTarget.classList);
       // @ts-ignore
       const droneName = e.originalEvent.originalTarget.title;
-      Promise.all(this.status.getDroneList()
-        .filter((d) => d.name === droneName)
-        .map((d) => this.webSocket.sendDeleteDrone(d)))
-        .then((d) => {
-          console.log("Drones deleted " + d)
-      }).catch((e) => {
-        console.error("Error deleting drone: " + e);
-      });
+      const drone = this.status.getDroneList()
+        .filter((d) => d.name === droneName)[0];
+      this.component = this.viewContainerRef.createComponent(DroneInformationsComponent);
+      this.component.setInput('drone', drone);
+      // Promise.all(this.status.getDroneList()
+      //   .filter((d) => d.name === droneName)
+      //   .map((d) => this.webSocket.sendDeleteDrone(d)))
+      //   .then((d) => {
+      //     console.log("Drones deleted " + d)
+      // }).catch((e) => {
+      //   console.error("Error deleting drone: " + e);
+      // });
       // @ts-ignore
       //const drone = ((this.status.getDroneList().filter((d) => d.path.getPath().at(0).toLatLng().distanceTo(e.latlng) < 10)).at(0));
       //if(drone){
-        const popup = L.popup()
+      const popup = L.popup()
           // @ts-ignore
           .setLatLng(/*drone.path.getPath().at(0).toLatLng()*/ e.latlng)
           .setContent(this.component.location.nativeElement) // Not fully functional TODO : Add the drone to the drone-information-component

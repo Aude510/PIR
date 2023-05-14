@@ -1,4 +1,4 @@
-import {Component, Injectable} from '@angular/core';
+import {Component, Injectable, Input} from '@angular/core';
 import {Drone} from "../../model/Drone";
 import {WebSocketService} from "../services/web-socket.service";
 
@@ -14,7 +14,7 @@ import {WebSocketService} from "../services/web-socket.service";
 @Injectable()
 export class DroneInformationsComponent {
 
-  public drone: Drone | undefined;
+  @Input() drone: Drone | undefined;
 
   constructor(private webSocketService: WebSocketService) { // TODO: Add drone to the constructor
     // Récupérer le drone !
