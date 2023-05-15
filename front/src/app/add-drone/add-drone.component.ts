@@ -116,7 +116,13 @@ export class AddDroneComponent {
   }
 
   displayPath(path: Path) {
-    L.polyline(path.toLatLang()).addTo(this.layer);
+    let points: L.LatLng[] = [];
+
+    for (let point of path.points) {
+      points.push(this.MTDCS.getNearestLatLng(new L.LatLng(point.x, point.y)));
+    } 
+
+    L.polyline(points).addTo(this.layer);
   }
 
   public confirmPath() {
