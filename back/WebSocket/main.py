@@ -54,25 +54,21 @@ def changePath(paths,addedDrone):
     for identifier in paths:
         map_idDrone_path[identifier] = paths[identifier]
         if(identifier != addedDrone):
-            drone = getKeyFromDic(map_owner_idDrone,identifier)
-            owner=drone[0]
-            name=drone[1]
-            map_changed_path[owner].append(name)
-    
-def getKeyFromDic(map :dict, value):
-    auxKey = list(map.keys())
-    auxValue = list(map.values())
-    return auxKey[auxValue.index(value)]
+            for owner,name  in map_owner_idDrone:
+                if(map_owner_idDrone[(owner,name)]==identifier):
+                    map_changed_path[owner].append(name)
+                    break
+            
 
 def detectChangedPath(paths):
     for identifier in paths:
         if(paths[identifier] != map_idDrone_path[identifier]):
             map_idDrone_path[identifier] = paths[identifier]
-            drone = getKeyFromDic(map_owner_idDrone,identifier)
-            print("changed path")
-            owner=drone[0]
-            name=drone[1]
-            map_changed_path[owner].append(name)
+            for owner,name  in map_owner_idDrone:
+                if(map_owner_idDrone[(owner,name)]==identifier):
+                    map_changed_path[owner].append(name)
+                    break
+
 
 
 

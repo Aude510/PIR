@@ -167,7 +167,7 @@ def jsonToNewPathResponse(message):
     y = json.load(message)
     return y["data"]["response"],y["data"]["drone"]
 
-
+## Problème : [115,421],[197,421],[204,365],[124,361]
 
 
 

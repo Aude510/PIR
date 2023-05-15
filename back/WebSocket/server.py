@@ -48,6 +48,8 @@ async def handler(websocket,path):
                 case "block_zone":
                     sem.acquire()
                     zone = convertionJson.jsonToZone(message)
+                    print(f"zone : {zone}")
+                    print(f"zone for Dijkstra : {convertionJson.formatZoneDijkstra(zone)}")
                     main.addBlockedZone(zone)
                     environnement.updateDrone(map_idDrone_path)
                     paths = environnement.blockAZone(convertionJson.formatZoneDijkstra(zone))
@@ -107,7 +109,7 @@ async def handler(websocket,path):
 
 #Send a message to an unique client 
 async def sendUnicast(message, websocket):
-    print("Envoi Unicast")
+    #print("Envoi Unicast")
     try:
         await websocket.send(message)
     except websockets.exceptions.ConnectionClosed:
