@@ -76,10 +76,6 @@ async def handler(websocket,path):
                     environnement.deleteDrone(identifier) ## Suppresion drone de l'environnement
                     await sendUnicast(convertionJson.ackMessage("delete_drone"),websocket)
                     sem.release()
-                case "get_status":
-                    sem.acquire()
-                    await main.sendStatus
-                    sem.release()
                 case _:
                     raise convertionJson.MessageTypeError
     except websockets.exceptions.ConnectionClosed as e: #Connection closed 
