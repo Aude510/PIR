@@ -58,21 +58,27 @@ export class MapToDiscretCoordService {
   }
 
   public discretToLatLng(x: number, y: number): LatLng {
-    let lat: number = this.origin.lat + y * this.deltaY;
-    let lng: number = this.origin.lng + x * this.deltaX;
+    let lat: number = (this.origin.lat + y * this.deltaY) + this.deltaY / 2;
+    let lng: number = (this.origin.lng + x * this.deltaX) + this.deltaX / 2;
     return new LatLng(lat, lng);
   }
 
   public discretToLatLngFromPoint(p: Point): LatLng {
-    return this.discretToLatLng(p.x,p.y);
+    return this.discretToLatLng(p.x, p.y);
   }
 
-  addZoneToMap(zone: IPoint[], layer: LayerGroup) {
+  public addZoneToMap(zone: IPoint[], layer: LayerGroup) {
     console.log(zone)
     // @ts-ignore
     L.polygon(zone.map((p) => this.discretToLatLngFromPoint(p))).addTo(layer);
   }
-  addDroneToMap(drone: Drone, layer: LayerGroup) {
+
+  public getNearestLatLng(point: LatLng): LatLng {
+    let p: Point = this.latLngToDiscret(point);
+    return this.discretToLatLng(p.x, p.y);
+  }
+
+  public addDroneToMap(drone: Drone, layer: LayerGroup) {
     L.circleMarker(this.discretToLatLngFromPoint(drone.start),{color: 'green'}).addTo(layer);
     L.circleMarker(this.discretToLatLngFromPoint(drone.destination), {color: 'blue'}).addTo(layer);
     const path = drone.path.points.map((p) => this.discretToLatLngFromPoint(p));

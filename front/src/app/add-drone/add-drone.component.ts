@@ -43,8 +43,9 @@ export class AddDroneComponent {
     this.layer = new L.LayerGroup();
     this.mapService.addToMap(this.layer);
   }
+
   public leafletClick(event: LeafletMouseEvent) {
-    let point = event.latlng;
+    let point = this.MTDCS.getNearestLatLng(event.latlng);
     if (!this.MTDCS.onZone(event.latlng)) {
       alert("You are outside the zone!");
       throw new Error("You are outside the zone");
@@ -53,7 +54,7 @@ export class AddDroneComponent {
       this.start?.remove();
       this.start = L.circleMarker(point)
         .setStyle({color: 'green'})
-        .setLatLng(event.latlng)
+        .setLatLng(point)
         .addTo(this.layer);
       this.mapState = "SettingArrival";
     } else {
@@ -61,7 +62,7 @@ export class AddDroneComponent {
       this.arrival = L
         .circleMarker(point)
         .setStyle({color:'blue'})
-        .setLatLng(event.latlng)
+        .setLatLng(point)
         .addTo(this.layer);
       this.mapState = "SettingStart";
     }

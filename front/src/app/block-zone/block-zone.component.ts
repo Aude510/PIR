@@ -67,7 +67,7 @@ export class BlockZoneComponent {
 
 
 
-  addPoint(event: L.LeafletMouseEvent){
+  addPoint(event: L.LeafletMouseEvent) {
 
 
 
@@ -88,16 +88,17 @@ export class BlockZoneComponent {
 
     if (this.listePoints.length<this.tailleSquare-1){ // premiers points
       // add point à la liste
-      this.listePoints.push(event.latlng);
+      this.listePoints.push(this.MTDCS.getNearestLatLng(event.latlng));
       /* add marqueur sur la map à la position du point */
-      let marker: L.Marker = new L.Marker(event.latlng);
+      // let marker: L.Marker = new L.Marker(event.latlng);
+      let marker: L.Marker = new L.Marker(this.MTDCS.getNearestLatLng(event.latlng));
       this.listeMarkers.push(marker);
       marker.addTo(this.layer);
     } else if (this.listePoints.length==this.tailleSquare-1) { // dernier point
       // add point à la liste
-      this.listePoints.push(event.latlng);
+      this.listePoints.push(this.MTDCS.getNearestLatLng(event.latlng));
       /* add marqueur sur la map de l'event à la position du point */
-      let marker: L.Marker = new L.Marker(event.latlng);
+      let marker: L.Marker = new L.Marker(this.MTDCS.getNearestLatLng(event.latlng));
       this.listeMarkers.push(marker);
       marker.addTo(this.layer);
       // tracer polygone
