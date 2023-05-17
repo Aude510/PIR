@@ -75,7 +75,7 @@ export class WebSocketService {
                 "y": 421
               },
               {
-                "x": 197,
+                "x": 204,
                 "y": 421
               },
               {
@@ -83,8 +83,8 @@ export class WebSocketService {
                 "y": 365
               },
               {
-                "x": 124,
-                "y": 361
+                "x": 115,
+                "y": 365
               }
             ]
           }

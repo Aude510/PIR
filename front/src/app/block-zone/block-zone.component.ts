@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { LatLng, LayerGroup } from 'leaflet';
+import {latLng, LatLng, LayerGroup} from 'leaflet';
 import * as L from "leaflet";
 import { Square } from 'src/model/Square';
 import { Point } from 'src/model/Point';
@@ -17,6 +17,7 @@ import {WebSocketService} from "../services/web-socket.service";
 export class BlockZoneComponent {
 
   private listePoints: Array<LatLng> = []; // ne pas oublier d'init
+  private finalList: Array<LatLng> = [] ;
   private listeMarkers: Array<L.Marker> = [];
   private map: any = null;
   private polygon: any = null;
@@ -28,7 +29,7 @@ export class BlockZoneComponent {
 
     this.mapService.onMapClickedTakeSubscription().subscribe((e) => {
       // j'ai juste commenté ton code pour tester le miens 😊
-      this.addPoint(e);
+      this.addPointSquared(e);
 
       // permet de pas supprimer le callback quand on clique sur la map
       // this.MTDCS.onMapClick(e);
@@ -65,11 +66,60 @@ export class BlockZoneComponent {
     return croisent;
   }
 
+  addPointSquared(event: L.LeafletMouseEvent){
 
+    // assignation de la map :
+    if (this.map==null){
+      this.map=this.mapService.map;
+    }
+
+    if (!this.MTDCS.onZone(event.latlng)) {
+      alert("You are outside the zone!");
+      return ;
+    }
+
+    if (this.listePoints.length == 0){ // premiers points
+      // add point à la liste
+      this.listePoints.push(event.latlng);
+      /* add marqueur sur la map à la position du point */
+      let marker: L.Marker = new L.Marker(event.latlng);
+      this.listeMarkers.push(marker);
+      marker.addTo(this.layer);
+    } else if (this.listePoints.length == 1) { // dernier point
+
+      // @ts-ignore
+      let point1 = latLng(this.listePoints.at(0)?.lat,event.latlng.lng);
+      this.listePoints.push(point1);
+      let marker1: L.Marker = new L.Marker(point1);
+      this.listeMarkers.push(marker1);
+      marker1.addTo(this.layer);
+
+      // add point à la liste
+      this.listePoints.push(event.latlng);
+      /* add marqueur sur la map de l'event à la position du point */
+      let marker: L.Marker = new L.Marker(event.latlng);
+      this.listeMarkers.push(marker);
+      marker.addTo(this.layer);
+
+      // @ts-ignore
+      let point2 = latLng(event.latlng.lat,this.listePoints.at(0)?.lng);
+      this.listePoints.push(point2);
+      let marker2: L.Marker = new L.Marker(point2);
+      this.listeMarkers.push(marker2);
+      marker2.addTo(this.layer);
+
+      // tracer polygone
+      this.polygon = L.polygon(this.listePoints);
+      this.polygon.addTo(this.layer);
+
+      this.listeMarkers.map((m) => console.log(m.getLatLng()))
+    } else {
+      alert("please submit or redraw the zone");
+    }
+
+  }
 
   addPoint(event: L.LeafletMouseEvent) {
-
-
 
     // let scope {}
     // var scope par fonction (à éviter)
@@ -129,7 +179,7 @@ export class BlockZoneComponent {
   async sendToBack(){
     if (this.listePoints.length != this.tailleSquare){
       alert("please draw a valid zone before submitting : " + this.tailleSquare + " points.")
-    } else if (this.checkWrongZone(this.listePoints)){
+    } else if (this.checkWrongZone(this.listePoints ) ){
       alert("avoid lines crossing while drawing the zone");
     }
      else {
