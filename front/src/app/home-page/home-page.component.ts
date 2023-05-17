@@ -1,10 +1,8 @@
 import {
   Component,
-  ComponentFactoryResolver,
-  ComponentRef,
-  EventEmitter, Injector,
+  EventEmitter,
+  Injector,
   Output,
-  ViewChild,
   ViewContainerRef
 } from '@angular/core';
 import {Router} from "@angular/router";
@@ -32,7 +30,6 @@ export class HomePageComponent {
                      private mapService: MapService,
                      private webSocket: WebSocketService,
                      private coords: MapToDiscretCoordService,
-                     private resolver: ComponentFactoryResolver,
                      public status: StatusService,
                      private injector: Injector,
                      private viewContainerRef: ViewContainerRef) {
