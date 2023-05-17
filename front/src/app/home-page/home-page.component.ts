@@ -33,7 +33,7 @@ export class HomePageComponent {
                      private webSocket: WebSocketService,
                      private coords: MapToDiscretCoordService,
                      private resolver: ComponentFactoryResolver,
-                     private status: StatusService,
+                     public status: StatusService,
                      private injector: Injector,
                      private viewContainerRef: ViewContainerRef) {
 
