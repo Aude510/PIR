@@ -17,10 +17,8 @@ export class ConfirmPathNotificationComponent {
   private lastStatus: Status | undefined;
   constructor(private socket: WebSocketService) {
     this.socket.subToMapUpdate().subscribe((status: Status) => {
-      console.log(`analysing ${status.changed}`)
         status.changed.map((name) => {
           return _.find(status.drones, (d) => {
-            console.log(`find ${d.name} : name ${name}`);
             return d.name === name
           })
         }).filter((d) => {
@@ -30,12 +28,9 @@ export class ConfirmPathNotificationComponent {
           if(!this.lastStatus) {
             return false;
           }
-          console.log(`filter ${d.name}`);
           const changedDrone = _.find(this.lastStatus?.drones,(fd) => {
             return d.name === fd.name;
           });
-          console.log(`found ${changedDrone?.name}`)
-          console.log(`contains: ${changedDrone?.path.contains(d.path) || false}`);
           return !changedDrone?.path.contains(d.path);
         }).forEach((d) => {
             if (!d) {
