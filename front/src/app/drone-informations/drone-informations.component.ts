@@ -18,7 +18,7 @@ export class DroneInformationsComponent {
 
   @Input() drone: Drone | undefined;
 
-  constructor(private webSocketService: WebSocketService,private mdtcs : MapToDiscretCoordService) { // TODO: Add drone to the constructor
+  constructor(private webSocketService: WebSocketService,private mdtcs: MapToDiscretCoordService) { // TODO: Add drone to the constructor
     // Récupérer le drone !
     console.log("Drone information ready")
 
@@ -30,4 +30,19 @@ export class DroneInformationsComponent {
       this.webSocketService.sendDeleteDrone(this.drone).then(r => console.log(r));
     }
   }
+
+  getStart(){
+    if(this.drone?.start) {
+      return this.mdtcs.discretToLatLngFromPoint(this.drone?.start)
+    }
+    return undefined;
+  }
+  getDestination(){
+    if(this.drone?.destination) {
+      return this.mdtcs.discretToLatLngFromPoint(this.drone.destination)
+    }
+    return undefined
+  }
 }
+
+

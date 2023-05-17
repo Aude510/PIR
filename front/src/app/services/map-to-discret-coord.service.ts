@@ -94,4 +94,6 @@ export class MapToDiscretCoordService {
     // @ts-ignore
     L.marker(path[0], {icon: icon, title: drone.name}).addTo(layer);
   }
+
+
 }

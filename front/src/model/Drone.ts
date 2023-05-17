@@ -1,6 +1,7 @@
 import {IOwner, Owner} from "./Owner";
 import {IPath, Path} from "./Path";
 import {IPoint, Point} from "./Point";
+import {MapToDiscretCoordService} from "../app/services/map-to-discret-coord.service";
 
 export type IDrone = {
   id: number,
@@ -20,7 +21,8 @@ export class Drone {
               public priority: number,
               public path: Path,
               public start: Point,
-              public destination: Point) { }
+              public destination: Point) {
+  }
 
   static fromServer(drone: IDrone) {
     console.log(`Parsed path ${JSON.stringify(drone.path)}`);
@@ -34,3 +36,4 @@ export class Drone {
     );
   }
 }
+
