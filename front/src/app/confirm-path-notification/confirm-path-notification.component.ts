@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { WebSocketService } from '../services/web-socket.service';
-import { ServerMessage } from 'src/model/ServerMessage';
 import { Status } from 'src/model/Status';
 import { Drone } from 'src/model/Drone';
+import _ from "lodash";
 
 @Component({
   selector: 'app-confirm-path-notification',
@@ -12,23 +12,46 @@ import { Drone } from 'src/model/Drone';
 export class ConfirmPathNotificationComponent {
   public cond = true;
 
+  public notification:  {drone: Drone, message: string}[] = [];
 
-
-
-
-
-  public notification: string[] = [];
-
+  private lastStatus: Status | undefined;
   constructor(private socket: WebSocketService) {
-    this.socket.subToMapUpdate().subscribe((v: Status) => {
-        const status = v;
-        status.changed.forEach((c) => {
-            this.notification.push(`Path modified for drone ${c}`);
+    this.socket.subToMapUpdate().subscribe((status: Status) => {
+      console.log(`analysing ${status.changed}`)
+        status.changed.map((name) => {
+          return _.find(status.drones, (d) => {
+            console.log(`find ${d.name} : name ${name}`);
+            return d.name === name
+          })
+        }).filter((d) => {
+          if (!d) {
+            return false;
+          }
+          if(!this.lastStatus) {
+            return false;
+          }
+          console.log(`filter ${d.name}`);
+          const changedDrone = _.find(this.lastStatus?.drones,(fd) => {
+            return d.name === fd.name;
+          });
+          console.log(`found ${changedDrone?.name}`)
+          console.log(`contains: ${changedDrone?.path.contains(d.path) || false}`);
+          return !changedDrone?.path.contains(d.path);
+        }).forEach((d) => {
+            if (!d) {
+              return;
+            }
+            this.notification.push({
+              drone: d,
+              message: `Path modified for drone ${d.name}`
+            });
+            console.log("changed: " + d.name)
             setTimeout(
               () => this.notification.pop(),
               30000
             );
         })
+      this.lastStatus = status;
     })
   }
 
@@ -45,10 +68,15 @@ userResponse: boolean | undefined;
 //Εκεί μπορούμε να θέσουμε την τιμή της userResponse σύμφωνα με την απάντηση του χρήστη ως εξής:
 //There we can set the value of userResponse according to the user response as follows:
 
-sendAnswerPath(response: boolean): Promise<void> {
+sendAnswerPath(response: boolean) {
   console.log("Answering the path");
-  this.notification.pop();
-  return this.socket?.sendAnswerPath(response);
+  const d = this.notification.pop()?.drone;
+  if (!response && d) {
+    return this.socket.sendDeleteDrone(d);
+  }
+  return new Promise((resolve, reject) => reject());
+
+  // return this.socket?.sendAnswerPath(response);
 
   /*
   // Θέτουμε την τιμή της userResponse  // Set the value of userResponse

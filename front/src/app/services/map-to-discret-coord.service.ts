@@ -4,7 +4,6 @@ import {IPoint, Point} from 'src/model/Point';
 import { MapService } from './map.service';
 import {Drone} from "../../model/Drone";
 import * as L from "leaflet";
-import {Zone} from "../../model/Zone";
 
 const MAX_POINTS: number = 500;
 const DIST: number = 10;
@@ -68,7 +67,6 @@ export class MapToDiscretCoordService {
   }
 
   public addZoneToMap(zone: IPoint[], layer: LayerGroup) {
-    console.log(zone)
     // @ts-ignore
     L.polygon(zone.map((p) => this.discretToLatLngFromPoint(p))).addTo(layer);
   }

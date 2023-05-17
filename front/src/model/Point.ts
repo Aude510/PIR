@@ -1,16 +1,21 @@
 import { LatLng } from "leaflet";
+import {IEquals} from "./IEquals";
 
 export type IPoint = {
   x: number;
   y: number;
 }
-export class Point {
+export class Point implements IEquals<Point> {
   x: number
   y: number
 
   constructor(latlng: LatLng) {
     this.x=latlng.lat;
     this.y=latlng.lng;
+  }
+
+  equals(other: Point): boolean {
+       return this.x === other.x && this.y === other.y;
   }
 
 
