@@ -1,6 +1,8 @@
 import {Component, Injectable, Input} from '@angular/core';
 import {Drone} from "../../model/Drone";
 import {WebSocketService} from "../services/web-socket.service";
+import {MapToDiscretCoordService} from "../services/map-to-discret-coord.service";
+import {LatLng} from "leaflet";
 
 
 @Component({
@@ -16,7 +18,7 @@ export class DroneInformationsComponent {
 
   @Input() drone: Drone | undefined;
 
-  constructor(private webSocketService: WebSocketService) { // TODO: Add drone to the constructor
+  constructor(private webSocketService: WebSocketService,private mdtcs : MapToDiscretCoordService) { // TODO: Add drone to the constructor
     // Récupérer le drone !
     console.log("Drone information ready")
 
