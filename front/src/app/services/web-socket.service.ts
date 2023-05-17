@@ -79,16 +79,7 @@ export class WebSocketService {
         this.connect();
       }
     }
-  async verifyConnection(){
-    await new Promise(f => setTimeout(f, 5000));
-    console.log("GNA")
-    if(!this.messageReceived){
-      console.error("CONNECTION TIMEOUT")
-      this.socket?.close();
-    }else{
-      this.messageReceived = false;
-    }
-  }
+
   private simulationCase1() {
     const dd = new Drone("Cador", {ID: "q,kdfnqdsjnvjsdn"}, 10, new Path([]), Point.fromTuple(10, 10), Point.fromTuple(50, 50)); // TEST CASE
     this.sendNewDrone(dd)
