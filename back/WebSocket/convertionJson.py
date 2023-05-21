@@ -39,6 +39,7 @@ def formatPath(path):
         pathFormated.append({"x":int(point[0]),"y":int(point[1])})
     return pathFormated
 
+
 #Convert a drone to the right format in order to send it to the client
 def formatDrone(drone):
     print("Drone: ", drone)
