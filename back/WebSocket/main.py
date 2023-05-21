@@ -70,7 +70,8 @@ def droneInBlockedZone(zone):
             if (x0< drone["destination"]["x"] < x1) and (y0< drone["destination"]["y"] < y1):
                 name = drone["name"]
                 idDrone = map_owner_idDrone[(owner,name)]
-                map_idDrone_path[idDrone] = drone["destination",drone["start"]]
+                print(drone["destination"])
+                map_idDrone_path[idDrone] = [drone["destination"],drone["start"]]
                 aux = drone["destination"]
                 drone["destination"] = drone["start"]
                 drone["start"] = aux
@@ -138,7 +139,6 @@ async def sendStatus():
 async def running():
     while(True):
         sem.acquire()
-        print("acquire sem " + str(_getframe().f_lineno))
         if(len(map_idDrone_path)>0):
             for client in connect:
                 ## Mettre un if pour voir s'il y a un ownerID ##
@@ -157,8 +157,6 @@ async def running():
                         liste_drone.remove(drone)
         await sendStatus()
         sem.release()
-        print("release sem main")
-        
         await asyncio.sleep(period)
 
 
