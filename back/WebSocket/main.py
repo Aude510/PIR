@@ -83,6 +83,13 @@ def changePath(paths,addedDrone):
                 if(map_owner_idDrone[(owner,name)]==identifier):
                     map_changed_path[owner].append(name)
                     break
+
+def convertToInt(paths):
+    for key in paths:
+        path = paths[key]
+        for point in path:
+            for coord in point:
+                coord = int(coord)
             
 
 def detectChangedPath(paths):
