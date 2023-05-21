@@ -4,6 +4,7 @@ import convertionJson
 import main
 from structure import *
 import trajectory
+from sys import _getframe
 
 environnement = trajectory.Environment(500,500)
 
@@ -17,6 +18,7 @@ async def handler(websocket,path):
         print(message)
         if(convertionJson.jsonToType(message)=="connect"):
             sem.acquire()
+            print("acquire sem " + _getframe().f_lineno)
             #id = newIdConnect()
             connect.append(websocket)
             #map_connect[id] = websocket
@@ -29,6 +31,7 @@ async def handler(websocket,path):
             match convertionJson.jsonToType(message): #Identifies the type of the message if not, raise MessageTypeError
                 case "answer_path":
                     sem.acquire()
+                    print("acquire sem " + _getframe().f_lineno)
                     answer, drone = convertionJson.jsonToNewPathResponse(message)
                     if(not(answer)):
                         identifier = await main.deleteDrone(websocket,drone)
@@ -37,6 +40,8 @@ async def handler(websocket,path):
                     sem.release()
                 case "delete_zone":
                     sem.acquire()
+                    print("acquire sem " + _getframe().f_lineno)
+                    
                     zone = convertionJson.jsonToZone(message)
                     await main.deleteBlockedZone(zone)
                     environnement.deleteBlockedZone(convertionJson.formatZoneDijkstra(zone))
@@ -45,6 +50,8 @@ async def handler(websocket,path):
                     sem.release()
                 case "block_zone":
                     sem.acquire()
+                    print("acquire sem " + _getframe().f_lineno)
+                    
                     zone = convertionJson.jsonToZone(message)
                     main.addBlockedZone(zone)
                     environnement.updateDrone(map_idDrone_path)
@@ -54,6 +61,8 @@ async def handler(websocket,path):
                     sem.release()
                 case "new_drone":
                     sem.acquire()
+                    print("acquire sem " + _getframe().f_lineno)
+                    
                     owner, priority, start, destination = convertionJson.jsonToDroneDijkstra(message)
                     drone = convertionJson.jsonToDrone(message)
                     idDrone = main.addDrone(websocket,drone)
@@ -65,6 +74,8 @@ async def handler(websocket,path):
                     sem.release()
                 case "delete_drone":
                     sem.acquire()
+                    print("acquire sem " + _getframe().f_lineno)
+                    
                     drone = convertionJson.jsonToDrone(message)
                     identifier = main.deleteDrone(websocket,drone) ## Suppression drone du status
                     environnement.deleteDrone(identifier) ## Suppresion drone de l'environnement
@@ -72,6 +83,8 @@ async def handler(websocket,path):
                     sem.release()
                 case "get_status":
                     sem.acquire()
+                    print("acquire sem " + _getframe().f_lineno)
+                    
                     await main.sendStatus
                     sem.release()
                 case _:
@@ -80,6 +93,8 @@ async def handler(websocket,path):
         print("Connection closed")
         sem.release()
         sem.acquire()
+        print("acquire sem " + _getframe().f_lineno)
+        
         try:
             print("Session closed") 
             connect.remove(websocket) #Delete the connection from the list
@@ -92,6 +107,8 @@ async def handler(websocket,path):
     except convertionJson.MessageTypeError:
         print("Message Type Error")
         sem.acquire()
+        print("acquire sem " + _getframe().f_lineno)
+        
         print("Erreur sur le type du message reçu")
         await sendUnicast(convertionJson.errorMessage("test"),websocket) #Send an error message to the client
         connect.remove(websocket)
@@ -100,6 +117,8 @@ async def handler(websocket,path):
     except convertionJson.ConnectionError:
         print("Connection Error")
         sem.acquire()
+        print("acquire sem " + _getframe().f_lineno)
+        
         print("Erreur sur le message de connect")
         await sendUnicast(convertionJson.errorMessage("connect"),websocket)
         sem.release()
@@ -110,6 +129,8 @@ async def sendUnicast(message, websocket):
         await websocket.send(message)
     except websockets.exceptions.ConnectionClosed:
         sem.acquire()
+        print("acquire sem " + _getframe().f_lineno)
+        
         main.deleteConnection(websocket,environnement)
         print("Impossible to send connection was closed")
         sem.release()

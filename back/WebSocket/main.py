@@ -4,6 +4,7 @@ import threading
 import convertionJson
 from structure import *
 import trajectory
+from sys import _getframe
 
 period = 5 ## Period to send status ##
 nextIdDrone=0
@@ -115,6 +116,7 @@ async def sendStatus():
 async def running():
     while(True):
         sem.acquire()
+        print("acquire sem " + _getframe().f_lineno)
         if(len(map_idDrone_path)>0):
             for client in connect:
                 ## Mettre un if pour voir s'il y a un ownerID ##
