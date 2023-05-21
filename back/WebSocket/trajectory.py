@@ -96,6 +96,18 @@ class Environment:
         global returnVal
         for i in range(0, 3):
 
+            # Block a zone around edges (make a 9-zones square for each edge in order to avoid problems
+            for time in range(0, self.z):
+                self.environment[listPoints[i][0]][listPoints[i][1]][time] = 999999999999999
+                self.environment[listPoints[i][0] + 1][listPoints[i][1]][time] = 999999999999999
+                self.environment[listPoints[i][0] + 1][listPoints[i][1] + 1][time] = 999999999999999
+                self.environment[listPoints[i][0]][listPoints[i][1] + 1][time] = 999999999999999
+                self.environment[listPoints[i][0] - 1][listPoints[i][1]][time] = 999999999999999
+                self.environment[listPoints[i][0] - 1][listPoints[i][1] - 1][time] = 999999999999999
+                self.environment[listPoints[i][0]][listPoints[i][1] - 1][time] = 999999999999999
+                self.environment[listPoints[i][0] + 1][listPoints[i][1] - 1][time] = 999999999999999
+                self.environment[listPoints[i][0] - 1][listPoints[i][1] + 1][time] = 999999999999999
+
             # Calculation of the sides of the blocked zone
             l = list()
 
@@ -138,13 +150,15 @@ class Environment:
             for time in range(0, self.z):
                 self.listBlockedPoints.append((point[0], point[1], time))
                 self.environment[point[0]][point[1]][time] = 99999999999999
+               # self.environment[point[0]+1][point[1]+1][time] = 99999999999999
+
 
         returnVal = dict()
         if recalculateDronesPath:
 
             # self.listDrones.clear()
 
-            # self.ax = self.fig.add_subplot(111, projection='3d')
+            self.ax = self.fig.add_subplot(111, projection='3d')
             for drone in self.listDrones:
                 result = self.addDrone(drone[0], drone[1], drone[2], drone[3], drone[4], isANewDrone=False,
                                        addToPlot=addToPlot)
