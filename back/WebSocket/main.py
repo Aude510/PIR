@@ -69,11 +69,11 @@ def droneInBlockedZone(zone):
         for drone in list_drone:
             if (x0< drone["destination"]["x"] < x1) and (y0< drone["destination"]["y"] < y1):
                 name = drone["name"]
+                actual = map_idDrone_path[idDrone][0]
                 idDrone = map_owner_idDrone[(owner,name)]
                 map_idDrone_path[idDrone] = [map_idDrone_path[idDrone][0],convertionJson.jsonToPoint(drone["start"]) ]
-                aux = drone["destination"]
                 drone["destination"] = drone["start"]
-                drone["start"] = aux
+                drone["start"] = actual
     
 def changePath(paths,addedDrone):
     for identifier in paths:
