@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { v4 as uuidv4 } from 'uuid';
+import {Owner} from "../../model/Owner";
 
 @Injectable({
   providedIn: 'root'
@@ -16,5 +17,9 @@ export class OwnerService {
     } else {
       this.id = id;
     }
+  }
+
+  getOwner() {
+    return new Owner(this.id);
   }
 }

@@ -8,6 +8,7 @@ import {Zone} from "../../model/Zone";
 import {Point} from "../../model/Point";
 import {IStatus, Status} from "../../model/Status";
 import {ServerConnect} from "../../model/ServerConnect";
+import {OwnerService} from "./owner.service";
 
 
 @Injectable({
@@ -35,7 +36,7 @@ export class WebSocketService {
     return this.map_update_subscription;
   }
 
-  public constructor() {
+  public constructor(private owner: OwnerService) {
     console.log("Initialising the web socket\n");
     this.connect();
     console.log("Connection complete");
@@ -57,7 +58,7 @@ export class WebSocketService {
     }
     if(this.socket){
       this.socket.onopen = (event) => {
-        this.socket?.send(JSON.stringify({type: "connect", data: {owner: "dsfg"}}));
+        this.socket?.send(JSON.stringify({type: "connect", data: {owner: this.owner.getOwner()}}));
         if(isConnected){
           console.log("Connected to the server !\n");
           this.simulationCase1();
@@ -81,7 +82,7 @@ export class WebSocketService {
     }
 
   private simulationCase1() {
-    const dd = new Drone("Cador", {ID: "q,kdfnqdsjnvjsdn"}, 10, new Path([]), Point.fromTuple(10, 10), Point.fromTuple(50, 50)); // TEST CASE
+    const dd = new Drone("Cador",  this.owner.getOwner(), 10, new Path([]), Point.fromTuple(10, 10), Point.fromTuple(50, 50)); // TEST CASE
     this.sendNewDrone(dd)
       .then((data) => console.log(data))
       .catch((e) => {
