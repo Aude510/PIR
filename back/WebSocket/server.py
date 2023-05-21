@@ -6,7 +6,7 @@ from structure import *
 import trajectory
 
 environnement = trajectory.Environment(500,500)
-connect = [] #List of all clients connected
+
 period = 3
 
 #Handler executed at every new connection

@@ -18,7 +18,7 @@ def add_connect(websocket,owner):
     if found:
         map_connect_droneList[websocket] = (owner,map_connect_droneList[key][1])
         del map_connect_droneList[key]
-        server.connect.remove(key)
+        connect.remove(key)
     else:
         map_connect_droneList[websocket]=(owner,[])
         map_changed_path[owner] = []
@@ -106,7 +106,7 @@ async def deleteBlockedZone(zone):
 
 
 async def sendStatus():
-    for client in server.connect:
+    for client in connect:
         ownerID = map_connect_droneList[client][0]
         droneList = map_connect_droneList[client][1]
         await server.sendUnicast(convertionJson.statusToJson(ownerID,droneList,blocked_zones,0,map_changed_path[ownerID]),client)
@@ -116,7 +116,7 @@ async def running():
     while(True):
         sem.acquire()
         if(len(map_idDrone_path)>0):
-            for client in server.connect:
+            for client in connect:
                 ## Mettre un if pour voir s'il y a un ownerID ##
                 ownerID = map_connect_droneList[client][0]
                 liste_drone = map_connect_droneList[client][1]
