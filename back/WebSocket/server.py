@@ -128,12 +128,10 @@ async def sendUnicast(message, websocket):
     try:
         await websocket.send(message)
     except websockets.exceptions.ConnectionClosed:
-        sem.acquire()
         print("acquire  em " + str(_getframe().f_lineno))
         
         main.deleteConnection(websocket,environnement)
         print("Impossible to send connection was closed")
-        sem.release()
 
 
 #Créer le serveur websocket et envoi périodiquement à tous les clients le statu

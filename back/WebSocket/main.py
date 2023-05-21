@@ -139,6 +139,7 @@ async def running():
                         liste_drone.remove(drone)
         await sendStatus()
         sem.release()
+        print("release sem main")
         
         await asyncio.sleep(period)
 
