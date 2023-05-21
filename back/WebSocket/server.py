@@ -77,6 +77,7 @@ async def handler(websocket,path):
                 case _:
                     raise convertionJson.MessageTypeError
     except websockets.exceptions.ConnectionClosed as e: #Connection closed 
+        sem.release()
         sem.acquire()
         try:
             print("Session closed") 
