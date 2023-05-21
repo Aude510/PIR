@@ -55,7 +55,7 @@ async def handler(websocket,path):
                         main.convertToInt(paths)
                         main.detectChangedPath(paths)
                     await sendUnicast(convertionJson.ackMessage("block_zone"),websocket)
-                    sem.relesase()
+                    sem.release()
                 case "new_drone":
                     sem.acquire()                    
                     owner, priority, start, destination = convertionJson.jsonToDroneDijkstra(message)
