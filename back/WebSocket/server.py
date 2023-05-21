@@ -11,8 +11,6 @@ period = 3
 
 #Handler executed at every new connection
 async def handler(websocket,path):
-    ## connect.append(websocket) #Add the new connection to the list of all connections  
-    ## TODO : bouger le append du connect au moment où je recevrais le message connexion
     print("Je suis dans le handler")
     try:
         message = await websocket.recv()
@@ -48,15 +46,10 @@ async def handler(websocket,path):
                 case "block_zone":
                     sem.acquire()
                     zone = convertionJson.jsonToZone(message)
-                    print(f"zone : {zone}")
-                    print(f"zone for Dijkstra : {convertionJson.formatZoneDijkstra(zone)}")
                     main.addBlockedZone(zone)
                     environnement.updateDrone(map_idDrone_path)
                     paths = environnement.blockAZone(convertionJson.formatZoneDijkstra(zone))
-                    #print("map_idDrone_path : "+ str(map_idDrone_path))
-                    #print("paths : " + str(paths))
                     main.detectChangedPath(paths)
-                    ## TODO : exécuter la fonction de Kiki pour add zone
                     await sendUnicast(convertionJson.ackMessage("block_zone"),websocket)
                     sem.release()
                 case "new_drone":
@@ -64,9 +57,8 @@ async def handler(websocket,path):
                     owner, priority, start, destination = convertionJson.jsonToDroneDijkstra(message)
                     drone = convertionJson.jsonToDrone(message)
                     idDrone = main.addDrone(websocket,drone)
-                    #print("New drone with id : " + str(idDrone))
                     environnement.updateDrone(map_idDrone_path)
-                    paths = environnement.addDrone(idDrone,priority,start,destination)
+                    paths = environnement.addDrone(idDrone,int(priority),start,destination)
                     main.changePath(paths,idDrone)
                     await sendUnicast(convertionJson.ackMessage("new_drone"),websocket)
                     sem.release()
@@ -104,12 +96,11 @@ async def handler(websocket,path):
     except convertionJson.ConnectionError:
         sem.acquire()
         print("Erreur sur le message de connect")
-        sendUnicast(convertionJson.errorMessage("connect"),websocket)
+        await sendUnicast(convertionJson.errorMessage("connect"),websocket)
         sem.release()
 
 #Send a message to an unique client 
 async def sendUnicast(message, websocket):
-    #print("Envoi Unicast")
     try:
         await websocket.send(message)
     except websockets.exceptions.ConnectionClosed:

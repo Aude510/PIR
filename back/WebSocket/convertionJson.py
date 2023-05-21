@@ -136,8 +136,8 @@ def jsonToDroneDijkstra(message):
 #return = owner : int
 def jsonToOwner(message) -> str:
     y=json.loads(message)
-    if(type(y["data"]["owner"])== str):
-        return y["data"]["owner"]
+    if(type(y["data"]["owner"]["ID"])== str):
+        return y["data"]["owner"]["ID"]
     else:
         raise ConnectionError
 
