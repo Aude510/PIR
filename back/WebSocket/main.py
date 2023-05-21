@@ -74,10 +74,6 @@ def droneInBlockedZone(zone):
                 map_idDrone_path[idDrone] = [int(actual)=,convertionJson.jsonToPoint(drone["start"]) ]
                 drone["destination"] = drone["start"]
                 drone["start"] = actual
-                print(type(actual))
-                print(type(actual[0]))
-                print(type(convertionJson.jsonToPoint(drone["start"])))
-                print(type(drone["start"]))
     
 def changePath(paths,addedDrone):
     for identifier in paths:
