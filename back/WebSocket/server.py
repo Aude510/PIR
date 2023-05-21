@@ -57,7 +57,7 @@ async def handler(websocket,path):
                         environnement.updateDrone(map_idDrone_path)
                         paths = environnement.blockAZone(convertionJson.formatZoneDijkstra(zone))
                         main.detectChangedPath(paths)
-                        await sendUnicast(convertionJson.ackMessage("block_zone"),websocket)
+                    await sendUnicast(convertionJson.ackMessage("block_zone"),websocket)
                     sem.release()
                 case "new_drone":
                     sem.acquire()
