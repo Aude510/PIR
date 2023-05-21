@@ -40,7 +40,7 @@ def formatPath(path):
     return pathFormated
 
 def jsonToPoint(point):
-    return [point["x"],point["y"]]
+    return [int(point["x"]),int(point["y"])]
 
 #Convert a drone to the right format in order to send it to the client
 def formatDrone(drone):
