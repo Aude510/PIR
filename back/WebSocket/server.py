@@ -48,11 +48,13 @@ async def handler(websocket,path):
                     sem.acquire()                    
                     zone = convertionJson.jsonToZone(message)
                     if(main.addBlockedZone(zone)):
+                        zoneFormated = convertionJson.formatZoneDijkstra(zone)
+                        main.droneInBlockedZone(zoneFormated)
                         environnement.updateDrone(map_idDrone_path)
                         paths = environnement.blockAZone(convertionJson.formatZoneDijkstra(zone))
                         main.detectChangedPath(paths)
                     await sendUnicast(convertionJson.ackMessage("block_zone"),websocket)
-                    sem.release()
+                    sem.relesase()
                 case "new_drone":
                     sem.acquire()                    
                     owner, priority, start, destination = convertionJson.jsonToDroneDijkstra(message)

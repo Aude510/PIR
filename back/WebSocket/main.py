@@ -64,8 +64,8 @@ def droneInBlockedZone(zone):
         for drone in list_drone:
             if (zone[0][0]< drone["destination"]["x"] < zone[2][0]) and (zone[0][1]< drone["destination"]["y"] < zone[2][1]):
                 aux = drone["destination"]
-                drone["destination"] = drone["source"]
-                drone["source"] = aux
+                drone["destination"] = drone["start"]
+                drone["start"] = aux
     
 def changePath(paths,addedDrone):
     for identifier in paths:
