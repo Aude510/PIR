@@ -12,7 +12,7 @@ period = 3
 
 #Handler executed at every new connection
 async def handler(websocket,path):
-    print("Je suis dans le handler")
+    print("New connection detected")
     try:
         message = await websocket.recv()
         print(message)
@@ -52,7 +52,6 @@ async def handler(websocket,path):
                         main.droneInBlockedZone(zoneFormated)
                         environnement.updateDrone(map_idDrone_path)
                         paths = environnement.blockAZone(convertionJson.formatZoneDijkstra(zone))
-                        main.convertToInt(paths)
                         main.detectChangedPath(paths)
                     await sendUnicast(convertionJson.ackMessage("block_zone"),websocket)
                     sem.relesase()
