@@ -58,6 +58,15 @@ def addDrone(websocket,drone):
     map_owner_idDrone[((owner,drone["name"]))] = idDrone
     return idDrone
     
+def droneInBlockedZone(zone):
+    for user in connect:
+        list_drone = map_connect_droneList[user][1]
+        for drone in list_drone:
+            if (zone[0][0]< drone["destination"]["x"] < zone[2][0]) and (zone[0][1]< drone["destination"]["y"] < zone[2][1]):
+                aux = drone["destination"]
+                drone["destination"] = drone["source"]
+                drone["source"] = aux
+    
 def changePath(paths,addedDrone):
     for identifier in paths:
         map_idDrone_path[identifier] = paths[identifier]
