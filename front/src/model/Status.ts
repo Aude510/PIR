@@ -12,7 +12,7 @@ export type IStatus = {
 export class Status {
   constructor(public owner : Owner,
   public drones: Drone[],
-  public blocked_Zones:Zone[],
+  public blocked_Zones: Zone[],
   public time: number,
   public changed: string[] // names of all drone who've changed path
 ) {};

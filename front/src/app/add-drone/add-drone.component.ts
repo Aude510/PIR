@@ -13,6 +13,7 @@ import {OwnerService} from "../services/owner.service";
 import {Owner} from "../../model/Owner";
 import {StatusService} from "../services/status.service";
 import { MapToDiscretCoordService } from '../services/map-to-discret-coord.service';
+import {Square} from "../../model/Square";
 
 
 @Component({
@@ -97,6 +98,28 @@ export class AddDroneComponent {
       start: this.MTDCS.latLngToDiscret(this.start.getLatLng()),
       arrival: this.MTDCS.latLngToDiscret(this.arrival?.getLatLng())
     };
+    const squares: Square[] = this.status.getSquares();
+    console.log(`squares: ${JSON.stringify(squares)}`);
+
+    if (squares.length > 0) {
+      const isStartBlocked = squares.reduce((acc, square) => {
+        console.log(`start in: ${obj.start.pointInRect(square)}`)
+        return obj.start.pointInRect(square) || acc;
+      }, false);
+      const isArrivalBlocked = squares.reduce((acc, square) => {
+        return obj.arrival.pointInRect(square) || acc;
+      }, false);
+
+      if (isStartBlocked) {
+        alert("Start in a blocked zone");
+        throw new Error("Start in a blocked zone");
+      }
+      if (isArrivalBlocked) {
+        alert("Arrival in a blocked zone");
+        throw new Error("Arrival in a blocked zone");
+      }
+    }
+
     const drone = new Drone(
       obj.name,
       new Owner(obj.owner),
@@ -120,7 +143,7 @@ export class AddDroneComponent {
 
     for (let point of path.points) {
       points.push(this.MTDCS.getNearestLatLng(new L.LatLng(point.x, point.y)));
-    } 
+    }
 
     L.polyline(points).addTo(this.layer);
   }
