@@ -70,7 +70,7 @@ async def handler(websocket,path):
                         environnement.updateDrone(map_idDrone_path)
                         paths = environnement.addDrone(idDrone,int(priority),start,destination)
                         main.changePath(paths,idDrone)
-                        await sendUnicast(convertionJson.ackMessage("new_drone"),websocket)
+                    await sendUnicast(convertionJson.ackMessage("new_drone"),websocket)
                     sem.release()
                 case "delete_drone":
                     sem.acquire()
