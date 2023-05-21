@@ -29,7 +29,11 @@ def startServ():
     asyncio.run(server.init_serv())
 
 def addBlockedZone(zone):
-    blocked_zones.append(zone)
+    if zone in blocked_zones:
+        return False
+    else:
+        blocked_zones.append(zone)
+        return True
     
 
 def newIdDrone():
