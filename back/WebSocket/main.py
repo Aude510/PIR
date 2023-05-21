@@ -65,8 +65,12 @@ def droneInBlockedZone(zone):
     y1 = max(zone[0][1],zone[2][1])
     for user in connect:
         list_drone = map_connect_droneList[user][1]
+        owner = map_connect_droneList[user][0]
         for drone in list_drone:
             if (x0< drone["destination"]["x"] < x1) and (y0< drone["destination"]["y"] < y1):
+                name = drone["name"]
+                idDrone = map_owner_idDrone[(owner,name)]
+                map_idDrone_path[idDrone] = drone["destination",drone["start"]]
                 aux = drone["destination"]
                 drone["destination"] = drone["start"]
                 drone["start"] = aux
