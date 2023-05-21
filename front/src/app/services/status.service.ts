@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {Status} from "../../model/Status";
 import {WebSocketService} from "./web-socket.service";
 import {LatLng} from "leaflet";
+import {Square} from "../../model/Square";
 
 /**
  * This service is an abstraction around the Status object,
@@ -26,6 +27,12 @@ export class StatusService {
     }
     return this.status.drones
       .filter((d) => d.start.toLatLng().equals(latLang, margin));
+  }
+
+  getSquares(): Square[] {
+    console.log(`status: ${JSON.stringify(this.status?.blocked_Zones)}`);
+    // @ts-ignore
+    return this.status?.blocked_Zones.map((pls) => new Square(pls.points)) ?? [];
   }
 
   public getDroneList(){
