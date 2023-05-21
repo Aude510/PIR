@@ -23,6 +23,7 @@ export class BlockZoneComponent {
   private polygon: any = null;
   private layer: LayerGroup;
   private tailleSquare: number = 4 ;
+  private discretePointsList: Point[] = [];
 
   public constructor(private mapService:MapService, private MTDCS: MapToDiscretCoordService,private webSocket:WebSocketService) {
     //Callback pour récupérer les coord sur la zone discretisée
@@ -185,9 +186,16 @@ export class BlockZoneComponent {
      else {
       console.log("envoi des données au serveur");
       let square: Square = {points:this.listePoints.map((p=>this.MTDCS.latLngToDiscret(p)))};
+      const points = [];
+      const p0 = square.points[0];
+      const p2 = square.points[2];
+      points[0] = p0;
+      points[2] = p2;
+      points[1] = Point.fromTuple(p2.x, p0.y);
+      points[3] = Point.fromTuple(p0.x, p2.y);
       console.log(square.points[0]);
       // TODO envoyer square au back
-      await this.webSocket?.sendBlockedZone({square:square }).catch((e) => {
+      await this.webSocket?.sendBlockedZone({square: new Square(points) }).catch((e) => {
         console.log("cant block zone: " + e);
       })
       this.deleteZone();

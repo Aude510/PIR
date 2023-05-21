@@ -6,8 +6,8 @@ export type IPoint = {
   y: number;
 }
 export class Point implements IEquals<Point> {
-  x: number
-  y: number
+  public x: number
+  public y: number
 
   constructor(latlng: LatLng) {
     this.x=latlng.lat;
@@ -17,9 +17,6 @@ export class Point implements IEquals<Point> {
   equals(other: Point): boolean {
        return this.x === other.x && this.y === other.y;
   }
-
-
-
   public static fromTuple(x: number, y: number): Point {
     return new Point(new LatLng(x, y));
   }

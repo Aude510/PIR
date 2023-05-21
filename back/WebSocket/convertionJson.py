@@ -41,6 +41,7 @@ def formatPath(path):
 
 #Convert a drone to the right format in order to send it to the client
 def formatDrone(drone):
+    print("Drone: ", drone)
     formatedDrone={}
     formatedDrone["name"] = drone["name"]
     formatedDrone["owner"] = {"ID" : drone["owner"]["ID"]}
