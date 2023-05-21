@@ -77,6 +77,7 @@ async def handler(websocket,path):
                 case _:
                     raise convertionJson.MessageTypeError
     except websockets.exceptions.ConnectionClosed as e: #Connection closed 
+        print("Connection closed")
         sem.release()
         sem.acquire()
         try:
@@ -89,6 +90,7 @@ async def handler(websocket,path):
         finally:
             sem.release()
     except convertionJson.MessageTypeError:
+        print("Message Type Error")
         sem.acquire()
         print("Erreur sur le type du message reçu")
         await sendUnicast(convertionJson.errorMessage("test"),websocket) #Send an error message to the client
@@ -96,6 +98,7 @@ async def handler(websocket,path):
         main.deleteConnection(websocket,environnement)
         sem.release()
     except convertionJson.ConnectionError:
+        print("Connection Error")
         sem.acquire()
         print("Erreur sur le message de connect")
         await sendUnicast(convertionJson.errorMessage("connect"),websocket)
