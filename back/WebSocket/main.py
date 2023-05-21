@@ -70,8 +70,8 @@ def droneInBlockedZone(zone):
             if (x0< drone["destination"]["x"] < x1) and (y0< drone["destination"]["y"] < y1):
                 name = drone["name"]
                 idDrone = map_owner_idDrone[(owner,name)]
-                actual = map_idDrone_path[idDrone][0]
-                map_idDrone_path[idDrone] = [actual,convertionJson.jsonToPoint(drone["start"]) ]
+                actual = [int(map_idDrone_path[idDrone][0][0]),int(map_idDrone_path[idDrone][0][1])]
+                map_idDrone_path[idDrone] = [int(actual)=,convertionJson.jsonToPoint(drone["start"]) ]
                 drone["destination"] = drone["start"]
                 drone["start"] = actual
                 print(type(actual))
