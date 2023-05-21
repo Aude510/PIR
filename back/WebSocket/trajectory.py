@@ -186,7 +186,7 @@ class Environment:
                 if k == drone[0]:
                     print(drone[1], drone[2],drone[3],drone[4])
                     self.listDrones.remove(drone)
-                    self.listDrones.append((drone[0], drone[2], [v[0][0], v[0][1], 0], [v[-1][0], v[-1][1], 0], drone[4]))
+                    self.listDrones.append((drone[0], drone[1], [v[0][0], v[0][1], 0], [v[-1][0], v[-1][1], 0], drone[4]))
 
     def plotting(self):
         plt.show()
