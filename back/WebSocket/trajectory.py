@@ -128,6 +128,9 @@ class Environment:
                 for time in range(0, self.z):
                     self.listBlockedPoints.append((point[0], point[1], time))
                     self.environment[point[0]][point[1]][time] = 99999999999999
+                    self.environment[point[0] + 1][point[1] + 1][time] = 99999999999999
+                    self.environment[point[0]][point[1] + 1][time] = 99999999999999
+                    self.environment[point[0] + 1][point[1]][time] = 99999999999999
 
         # Do the last side of the polygon
 

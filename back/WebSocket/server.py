@@ -18,7 +18,6 @@ async def handler(websocket,path):
         print(message)
         if(convertionJson.jsonToType(message)=="connect"):
             sem.acquire()
-            print("acquire sem " + str(_getframe().f_lineno))
             #id = newIdConnect()
             connect.append(websocket)
             #map_connect[id] = websocket
@@ -31,7 +30,6 @@ async def handler(websocket,path):
             match convertionJson.jsonToType(message): #Identifies the type of the message if not, raise MessageTypeError
                 case "answer_path":
                     sem.acquire()
-                    print("acquire  em " + str(_getframe().f_lineno))
                     answer, drone = convertionJson.jsonToNewPathResponse(message)
                     if(not(answer)):
                         identifier = await main.deleteDrone(websocket,drone)
@@ -39,9 +37,7 @@ async def handler(websocket,path):
                     await sendUnicast(convertionJson.ackMessage("answer_path"),websocket)
                     sem.release()
                 case "delete_zone":
-                    sem.acquire()
-                    print("acquire  em " + str(_getframe().f_lineno))
-                    
+                    sem.acquire()                    
                     zone = convertionJson.jsonToZone(message)
                     await main.deleteBlockedZone(zone)
                     environnement.deleteBlockedZone(convertionJson.formatZoneDijkstra(zone))
@@ -49,9 +45,7 @@ async def handler(websocket,path):
                     await sendUnicast(convertionJson.ackMessage("delete_zone"),websocket)
                     sem.release()
                 case "block_zone":
-                    sem.acquire()
-                    print("acquire  em " + str(_getframe().f_lineno))
-                    
+                    sem.acquire()                    
                     zone = convertionJson.jsonToZone(message)
                     if(main.addBlockedZone(zone)):
                         environnement.updateDrone(map_idDrone_path)
@@ -60,9 +54,7 @@ async def handler(websocket,path):
                     await sendUnicast(convertionJson.ackMessage("block_zone"),websocket)
                     sem.release()
                 case "new_drone":
-                    sem.acquire()
-                    print("acquire  em " + str(_getframe().f_lineno))
-                    
+                    sem.acquire()                    
                     owner, priority, start, destination = convertionJson.jsonToDroneDijkstra(message)
                     drone = convertionJson.jsonToDrone(message)
                     idDrone = main.addDrone(websocket,drone)
@@ -107,8 +99,6 @@ async def handler(websocket,path):
     except convertionJson.MessageTypeError:
         print("Message Type Error")
         sem.acquire()
-        print("acquire  em " + str(_getframe().f_lineno))
-        
         print("Erreur sur le type du message reçu")
         await sendUnicast(convertionJson.errorMessage("test"),websocket) #Send an error message to the client
         connect.remove(websocket)
