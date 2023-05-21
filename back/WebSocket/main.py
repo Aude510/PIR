@@ -59,10 +59,14 @@ def addDrone(websocket,drone):
     return idDrone
     
 def droneInBlockedZone(zone):
+    x0 = min(zone[0][0],zone[2][0])
+    x1 = max(zone[0][0],zone[2][0])
+    y0 = min(zone[0][1],zone[2][1])
+    y1 = max(zone[0][1],zone[2][1])
     for user in connect:
         list_drone = map_connect_droneList[user][1]
         for drone in list_drone:
-            if (zone[0][0]< drone["destination"]["x"] < zone[2][0]) and (zone[0][1]< drone["destination"]["y"] < zone[2][1]):
+            if (x0< drone["destination"]["x"] < x1) and (y0< drone["destination"]["y"] < y1):
                 aux = drone["destination"]
                 drone["destination"] = drone["start"]
                 drone["start"] = aux
