@@ -57,10 +57,11 @@ async def handler(websocket,path):
                     owner, priority, start, destination = convertionJson.jsonToDroneDijkstra(message)
                     drone = convertionJson.jsonToDrone(message)
                     idDrone = main.addDrone(websocket,drone)
-                    environnement.updateDrone(map_idDrone_path)
-                    paths = environnement.addDrone(idDrone,int(priority),start,destination)
-                    main.changePath(paths,idDrone)
-                    await sendUnicast(convertionJson.ackMessage("new_drone"),websocket)
+                    if idDrone != -1:
+                        environnement.updateDrone(map_idDrone_path)
+                        paths = environnement.addDrone(idDrone,int(priority),start,destination)
+                        main.changePath(paths,idDrone)
+                        await sendUnicast(convertionJson.ackMessage("new_drone"),websocket)
                     sem.release()
                 case "delete_drone":
                     sem.acquire()
