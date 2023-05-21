@@ -129,8 +129,6 @@ async def sendUnicast(message, websocket):
         await websocket.send(message)
     except websockets.exceptions.ConnectionClosed:
         print("acquire  em " + str(_getframe().f_lineno))
-        
-        main.deleteConnection(websocket,environnement)
         print("Impossible to send connection was closed")
 
 

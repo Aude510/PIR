@@ -50,8 +50,9 @@ def delIdDrone(id):
 def addDrone(websocket,drone):
     owner = map_connect_droneList[websocket][0]
     droneList = map_connect_droneList[websocket][1]
-    if(drone in droneList):
-        return -1
+    for drone_list in droneList:
+        if drone_list["name"] == drone["name"]:
+            return -1
     droneList.append(drone)
     idDrone = newIdDrone()
     map_owner_idDrone[((owner,drone["name"]))] = idDrone
