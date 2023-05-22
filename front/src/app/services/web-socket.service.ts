@@ -6,8 +6,7 @@ import {Path} from "../../model/Path";
 import {Subject} from "rxjs";
 import {Zone} from "../../model/Zone";
 import {Point} from "../../model/Point";
-import {IStatus, Status} from "../../model/Status";
-import {ServerConnect} from "../../model/ServerConnect";
+import {Status} from "../../model/Status";
 import {OwnerService} from "./owner.service";
 
 
@@ -61,7 +60,7 @@ export class WebSocketService {
         this.socket?.send(JSON.stringify({type: "connect", data: {owner: this.owner.getOwner()}}));
         if(isConnected){
           console.log("Connected to the server !\n");
-          this.simulationCase1();
+          // this.simulationCase1();
 
         }
       }
@@ -70,16 +69,21 @@ export class WebSocketService {
     } else {
       console.log("Socket is still not open");
     }
+    if (this.socket) {
       // @ts-ignore
-      this.socket.onmessage = (event: ServerMessage<any>) =>  this.messageHandler(event);
-
-      // @ts-ignore
+      this.socket.onmessage = (event: ServerMessage<any>) => this.messageHandler(event);
+      this.socket.onerror = (event) => {
+        console.log("Communication with the server ERRORED");
+        isConnected = false;
+        this.connect();
+      }
       this.socket.onclose = (event) => {
         console.log("Communication with the server is lost"); // Todo : Reconnect through the connect method (also needs to be implemented)
         isConnected = false;
         this.connect();
       }
     }
+  }
 
   private simulationCase1() {
     const dd = new Drone("Cador",  this.owner.getOwner(), 10, new Path([]), Point.fromTuple(10, 10), Point.fromTuple(50, 50)); // TEST CASE

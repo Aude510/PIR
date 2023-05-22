@@ -3,6 +3,7 @@ import {Status} from "../../model/Status";
 import {WebSocketService} from "./web-socket.service";
 import {LatLng} from "leaflet";
 import {Square} from "../../model/Square";
+import {Drone} from "../../model/Drone";
 
 /**
  * This service is an abstraction around the Status object,
@@ -14,7 +15,7 @@ import {Square} from "../../model/Square";
 export class StatusService {
 
   public status: Status | undefined;
-
+  public updatedDrones: {drone: Drone, message: string}[] = [];
   constructor(private socket: WebSocketService) {
     this.socket.subToMapUpdate().subscribe((d) => {
       this.status = d;

@@ -4,6 +4,8 @@ import {IPoint, Point} from 'src/model/Point';
 import { MapService } from './map.service';
 import {Drone} from "../../model/Drone";
 import * as L from "leaflet";
+import {StatusService} from "./status.service";
+import _ from "lodash";
 
 const MAX_POINTS: number = 500;
 const DIST: number = 10;
@@ -17,7 +19,7 @@ export class MapToDiscretCoordService {
   private deltaX: number;
   private deltaY: number;
 
-  constructor(mapService: MapService) {
+  constructor(mapService: MapService, private status: StatusService) {
     this.origin = new LatLng(0, 0);
     this.deltaX = 0;
     this.deltaY = 0;
@@ -76,11 +78,20 @@ export class MapToDiscretCoordService {
     return this.discretToLatLng(p.x, p.y);
   }
 
+  private droneIsUpdated(drone: Drone): boolean {
+    const d: { drone: Drone; message: string } | undefined = _.find(this.status.updatedDrones, (e) => {
+      return e.drone.name === drone.name;
+    });
+    console.log("drone: ", d);
+    return d !== undefined;
+  }
+
   public addDroneToMap(drone: Drone, layer: LayerGroup) {
     L.circleMarker(this.discretToLatLngFromPoint(drone.start),{color: 'green'}).addTo(layer);
     L.circleMarker(this.discretToLatLngFromPoint(drone.destination), {color: 'blue'}).addTo(layer);
     const path = drone.path.points.map((p) => this.discretToLatLngFromPoint(p));
-    L.polyline(path).addTo(layer);
+    const color = this.droneIsUpdated(drone) ? 'red' : 'blue';
+    L.polyline(path,{color:color}).addTo(layer);
     const icon = L.icon({
       iconUrl: './assets/drone.png',
 

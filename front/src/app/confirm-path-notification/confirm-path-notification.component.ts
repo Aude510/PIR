@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { WebSocketService } from '../services/web-socket.service';
 import { Status } from 'src/model/Status';
-import { Drone } from 'src/model/Drone';
 import _ from "lodash";
+import {StatusService} from "../services/status.service";
 
 @Component({
   selector: 'app-confirm-path-notification',
@@ -12,11 +12,26 @@ import _ from "lodash";
 export class ConfirmPathNotificationComponent {
   public cond = true;
 
-  public notification:  {drone: Drone, message: string}[] = [];
+  // public notification:  {drone: Drone, message: string}[] = [];
 
   private lastStatus: Status | undefined;
-  constructor(private socket: WebSocketService) {
+  constructor(private socket: WebSocketService, public statusService: StatusService) {
     this.socket.subToMapUpdate().subscribe((status: Status) => {
+        const newDrones = status.drones.filter((d) => {
+          if(!this.lastStatus) {
+            return true;
+          }
+          return !_.find(this.lastStatus.drones, (d1) => {
+            return d.name === d1.name
+          });
+        });
+        newDrones.forEach((d) => {
+          this.statusService.updatedDrones.push({
+            drone: d,
+            message: `Path modified for drone ${d.name}`
+          });
+        });
+
         status.changed.map((name) => {
           return _.find(status.drones, (d) => {
             return d.name === name
@@ -26,23 +41,28 @@ export class ConfirmPathNotificationComponent {
             return false;
           }
           if(!this.lastStatus) {
-            return false;
+            return true;
           }
           const changedDrone = _.find(this.lastStatus?.drones,(fd) => {
             return d.name === fd.name;
           });
+          if (!changedDrone) {
+            return true;
+          }
           return !changedDrone?.path.contains(d.path);
         }).forEach((d) => {
             if (!d) {
               return;
             }
-            this.notification.push({
+            this.statusService.updatedDrones.push({
               drone: d,
               message: `Path modified for drone ${d.name}`
             });
             console.log("changed: " + d.name)
             setTimeout(
-              () => this.notification.pop(),
+              () => {
+                this.statusService.updatedDrones.pop();
+              },
               30000
             );
         })
@@ -65,7 +85,7 @@ userResponse: boolean | undefined;
 
 sendAnswerPath(response: boolean) {
   console.log("Answering the path");
-  const d = this.notification.pop()?.drone;
+  const d = this.statusService.updatedDrones.pop()?.drone;
   if (!response && d) {
     return this.socket.sendDeleteDrone(d);
   }
